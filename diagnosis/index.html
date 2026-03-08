@@ -58,7 +58,7 @@
         <div class="diag__step-inner">
           <div class="diag__q-header">
             <span class="diag__q-num">Q1</span>
-            <span class="diag__q-total">/ 8</span>
+            <span class="diag__q-total">/ 7</span>
           </div>
           <h2 class="diag__q-title">あなたの業種を教えてください</h2>
           <div class="diag__options diag__options--grid" data-name="industry">
@@ -103,7 +103,7 @@
         <div class="diag__step-inner">
           <div class="diag__q-header">
             <span class="diag__q-num">Q2</span>
-            <span class="diag__q-total">/ 8</span>
+            <span class="diag__q-total">/ 7</span>
           </div>
           <h2 class="diag__q-title">Webサイトの主な目的は？</h2>
           <div class="diag__options diag__options--list" data-name="purpose">
@@ -136,7 +136,7 @@
         <div class="diag__step-inner">
           <div class="diag__q-header">
             <span class="diag__q-num">Q3</span>
-            <span class="diag__q-total">/ 8</span>
+            <span class="diag__q-total">/ 7</span>
           </div>
           <h2 class="diag__q-title">現在Webサイトはお持ちですか？</h2>
           <div class="diag__options diag__options--list" data-name="currentSite">
@@ -161,7 +161,7 @@
         <div class="diag__step-inner">
           <div class="diag__q-header">
             <span class="diag__q-num">Q4</span>
-            <span class="diag__q-total">/ 8</span>
+            <span class="diag__q-total">/ 7</span>
           </div>
           <h2 class="diag__q-title">希望するページ数は？</h2>
           <p class="diag__q-hint">トップページ・会社概要・サービス紹介・お問い合わせなど</p>
@@ -170,17 +170,17 @@
               <span class="diag__option-check"></span>
               <span class="diag__option-label">1〜3ページ（シンプルに）</span>
             </button>
-            <button class="diag__option" data-value="4〜5ページ" data-plan="light">
+            <button class="diag__option" data-value="4〜7ページ" data-plan="standard">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">4〜5ページ（基本的な構成）</span>
+              <span class="diag__option-label">4〜7ページ（基本的な構成）</span>
             </button>
-            <button class="diag__option" data-value="6〜10ページ" data-plan="standard">
+            <button class="diag__option" data-value="8ページ以上" data-plan="premium">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">6〜10ページ（しっかり情報発信）</span>
+              <span class="diag__option-label">8ページ以上（しっかり情報発信）</span>
             </button>
-            <button class="diag__option" data-value="11ページ以上" data-plan="premium">
+            <button class="diag__option" data-value="わからない">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">11ページ以上（本格的に）</span>
+              <span class="diag__option-label">わからない・おまかせ</span>
             </button>
           </div>
         </div>
@@ -191,7 +191,7 @@
         <div class="diag__step-inner">
           <div class="diag__q-header">
             <span class="diag__q-num">Q5</span>
-            <span class="diag__q-total">/ 8</span>
+            <span class="diag__q-total">/ 7</span>
           </div>
           <h2 class="diag__q-title">好みのデザインテイストは？</h2>
           <div class="diag__options diag__options--grid" data-name="design">
@@ -223,77 +223,51 @@
         </div>
       </div>
 
-      <!-- Q6: 必要な機能 -->
+      <!-- Q6: 問い合わせ対応の課題（複数選択） -->
       <div class="diag__step" data-step="6">
         <div class="diag__step-inner">
           <div class="diag__q-header">
             <span class="diag__q-num">Q6</span>
-            <span class="diag__q-total">/ 8</span>
+            <span class="diag__q-total">/ 7</span>
           </div>
-          <h2 class="diag__q-title">必要な機能はありますか？</h2>
+          <h2 class="diag__q-title">問い合わせ対応で困っていることは？</h2>
           <p class="diag__q-hint">複数選択OK</p>
-          <div class="diag__options diag__options--list diag__options--multi" data-name="features" data-multi="true">
-            <button class="diag__option" data-value="お問い合わせフォーム">
+          <div class="diag__options diag__options--list diag__options--multi" data-name="contactIssues" data-multi="true">
+            <button class="diag__option" data-value="返信が遅れがち">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">お問い合わせフォーム</span>
+              <span class="diag__option-label">返信が遅れがち</span>
             </button>
-            <button class="diag__option" data-value="AIチャットボット">
+            <button class="diag__option" data-value="営業時間外に対応できない">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">AIチャットボット（自動接客）</span>
+              <span class="diag__option-label">営業時間外に対応できない</span>
             </button>
-            <button class="diag__option" data-value="ブログ・お知らせ">
+            <button class="diag__option" data-value="同じ質問に何度も答えている">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">ブログ・お知らせ機能</span>
+              <span class="diag__option-label">同じ質問に何度も答えている</span>
             </button>
-            <button class="diag__option" data-value="予約機能">
+            <button class="diag__option" data-value="問い合わせ自体が少ない">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">予約機能</span>
+              <span class="diag__option-label">問い合わせ自体が少ない</span>
             </button>
-            <button class="diag__option" data-value="Googleマップ埋め込み">
+            <button class="diag__option" data-value="対応に人手が足りない">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">Googleマップ埋め込み</span>
+              <span class="diag__option-label">対応に人手が足りない</span>
             </button>
-            <button class="diag__option" data-value="SNS連携">
+            <button class="diag__option" data-value="特にない">
               <span class="diag__option-check"></span>
-              <span class="diag__option-label">SNS連携（Instagram等）</span>
+              <span class="diag__option-label">特に困っていない</span>
             </button>
           </div>
           <button class="btn btn--primary diag__next-btn" onclick="nextStep()">次へ進む</button>
         </div>
       </div>
 
-      <!-- Q7: チャットボットへの関心 -->
+      <!-- Q7: 希望時期 -->
       <div class="diag__step" data-step="7">
         <div class="diag__step-inner">
           <div class="diag__q-header">
             <span class="diag__q-num">Q7</span>
-            <span class="diag__q-total">/ 8</span>
-          </div>
-          <h2 class="diag__q-title">AIによる自動Web接客に興味はありますか？</h2>
-          <p class="diag__q-hint">Standard以上のプランに「Chatta」が付属します</p>
-          <div class="diag__options diag__options--list" data-name="chatbot">
-            <button class="diag__option" data-value="ぜひ使いたい">
-              <span class="diag__option-check"></span>
-              <span class="diag__option-label">ぜひ使いたい</span>
-            </button>
-            <button class="diag__option" data-value="興味がある">
-              <span class="diag__option-check"></span>
-              <span class="diag__option-label">興味がある、詳しく知りたい</span>
-            </button>
-            <button class="diag__option" data-value="今は不要">
-              <span class="diag__option-check"></span>
-              <span class="diag__option-label">今は不要</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Q8: 希望時期 -->
-      <div class="diag__step" data-step="8">
-        <div class="diag__step-inner">
-          <div class="diag__q-header">
-            <span class="diag__q-num">Q8</span>
-            <span class="diag__q-total">/ 8</span>
+            <span class="diag__q-total">/ 7</span>
           </div>
           <h2 class="diag__q-title">サイト公開の希望時期は？</h2>
           <div class="diag__options diag__options--list" data-name="timeline">
@@ -318,7 +292,7 @@
       </div>
 
       <!-- 連絡先入力 -->
-      <div class="diag__step" data-step="9">
+      <div class="diag__step" data-step="8">
         <div class="diag__step-inner">
           <div class="diag__q-header">
             <span class="diag__q-num">最後に</span>
@@ -355,7 +329,7 @@
       </div>
 
       <!-- 完了画面 -->
-      <div class="diag__step" data-step="10">
+      <div class="diag__step" data-step="9">
         <div class="diag__step-inner diag__complete">
           <div class="diag__complete-icon">
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>

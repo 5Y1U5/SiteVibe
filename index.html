@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SiteVibe — Vibe Codingで、Webサイトを7日で。</title>
-  <meta name="description" content="質問に答えるだけで、プロ品質のWebサイトが7営業日で完成。月額1万円から始められるWeb制作サブスクリプション。">
+  <title>SiteVibe — フォームの時代は終わった。AIが接客する時代へ。</title>
+  <meta name="description" content="AIが24時間接客する高品質Webサイトが、制作費55,000円・7日で完成。全プランにAIチャットボット「Chatta」を標準搭載。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -19,8 +19,9 @@
         <span class="nav__logo-text">SiteVibe</span>
       </a>
       <div class="nav__links">
+        <a href="#comparison">比較</a>
+        <a href="#chatta">Chatta</a>
         <a href="#features">特徴</a>
-        <a href="#flow">流れ</a>
         <a href="#plans">料金</a>
         <a href="#faq">FAQ</a>
         <a href="diagnosis/" class="btn btn--sm btn--primary">無料診断する</a>
@@ -31,15 +32,16 @@
     </div>
     <!-- モバイルメニュー -->
     <div class="nav__mobile" id="mobileMenu">
+      <a href="#comparison">比較</a>
+      <a href="#chatta">Chatta</a>
       <a href="#features">特徴</a>
-      <a href="#flow">流れ</a>
       <a href="#plans">料金</a>
       <a href="#faq">FAQ</a>
       <a href="diagnosis/" class="btn btn--primary btn--block">無料診断する</a>
     </div>
   </nav>
 
-  <!-- ヒーロー -->
+  <!-- S1. ヒーロー -->
   <section class="hero">
     <div class="hero__bg">
       <div class="hero__orb hero__orb--1"></div>
@@ -48,357 +50,181 @@
       <div class="hero__grid"></div>
     </div>
     <div class="container hero__content">
-      <div class="hero__badge">Vibe Coding × プロ品質</div>
+      <div class="hero__badge">AI接客 x プロ品質</div>
       <h1 class="hero__title">
-        質問に答えるだけ。<br>
-        <span class="gradient-text">7日でWebサイトが完成。</span>
+        フォームの時代は、<br>
+        <span class="gradient-text">終わりました。</span>
       </h1>
       <p class="hero__sub">
-        ヒアリングフォームに沿って回答するだけで、<br class="hide-sp">
-        プロクオリティのWebサイトを月額1万円から。<br class="hide-sp">
-        打ち合わせゼロ、ストレスゼロの新しいWeb制作。
+        AIが24時間接客する高品質Webサイトが、<br class="hide-sp">
+        制作費55,000円・7日で完成。
       </p>
       <div class="hero__cta">
         <a href="diagnosis/" class="btn btn--primary btn--lg">
-          <span>無料で診断を始める</span>
+          <span>無料診断を始める</span>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <a href="#plans" class="btn btn--ghost btn--lg">料金プランを見る</a>
       </div>
       <div class="hero__stats">
         <div class="hero__stat">
+          <span class="hero__stat-num">¥55,000</span>
+          <span class="hero__stat-label">制作費（税込）</span>
+        </div>
+        <div class="hero__stat-divider"></div>
+        <div class="hero__stat">
           <span class="hero__stat-num">7</span>
-          <span class="hero__stat-label">営業日で納品</span>
+          <span class="hero__stat-label">日で納品</span>
         </div>
         <div class="hero__stat-divider"></div>
         <div class="hero__stat">
-          <span class="hero__stat-num">¥10,000</span>
-          <span class="hero__stat-label">月額〜</span>
-        </div>
-        <div class="hero__stat-divider"></div>
-        <div class="hero__stat">
-          <span class="hero__stat-num">0</span>
-          <span class="hero__stat-label">回の打ち合わせ</span>
+          <span class="hero__stat-num">24/365</span>
+          <span class="hero__stat-label">AI接客</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 課題セクション -->
+  <!-- S2. 問題提起 -->
   <section class="section section--dark" id="problem">
     <div class="container">
       <div class="section__header">
         <span class="section__tag">Problem</span>
-        <h2 class="section__title">Web制作、<br class="hide-pc">こんな悩みありませんか？</h2>
+        <h2 class="section__title">お問い合わせフォーム、<br class="hide-pc">本当に機能していますか？</h2>
       </div>
       <div class="problems">
         <div class="problem-card" data-animate>
           <div class="problem-card__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>フォーム送信率はたった1〜3%</h3>
+          <p>せっかく訪問してくれたお客様の97%以上が、フォームを見ただけで離脱。機会損失が日々積み重なっています。</p>
+        </div>
+        <div class="problem-card" data-animate>
+          <div class="problem-card__icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <h3>制作に数ヶ月かかる</h3>
-          <p>打ち合わせ、デザイン提案、修正…完成まで2〜3ヶ月は当たり前。ビジネスチャンスを逃してしまう。</p>
+          <h3>返信まで平均24時間</h3>
+          <p>お客様がフォームを送信してから返信が届くまで平均24時間。その間にお客様は競合サイトへ流れてしまいます。</p>
         </div>
         <div class="problem-card" data-animate>
           <div class="problem-card__icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <h3>初期費用が高すぎる</h3>
-          <p>相場は30万〜100万円以上。中小企業や個人事業主には大きな負担。予算が合わず諦めることも。</p>
-        </div>
-        <div class="problem-card" data-animate>
-          <div class="problem-card__icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>何度も打ち合わせが必要</h3>
-          <p>忙しい中、制作会社との打ち合わせを何度もセッティング。やり取りだけで疲弊してしまう。</p>
-        </div>
-        <div class="problem-card" data-animate>
-          <div class="problem-card__icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>更新が自分でできない</h3>
-          <p>納品後の更新は毎回追加費用。ちょっとした修正にも時間とお金がかかる。</p>
+          <h3>営業時間外は対応不可</h3>
+          <p>夜間・休日のアクセスが全体の40%以上。しかしフォームしかなければ、その場で対応することは不可能です。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ソリューション -->
-  <section class="section" id="solution">
+  <!-- S3. ビフォーアフター対比 -->
+  <section class="section" id="comparison">
     <div class="container">
       <div class="section__header">
-        <span class="section__tag">Solution</span>
-        <h2 class="section__title">
-          SiteVibeなら、<span class="gradient-text">すべて解決。</span>
-        </h2>
-        <p class="section__desc">
-          Vibe Codingの力で、高品質なWebサイトを圧倒的なスピードとコストで実現します。
-        </p>
+        <span class="section__tag">Before / After</span>
+        <h2 class="section__title">フォームからAIへ。<br class="hide-pc"><span class="gradient-text">接客が変わる。</span></h2>
       </div>
-      <div class="solution-grid">
-        <div class="solution-card solution-card--accent" data-animate>
-          <div class="solution-card__number">01</div>
-          <h3>フォームに答えるだけ</h3>
-          <p>打ち合わせは一切不要。Web上のヒアリングフォームに順番に答えていくだけで、あなたの理想のサイト像が伝わります。</p>
-        </div>
-        <div class="solution-card" data-animate>
-          <div class="solution-card__number">02</div>
-          <h3>7営業日で納品</h3>
-          <p>Vibe Codingを活用した独自の制作フローで、発注から最短7営業日でプロ品質のサイトが完成します。</p>
-        </div>
-        <div class="solution-card" data-animate>
-          <div class="solution-card__number">03</div>
-          <h3>月額1万円から</h3>
-          <p>初期費用ゼロ。サブスクリプション型だから、毎月のコストも明確。いつでもプラン変更・解約OK。</p>
-        </div>
-        <div class="solution-card" data-animate>
-          <div class="solution-card__number">04</div>
-          <h3>AIチャットボット付き</h3>
-          <p>2万円以上のプランには、AIチャットボット「Chatta」が標準搭載。24時間自動でWeb接客を行います。</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 特徴 -->
-  <section class="section section--dark" id="features">
-    <div class="container">
-      <div class="section__header">
-        <span class="section__tag">Features</span>
-        <h2 class="section__title">SiteVibeが選ばれる理由</h2>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card" data-animate>
-          <div class="feature-card__icon feature-card__icon--purple">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="comparison">
+        <!-- BEFORE -->
+        <div class="comparison__col comparison__col--before" data-animate>
+          <div class="comparison__label">BEFORE</div>
+          <div class="comparison__mockup comparison__mockup--form">
+            <div class="comparison__mockup-header">
+              <div class="comparison__mockup-dot comparison__mockup-dot--red"></div>
+              <div class="comparison__mockup-dot comparison__mockup-dot--yellow"></div>
+              <div class="comparison__mockup-dot comparison__mockup-dot--green"></div>
+            </div>
+            <div class="comparison__mockup-body">
+              <div class="comparison__form-field"></div>
+              <div class="comparison__form-field"></div>
+              <div class="comparison__form-field comparison__form-field--textarea"></div>
+              <div class="comparison__form-btn"></div>
+            </div>
           </div>
-          <h3>圧倒的なスピード</h3>
-          <p>従来2〜3ヶ月かかるWeb制作を、Vibe Codingで7営業日に短縮。ビジネスの速度に合わせたサイト公開が可能です。</p>
-        </div>
-        <div class="feature-card" data-animate>
-          <div class="feature-card__icon feature-card__icon--blue">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>プロ品質を担保</h3>
-          <p>AIの力を活かしつつ、最終的にはプロのエンジニアが品質チェック。デザイン・コード品質・SEOすべてに妥協しません。</p>
-        </div>
-        <div class="feature-card" data-animate>
-          <div class="feature-card__icon feature-card__icon--cyan">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>更新・保守もおまかせ</h3>
-          <p>サブスクリプションに月次更新が含まれているから、サイト公開後も安心。常に最新の状態を保てます。</p>
-        </div>
-        <div class="feature-card" data-animate>
-          <div class="feature-card__icon feature-card__icon--green">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>AI Web接客「Chatta」</h3>
-          <p>2万円以上のプランに付属するAIチャットボットが、訪問者の質問に24時間対応。問い合わせ対応を自動化します。</p>
-        </div>
-        <div class="feature-card" data-animate>
-          <div class="feature-card__icon feature-card__icon--orange">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>スマホ完全対応</h3>
-          <p>すべてのプランでレスポンシブデザインを標準提供。どのデバイスでも美しく表示されるサイトをお届けします。</p>
-        </div>
-        <div class="feature-card" data-animate>
-          <div class="feature-card__icon feature-card__icon--pink">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>SEO対策済み</h3>
-          <p>Google検索で上位表示されるための基本的なSEO設定を全プランに実施。集客に強いサイトを構築します。</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 制作の流れ -->
-  <section class="section" id="flow">
-    <div class="container">
-      <div class="section__header">
-        <span class="section__tag">Flow</span>
-        <h2 class="section__title">たった3ステップで完成</h2>
-        <p class="section__desc">面倒な打ち合わせは一切なし。すべてWeb上で完結します。</p>
-      </div>
-      <div class="flow">
-        <div class="flow__step" data-animate>
-          <div class="flow__step-num">1</div>
-          <div class="flow__step-content">
-            <h3>無料診断に回答</h3>
-            <p>Web上のヒアリングフォームで、業種・目的・好みのデザインなどを選択式で回答。所要時間はたったの3分。</p>
-          </div>
-        </div>
-        <div class="flow__connector"></div>
-        <div class="flow__step" data-animate>
-          <div class="flow__step-num">2</div>
-          <div class="flow__step-content">
-            <h3>プランを選んで申し込み</h3>
-            <p>診断結果をもとに最適なプランをご提案。内容に納得いただけたら、そのまま申し込み。</p>
-          </div>
-        </div>
-        <div class="flow__connector"></div>
-        <div class="flow__step" data-animate>
-          <div class="flow__step-num">3</div>
-          <div class="flow__step-content">
-            <h3>7営業日で納品</h3>
-            <p>Vibe Codingを駆使して制作スタート。7営業日後にはプロ品質のWebサイトが公開されます。</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 料金プラン -->
-  <section class="section section--dark" id="plans">
-    <div class="container">
-      <div class="section__header">
-        <span class="section__tag">Plans</span>
-        <h2 class="section__title">シンプルな料金体系</h2>
-        <p class="section__desc">初期費用ゼロ。すべてのプランにレスポンシブ対応・SSL・基本SEOが含まれます。</p>
-      </div>
-      <div class="plans">
-        <!-- ライト -->
-        <div class="plan-card" data-animate>
-          <div class="plan-card__header">
-            <h3 class="plan-card__name">Light</h3>
-            <p class="plan-card__desc">まずはWebサイトを持ちたい方に</p>
-          </div>
-          <div class="plan-card__price">
-            <span class="plan-card__yen">&yen;</span>
-            <span class="plan-card__amount">10,000</span>
-            <span class="plan-card__period">/月</span>
-          </div>
-          <ul class="plan-card__features">
+          <ul class="comparison__list">
             <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              最大5ページ
+              <span class="comparison__icon comparison__icon--bad">&#x2715;</span>
+              送信率わずか1〜3%
             </li>
             <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              レスポンシブデザイン
+              <span class="comparison__icon comparison__icon--bad">&#x2715;</span>
+              返信まで24時間以上
             </li>
             <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              基本SEO対策
+              <span class="comparison__icon comparison__icon--bad">&#x2715;</span>
+              営業時間外は対応不可
             </li>
             <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              SSL証明書
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              月1回のテキスト更新
-            </li>
-            <li class="plan-card__features--disabled">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 12l8-8M4 4l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              AIチャットボット
+              <span class="comparison__icon comparison__icon--bad">&#x2715;</span>
+              一方通行のコミュニケーション
             </li>
           </ul>
-          <a href="diagnosis/" class="btn btn--outline btn--block">このプランで始める</a>
         </div>
-        <!-- スタンダード（人気） -->
-        <div class="plan-card plan-card--popular" data-animate>
-          <div class="plan-card__badge">人気 No.1</div>
-          <div class="plan-card__header">
-            <h3 class="plan-card__name">Standard</h3>
-            <p class="plan-card__desc">集客も自動化したい方に</p>
+        <!-- AFTER -->
+        <div class="comparison__col comparison__col--after" data-animate>
+          <div class="comparison__label">AFTER</div>
+          <div class="comparison__mockup comparison__mockup--chat">
+            <div class="comparison__mockup-header">
+              <div class="comparison__mockup-dot comparison__mockup-dot--red"></div>
+              <div class="comparison__mockup-dot comparison__mockup-dot--yellow"></div>
+              <div class="comparison__mockup-dot comparison__mockup-dot--green"></div>
+            </div>
+            <div class="comparison__mockup-body">
+              <div class="comparison__chat-msg comparison__chat-msg--bot">
+                <span class="comparison__chat-avatar">AI</span>
+                <span class="comparison__chat-bubble">こんにちは！ご質問はありますか？</span>
+              </div>
+              <div class="comparison__chat-msg comparison__chat-msg--user">
+                <span class="comparison__chat-bubble">予約はできますか？</span>
+              </div>
+              <div class="comparison__chat-msg comparison__chat-msg--bot">
+                <span class="comparison__chat-avatar">AI</span>
+                <span class="comparison__chat-bubble">はい！こちらから予約できます</span>
+              </div>
+            </div>
           </div>
-          <div class="plan-card__price">
-            <span class="plan-card__yen">&yen;</span>
-            <span class="plan-card__amount">20,000</span>
-            <span class="plan-card__period">/月</span>
-          </div>
-          <ul class="plan-card__features">
+          <ul class="comparison__list">
             <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              最大10ページ
+              <span class="comparison__icon comparison__icon--good">&#x2713;</span>
+              会話でスムーズに誘導
             </li>
             <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              レスポンシブデザイン
+              <span class="comparison__icon comparison__icon--good">&#x2713;</span>
+              即時レスポンス
             </li>
             <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              SEO対策 + アクセス解析
+              <span class="comparison__icon comparison__icon--good">&#x2713;</span>
+              24時間365日対応
             </li>
             <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              SSL証明書
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              月3回のコンテンツ更新
-            </li>
-            <li class="plan-card__features--highlight">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              AIチャットボット「Chatta」付き
+              <span class="comparison__icon comparison__icon--good">&#x2713;</span>
+              双方向の接客体験
             </li>
           </ul>
-          <a href="diagnosis/" class="btn btn--primary btn--block">このプランで始める</a>
-        </div>
-        <!-- プレミアム -->
-        <div class="plan-card" data-animate>
-          <div class="plan-card__header">
-            <h3 class="plan-card__name">Premium</h3>
-            <p class="plan-card__desc">本格的にWebで集客したい方に</p>
-          </div>
-          <div class="plan-card__price">
-            <span class="plan-card__yen">&yen;</span>
-            <span class="plan-card__amount">50,000</span>
-            <span class="plan-card__period">/月</span>
-          </div>
-          <ul class="plan-card__features">
-            <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              ページ数無制限
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              レスポンシブデザイン
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              高度なSEO + アクセス解析
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              SSL証明書 + 優先サポート
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              更新し放題
-            </li>
-            <li class="plan-card__features--highlight">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              AIチャットボット「Chatta」付き
-            </li>
-          </ul>
-          <a href="diagnosis/" class="btn btn--outline btn--block">このプランで始める</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Chatta紹介 -->
-  <section class="section" id="chatta">
+  <!-- S4. Chatta紹介 -->
+  <section class="section section--dark" id="chatta">
     <div class="container">
       <div class="chatta">
         <div class="chatta__content" data-animate>
           <span class="section__tag">Chatta</span>
           <h2 class="chatta__title">
-            AIが24時間、<br><span class="gradient-text">Web接客を代行。</span>
+            Chattaが、あなたの<br><span class="gradient-text">代わりに接客します。</span>
           </h2>
           <p class="chatta__desc">
-            Standard・Premiumプランには、i-Style独自のAIチャットボット「Chatta」が標準搭載。サイトに訪れたお客様の質問に、AIが24時間365日自動で応答します。
+            すべてのプランに、i-Style独自のAIチャットボット「Chatta」が標準搭載。サイトに訪れたお客様の質問に、AIが24時間365日自動で応答します。
           </p>
+          <div class="chatta__badge-all">全プラン標準搭載</div>
           <ul class="chatta__list">
             <li>よくある質問への自動回答</li>
             <li>営業時間外の問い合わせ対応</li>
-            <li>お問い合わせフォームへの誘導</li>
             <li>商品・サービスの案内</li>
+            <li>予約・お問い合わせへの誘導</li>
           </ul>
         </div>
         <div class="chatta__visual" data-animate>
@@ -414,11 +240,18 @@
                 <div class="chatta__msg-bubble">こんにちは！何かお手伝いできることはありますか？</div>
               </div>
               <div class="chatta__msg chatta__msg--user">
-                <div class="chatta__msg-bubble">料金プランについて教えてください</div>
+                <div class="chatta__msg-bubble">カットの予約をしたいのですが</div>
               </div>
               <div class="chatta__msg chatta__msg--bot">
                 <span class="chatta__msg-avatar">AI</span>
-                <div class="chatta__msg-bubble">月額1万円のLightプラン、2万円のStandardプラン、5万円のPremiumプランの3つをご用意しています。詳しくご案内しましょうか？</div>
+                <div class="chatta__msg-bubble">カットのご予約ですね！担当者のご希望はありますか？空き状況をお調べします。</div>
+              </div>
+              <div class="chatta__msg chatta__msg--user">
+                <div class="chatta__msg-bubble">山田さんでお願いします</div>
+              </div>
+              <div class="chatta__msg chatta__msg--bot">
+                <span class="chatta__msg-avatar">AI</span>
+                <div class="chatta__msg-bubble">山田の直近の空きは明日14:00と16:00です。ご都合いかがですか？</div>
               </div>
             </div>
           </div>
@@ -427,7 +260,234 @@
     </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- S5. サービスの特徴 -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section__header">
+        <span class="section__tag">Features</span>
+        <h2 class="section__title">SiteVibeが選ばれる理由</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card" data-animate>
+          <div class="feature-card__icon feature-card__icon--purple">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>7日で納品</h3>
+          <p>従来2〜3ヶ月かかるWeb制作を7日に短縮。ビジネスの速度に合わせたサイト公開が可能です。</p>
+        </div>
+        <div class="feature-card" data-animate>
+          <div class="feature-card__icon feature-card__icon--blue">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>プロ品質を担保</h3>
+          <p>AIを活かしつつ、プロのエンジニアが品質チェック。デザイン・コード・SEOすべてに妥協しません。</p>
+        </div>
+        <div class="feature-card" data-animate>
+          <div class="feature-card__icon feature-card__icon--green">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>AI接客が標準搭載</h3>
+          <p>全プランにAIチャットボット「Chatta」が付属。24時間自動でWeb接客を行い、問い合わせ対応を自動化します。</p>
+        </div>
+        <div class="feature-card" data-animate>
+          <div class="feature-card__icon feature-card__icon--orange">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>スマホ完全対応</h3>
+          <p>すべてのプランでレスポンシブデザインを標準提供。どのデバイスでも美しく表示されます。</p>
+        </div>
+        <div class="feature-card" data-animate>
+          <div class="feature-card__icon feature-card__icon--pink">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>SEO対策済み</h3>
+          <p>Google検索で上位表示されるためのSEO設定を全プランに実施。集客に強いサイトを構築します。</p>
+        </div>
+        <div class="feature-card" data-animate>
+          <div class="feature-card__icon feature-card__icon--cyan">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>保守・更新おまかせ</h3>
+          <p>月額プランに更新作業が含まれているので、サイト公開後も安心。常に最新の状態を保てます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S6. 制作の流れ -->
+  <section class="section section--dark" id="flow">
+    <div class="container">
+      <div class="section__header">
+        <span class="section__tag">Flow</span>
+        <h2 class="section__title">たった3ステップで完成</h2>
+        <p class="section__desc">面倒な打ち合わせは一切なし。すべてWeb上で完結します。</p>
+      </div>
+      <div class="flow">
+        <div class="flow__step" data-animate>
+          <div class="flow__step-num">1</div>
+          <div class="flow__step-content">
+            <h3>無料診断に回答（3分）</h3>
+            <p>Web上のヒアリングフォームで、業種・目的・好みのデザインなどを選択式で回答するだけ。</p>
+          </div>
+        </div>
+        <div class="flow__connector"></div>
+        <div class="flow__step" data-animate>
+          <div class="flow__step-num">2</div>
+          <div class="flow__step-content">
+            <h3>プランを選んでお申し込み（制作費55,000円）</h3>
+            <p>診断結果をもとに最適なプランをご提案。内容に納得いただけたら、そのまま申し込み。</p>
+          </div>
+        </div>
+        <div class="flow__connector"></div>
+        <div class="flow__step" data-animate>
+          <div class="flow__step-num">3</div>
+          <div class="flow__step-content">
+            <h3>7日で納品、即日AI接客スタート</h3>
+            <p>制作スタートから7日後にはプロ品質のWebサイトが公開。Chattaもすぐに稼働開始します。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S7. 料金プラン -->
+  <section class="section" id="plans">
+    <div class="container">
+      <div class="section__header">
+        <span class="section__tag">Plans</span>
+        <h2 class="section__title">シンプルな料金体系</h2>
+        <p class="section__desc">すべてのプランにレスポンシブ対応・SSL・基本SEO・Chattaが含まれます。</p>
+      </div>
+      <!-- 制作費バナー -->
+      <div class="plans__setup-banner" data-animate>
+        <span class="plans__setup-label">制作費</span>
+        <span class="plans__setup-price">55,000<span class="plans__setup-tax">円（税込）</span></span>
+        <span class="plans__setup-note">全プラン共通</span>
+      </div>
+      <div class="plans">
+        <!-- ライト -->
+        <div class="plan-card" data-animate>
+          <div class="plan-card__header">
+            <h3 class="plan-card__name">Light</h3>
+            <p class="plan-card__desc">まずはWebサイトを持ちたい方に</p>
+          </div>
+          <div class="plan-card__price">
+            <span class="plan-card__yen">&yen;</span>
+            <span class="plan-card__amount">5,500</span>
+            <span class="plan-card__period">/月</span>
+          </div>
+          <ul class="plan-card__features">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              最大3ページ
+            </li>
+            <li class="plan-card__features--highlight">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Chatta 標準搭載
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              レスポンシブデザイン
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              SSL証明書 + 基本SEO
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              月1回のテキスト更新
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              メールサポート
+            </li>
+          </ul>
+          <a href="diagnosis/" class="btn btn--outline btn--block">このプランで始める</a>
+        </div>
+        <!-- スタンダード（人気） -->
+        <div class="plan-card plan-card--popular" data-animate>
+          <div class="plan-card__badge">人気 No.1</div>
+          <div class="plan-card__header">
+            <h3 class="plan-card__name">Standard</h3>
+            <p class="plan-card__desc">集客も自動化したい方に</p>
+          </div>
+          <div class="plan-card__price">
+            <span class="plan-card__yen">&yen;</span>
+            <span class="plan-card__amount">11,000</span>
+            <span class="plan-card__period">/月</span>
+          </div>
+          <ul class="plan-card__features">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              最大7ページ
+            </li>
+            <li class="plan-card__features--highlight">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Chatta 標準搭載 + FAQ30件
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              レスポンシブデザイン
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              SEO対策 + アクセス解析
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              月3回のコンテンツ更新
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              チャット + メールサポート
+            </li>
+          </ul>
+          <a href="diagnosis/" class="btn btn--primary btn--block">このプランで始める</a>
+        </div>
+        <!-- プレミアム -->
+        <div class="plan-card" data-animate>
+          <div class="plan-card__header">
+            <h3 class="plan-card__name">Premium</h3>
+            <p class="plan-card__desc">本格的にWebで集客したい方に</p>
+          </div>
+          <div class="plan-card__price">
+            <span class="plan-card__yen">&yen;</span>
+            <span class="plan-card__amount">33,000</span>
+            <span class="plan-card__period">/月</span>
+          </div>
+          <ul class="plan-card__features">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              ページ数無制限
+            </li>
+            <li class="plan-card__features--highlight">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Chatta FAQ無制限 + トーン調整
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              レスポンシブデザイン
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              高度なSEO + 月次レポート
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              更新し放題 + SNS連携
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              優先サポート（電話含む）
+            </li>
+          </ul>
+          <a href="diagnosis/" class="btn btn--outline btn--block">このプランで始める</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S8. FAQ -->
   <section class="section section--dark" id="faq">
     <div class="container container--sm">
       <div class="section__header">
@@ -437,20 +497,47 @@
       <div class="faq">
         <div class="faq__item" data-animate>
           <button class="faq__question">
+            <span>Chattaとはどんなチャットボットですか？</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq__answer">
+            <p>Chattaは、i-Styleが開発したAIチャットボットです。あなたのサイトに設置することで、訪問者の質問にAIが24時間自動で応答します。FAQ登録した情報をもとに、自然な会話で接客を行います。全プランに標準搭載されています。</p>
+          </div>
+        </div>
+        <div class="faq__item" data-animate>
+          <button class="faq__question">
+            <span>制作費55,000円以外に初期費用はかかりますか？</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq__answer">
+            <p>いいえ、初期費用は制作費55,000円（税込）のみです。あとは選択されたプランの月額料金のみで、追加の初期費用はかかりません。独自ドメインの取得費用が必要な場合は別途ご案内します。</p>
+          </div>
+        </div>
+        <div class="faq__item" data-animate>
+          <button class="faq__question">
+            <span>AIは自社の情報をちゃんと答えてくれますか？</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq__answer">
+            <p>はい。Chattaにはお客様の業種・サービス内容・よくある質問などを事前に登録します。登録された情報に基づいてAIが回答するため、的確な接客が可能です。Standardプランは30件、Premiumプランは無制限にFAQを登録できます。</p>
+          </div>
+        </div>
+        <div class="faq__item" data-animate>
+          <button class="faq__question">
+            <span>打ち合わせなしで本当に制作できるのですか？</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq__answer">
+            <p>はい、ヒアリングフォームで必要な情報をすべて伺います。ただし、制作中にご不明点があればチャットやメールでいつでもご相談いただけます。</p>
+          </div>
+        </div>
+        <div class="faq__item" data-animate>
+          <button class="faq__question">
             <span>契約期間の縛りはありますか？</span>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <div class="faq__answer">
             <p>最低契約期間は6ヶ月です。それ以降はいつでも解約可能です。解約後もサイトのデータはお渡しいたします。</p>
-          </div>
-        </div>
-        <div class="faq__item" data-animate>
-          <button class="faq__question">
-            <span>本当に打ち合わせなしで制作できるのですか？</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="faq__answer">
-            <p>はい、ヒアリングフォームで必要な情報をすべて伺います。ただし、制作中にご不明点があればチャットやメールでいつでもご相談いただけます。</p>
           </div>
         </div>
         <div class="faq__item" data-animate>
@@ -464,36 +551,18 @@
         </div>
         <div class="faq__item" data-animate>
           <button class="faq__question">
-            <span>どんな業種でも対応できますか？</span>
+            <span>お問い合わせフォームも付けられますか？</span>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <div class="faq__answer">
-            <p>美容・飲食・士業・小売など、幅広い業種に対応しています。ヒアリングフォームで業種を選択いただければ、最適なテンプレートをベースに制作します。</p>
-          </div>
-        </div>
-        <div class="faq__item" data-animate>
-          <button class="faq__question">
-            <span>Chattaとは何ですか？</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="faq__answer">
-            <p>Chattaは、i-Styleが開発したAIチャットボットサービスです。あなたのサイトに設置することで、訪問者の質問にAIが自動で応答します。Standard・Premiumプランに標準搭載されています。</p>
-          </div>
-        </div>
-        <div class="faq__item" data-animate>
-          <button class="faq__question">
-            <span>独自ドメインは使えますか？</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="faq__answer">
-            <p>はい、すべてのプランで独自ドメインの設定が可能です。既にお持ちのドメインの接続、または新規ドメインの取得もサポートいたします。</p>
+            <p>はい、もちろんです。Chattaに加えて従来のお問い合わせフォームも設置できます。AIチャットとフォームを併用することで、お客様の好みに合わせた問い合わせ手段を提供できます。</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
+  <!-- S9. CTA -->
   <section class="cta-section">
     <div class="cta-section__bg">
       <div class="hero__orb hero__orb--1"></div>
@@ -501,9 +570,9 @@
     </div>
     <div class="container cta-section__content">
       <h2 class="cta-section__title">
-        まずは無料診断から、<br><span class="gradient-text">始めてみませんか？</span>
+        まだフォームで<br><span class="gradient-text">待たせますか？</span>
       </h2>
-      <p class="cta-section__desc">3分のヒアリングで、あなたに最適なプランと完成イメージをご提案します。</p>
+      <p class="cta-section__desc">3分の無料診断で、あなたに最適なプランと完成イメージをご提案します。</p>
       <a href="diagnosis/" class="btn btn--primary btn--lg">
         <span>無料診断を始める</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -511,7 +580,7 @@
     </div>
   </section>
 
-  <!-- フッター -->
+  <!-- S10. フッター -->
   <footer class="footer">
     <div class="container footer__inner">
       <div class="footer__brand">
