@@ -16,22 +16,18 @@
   --c-white: #ffffff;
   --c-black: #1a1a2e;
 
-  /* アクセントカラー */
-  --c-primary: #4f46e5;
-  --c-primary-light: #6366f1;
-  --c-primary-dark: #3730a3;
-  --c-primary-bg: #eef2ff;
-  --c-primary-bg-hover: #e0e7ff;
-  --c-accent-blue: #2563eb;
-  --c-accent-cyan: #0891b2;
+  /* アクセントカラー（#077BDC ベース） */
+  --c-primary: #077BDC;
+  --c-primary-light: #4DA3E8;
+  --c-primary-dark: #055DA6;
+  --c-primary-bg: #E8F4FD;
+  --c-primary-bg-hover: #D1E9FA;
   --c-accent-green: #059669;
-  --c-accent-orange: #ea580c;
-  --c-accent-pink: #db2777;
   --c-accent-red: #dc2626;
 
   /* グラデーション */
-  --g-primary: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-  --g-subtle: linear-gradient(135deg, #f8f9fb 0%, #eef2ff 100%);
+  --g-primary: linear-gradient(135deg, #055DA6 0%, #077BDC 50%, #4DA3E8 100%);
+  --g-subtle: linear-gradient(135deg, #f8f9fb 0%, #E8F4FD 100%);
 
   /* タイポグラフィ */
   --font: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -343,16 +339,16 @@ img { max-width: 100%; display: block; }
 .hero__orb--1 {
   width: 500px;
   height: 500px;
-  background: #eef2ff;
+  background: #D1E9FA;
   top: -150px;
   right: -100px;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .hero__orb--2 {
   width: 400px;
   height: 400px;
-  background: #dbeafe;
+  background: #E8F4FD;
   bottom: -100px;
   left: -100px;
   opacity: 0.5;
@@ -362,10 +358,10 @@ img { max-width: 100%; display: block; }
 .hero__orb--3 {
   width: 300px;
   height: 300px;
-  background: #ede9fe;
+  background: #B8DCEF;
   top: 40%;
   left: 50%;
-  opacity: 0.4;
+  opacity: 0.35;
   animation-delay: -14s;
 }
 
@@ -395,7 +391,7 @@ img { max-width: 100%; display: block; }
   display: inline-block;
   padding: 6px 16px;
   background: var(--c-primary-bg);
-  border: 1px solid #c7d2fe;
+  border: 1px solid #90C8F0;
   border-radius: var(--radius-full);
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -639,8 +635,8 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fef2f2;
-  color: var(--c-accent-red);
+  background: var(--c-bg-alt);
+  color: var(--c-text-muted);
   border-radius: var(--radius-sm);
   margin-bottom: var(--space-md);
 }
@@ -684,8 +680,8 @@ img { max-width: 100%; display: block; }
 }
 
 .comparison__col--after {
-  background: #eef2ff;
-  border: 1px solid #c7d2fe;
+  background: var(--c-primary-bg);
+  border: 1px solid #90C8F0;
 }
 
 .comparison__label {
@@ -891,19 +887,19 @@ img { max-width: 100%; display: block; }
 
 .solution-card--accent {
   background: var(--c-primary-bg);
-  border-color: #c7d2fe;
+  border-color: #90C8F0;
 }
 
 .solution-card__number {
   font-size: var(--font-size-3xl);
   font-weight: 900;
-  color: #c7d2fe;
+  color: #90C8F0;
   line-height: 1;
   margin-bottom: var(--space-md);
 }
 
 .solution-card--accent .solution-card__number {
-  color: #a5b4fc;
+  color: var(--c-primary-light);
 }
 
 .solution-card h3 {
@@ -956,12 +952,15 @@ img { max-width: 100%; display: block; }
   margin-bottom: var(--space-md);
 }
 
-.feature-card__icon--purple { background: #eef2ff; color: var(--c-primary); }
-.feature-card__icon--blue { background: #dbeafe; color: var(--c-accent-blue); }
-.feature-card__icon--cyan { background: #ecfeff; color: var(--c-accent-cyan); }
-.feature-card__icon--green { background: #ecfdf5; color: var(--c-accent-green); }
-.feature-card__icon--orange { background: #fff7ed; color: var(--c-accent-orange); }
-.feature-card__icon--pink { background: #fdf2f8; color: var(--c-accent-pink); }
+.feature-card__icon--purple,
+.feature-card__icon--blue,
+.feature-card__icon--cyan,
+.feature-card__icon--green,
+.feature-card__icon--orange,
+.feature-card__icon--pink {
+  background: var(--c-primary-bg);
+  color: var(--c-primary);
+}
 
 .feature-card h3 {
   font-size: var(--font-size-base);
@@ -1029,7 +1028,7 @@ img { max-width: 100%; display: block; }
 .flow__connector {
   width: 2px;
   height: 36px;
-  background: linear-gradient(to bottom, var(--c-primary), #c7d2fe);
+  background: linear-gradient(to bottom, var(--c-primary), #90C8F0);
   margin: var(--space-sm) 0 var(--space-sm) 23px;
 }
 
@@ -1452,12 +1451,12 @@ img { max-width: 100%; display: block; }
 }
 
 .cta-section__bg .hero__orb--1 {
-  background: #c7d2fe;
+  background: #90C8F0;
   opacity: 0.4;
 }
 
 .cta-section__bg .hero__orb--2 {
-  background: #dbeafe;
+  background: #D1E9FA;
   opacity: 0.3;
 }
 

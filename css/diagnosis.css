@@ -46,12 +46,12 @@
 }
 
 .diag__bg .hero__orb--1 {
-  background: #eef2ff;
+  background: #D1E9FA;
   opacity: 0.5;
 }
 
 .diag__bg .hero__orb--2 {
-  background: #dbeafe;
+  background: #E8F4FD;
   opacity: 0.3;
 }
 
@@ -332,7 +332,7 @@
 .diag__field input:focus,
 .diag__field textarea:focus {
   border-color: var(--c-primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px rgba(7, 123, 220, 0.1);
 }
 
 .diag__field input::placeholder,
