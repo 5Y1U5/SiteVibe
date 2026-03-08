@@ -2,7 +2,7 @@
 // SiteVibe — 診断フォームスクリプト
 // ============================================
 
-const TOTAL_QUESTIONS = 8;
+const TOTAL_QUESTIONS = 7;
 let currentStep = 0;
 const answers = {};
 
@@ -99,7 +99,7 @@ function submitDiagnosis(e) {
   document.getElementById('backBtn').style.display = 'none';
 
   // 完了ステップへ
-  showStep(10);
+  showStep(9);
 
   // コンソールに回答データ出力（実装時はAPIに送信）
   console.log('診断回答:', answers);
@@ -107,20 +107,19 @@ function submitDiagnosis(e) {
 }
 
 // プラン推薦ロジック
+// ページ数 + Q6の課題数でスコアリング
 function recommendPlan(data) {
   let score = 0;
 
   // ページ数
-  if (data.pages === '6〜10ページ') score += 2;
-  if (data.pages === '11ページ以上') score += 4;
+  if (data.pages === '4〜7ページ') score += 2;
+  if (data.pages === '8ページ以上') score += 4;
 
-  // チャットボットへの関心
-  if (data.chatbot === 'ぜひ使いたい') score += 3;
-  if (data.chatbot === '興味がある') score += 1;
-
-  // 機能数
-  if (data.features && data.features.length > 3) score += 2;
-  if (data.features && data.features.includes('AIチャットボット')) score += 2;
+  // 問い合わせ対応の課題数（Q6）
+  if (data.contactIssues && Array.isArray(data.contactIssues)) {
+    const realIssues = data.contactIssues.filter(v => v !== '特にない');
+    score += realIssues.length;
+  }
 
   // 目的
   if (data.purpose === '集客・問い合わせ獲得') score += 1;
@@ -129,22 +128,22 @@ function recommendPlan(data) {
     return {
       id: 'premium',
       name: 'Premium',
-      price: '¥50,000/月',
-      reason: 'ページ数やご要望の機能から、Premiumプランが最適です。'
+      price: '月額 ¥33,000 + 制作費 ¥55,000',
+      reason: 'ページ数や問い合わせ対応の課題から、Premiumプランが最適です。FAQ無制限・トーン調整で、AIが最高の接客を実現します。'
     };
   } else if (score >= 2) {
     return {
       id: 'standard',
       name: 'Standard',
-      price: '¥20,000/月',
-      reason: 'AIチャットボット付きのStandardプランがおすすめです。'
+      price: '月額 ¥11,000 + 制作費 ¥55,000',
+      reason: 'AI接客のカスタマイズが充実したStandardプランがおすすめです。FAQ30件で的確な自動応答を実現します。'
     };
   } else {
     return {
       id: 'light',
       name: 'Light',
-      price: '¥10,000/月',
-      reason: 'まずはLightプランでスタートがおすすめです。'
+      price: '月額 ¥5,500 + 制作費 ¥55,000',
+      reason: 'まずはLightプランでスタートがおすすめです。AI接客も標準搭載で、すぐに始められます。'
     };
   }
 }

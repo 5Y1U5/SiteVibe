@@ -1,5 +1,5 @@
 /* ============================================
-   SiteVibe — 診断ページスタイル
+   SiteVibe — 診断ページスタイル (Light Theme)
    ============================================ */
 
 /* ナビ（診断用） */
@@ -9,9 +9,9 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(10, 10, 15, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--c-border);
   padding: var(--space-sm) 0;
 }
@@ -35,6 +35,7 @@
   display: flex;
   flex-direction: column;
   padding-top: 60px;
+  background: var(--c-bg);
 }
 
 .diag__bg {
@@ -44,6 +45,16 @@
   z-index: -1;
 }
 
+.diag__bg .hero__orb--1 {
+  background: #D1E9FA;
+  opacity: 0.5;
+}
+
+.diag__bg .hero__orb--2 {
+  background: #E8F4FD;
+  opacity: 0.3;
+}
+
 /* プログレスバー */
 .diag__progress {
   position: fixed;
@@ -51,13 +62,13 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--c-surface);
+  background: var(--c-border);
   z-index: 99;
 }
 
 .diag__progress-bar {
   height: 100%;
-  background: var(--g-primary);
+  background: var(--c-primary);
   width: 0%;
   transition: width 0.5s var(--ease);
   border-radius: 0 2px 2px 0;
@@ -76,7 +87,7 @@
 .diag__step {
   display: none;
   width: 100%;
-  max-width: 640px;
+  max-width: 600px;
   animation: diagFadeIn 0.5s var(--ease) both;
 }
 
@@ -98,11 +109,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  background: rgba(124, 92, 252, 0.12);
-  border: 1px solid rgba(124, 92, 252, 0.25);
-  color: var(--c-primary-light);
+  width: 72px;
+  height: 72px;
+  background: var(--c-primary-bg);
+  color: var(--c-primary);
   border-radius: 50%;
   margin-bottom: var(--space-xl);
 }
@@ -110,8 +120,9 @@
 .diag__title {
   font-size: var(--font-size-3xl);
   font-weight: 900;
-  color: var(--c-white);
+  color: var(--c-black);
   margin-bottom: var(--space-md);
+  letter-spacing: -0.02em;
 }
 
 .diag__desc {
@@ -137,10 +148,7 @@
 .diag__q-num {
   font-size: var(--font-size-2xl);
   font-weight: 900;
-  background: var(--g-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--c-primary);
 }
 
 .diag__q-total {
@@ -149,9 +157,9 @@
 }
 
 .diag__q-title {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-weight: 800;
-  color: var(--c-white);
+  color: var(--c-black);
   margin-bottom: var(--space-sm);
   line-height: 1.4;
 }
@@ -184,9 +192,9 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
-  background: var(--c-surface);
+  background: var(--c-white);
   border: 1px solid var(--c-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: var(--font);
   font-size: var(--font-size-sm);
@@ -198,13 +206,14 @@
 
 .diag__option:hover {
   border-color: var(--c-border-light);
-  background: var(--c-surface-hover);
+  background: var(--c-bg-alt);
 }
 
 .diag__option.selected {
   border-color: var(--c-primary);
-  background: rgba(124, 92, 252, 0.1);
-  color: var(--c-white);
+  background: var(--c-primary-bg);
+  color: var(--c-primary-dark);
+  box-shadow: 0 0 0 1px var(--c-primary);
 }
 
 .diag__options--grid .diag__option {
@@ -227,7 +236,7 @@
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  border: 2px solid var(--c-border-light);
+  border: 2px solid var(--c-border);
   border-radius: 50%;
   transition: all var(--duration) var(--ease);
   position: relative;
@@ -286,7 +295,7 @@
 .diag__field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 6px;
 }
 
 .diag__field label {
@@ -299,30 +308,31 @@
 }
 
 .diag__required {
-  font-size: var(--font-size-xs);
+  font-size: 10px;
   font-weight: 700;
-  color: #fb7185;
-  background: rgba(251, 113, 133, 0.12);
+  color: var(--c-accent-red);
+  background: #fef2f2;
   padding: 1px 6px;
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
 }
 
 .diag__field input,
 .diag__field textarea {
   font-family: var(--font);
   font-size: var(--font-size-base);
-  color: var(--c-white);
-  background: var(--c-surface);
+  color: var(--c-text);
+  background: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-sm);
   padding: var(--space-md);
   outline: none;
-  transition: border-color var(--duration);
+  transition: border-color var(--duration), box-shadow var(--duration);
 }
 
 .diag__field input:focus,
 .diag__field textarea:focus {
   border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(7, 123, 220, 0.1);
 }
 
 .diag__field input::placeholder,
@@ -353,7 +363,7 @@
 }
 
 .diag__back:hover {
-  color: var(--c-white);
+  color: var(--c-primary);
 }
 
 /* 完了画面 */
@@ -364,12 +374,12 @@
 }
 
 .diag__complete-icon {
-  width: 96px;
-  height: 96px;
+  width: 88px;
+  height: 88px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(52, 211, 153, 0.12);
+  background: #ecfdf5;
   color: var(--c-accent-green);
   border-radius: 50%;
   margin-bottom: var(--space-xl);
@@ -384,13 +394,14 @@
 
 /* 診断結果カード */
 .diag__result {
-  background: var(--c-surface);
-  border: 1px solid rgba(124, 92, 252, 0.3);
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   margin: var(--space-xl) 0;
   text-align: left;
   width: 100%;
+  box-shadow: var(--shadow-card);
 }
 
 .diag__result-plan {
@@ -403,8 +414,8 @@
 }
 
 .diag__result-plan-badge {
-  padding: 6px 14px;
-  background: var(--g-primary);
+  padding: 4px 12px;
+  background: var(--c-primary);
   color: var(--c-white);
   font-size: var(--font-size-xs);
   font-weight: 700;
@@ -415,7 +426,7 @@
 .diag__result-plan-name {
   font-size: var(--font-size-xl);
   font-weight: 800;
-  color: var(--c-white);
+  color: var(--c-black);
 }
 
 .diag__result-plan-price {
@@ -442,14 +453,14 @@
 }
 
 .diag__result-item-value {
-  color: var(--c-white);
+  color: var(--c-black);
   font-weight: 600;
 }
 
 /* レスポンシブ */
 @media (max-width: 768px) {
   .diag__title { font-size: var(--font-size-2xl); }
-  .diag__q-title { font-size: var(--font-size-xl); }
+  .diag__q-title { font-size: var(--font-size-lg); }
   .diag__options--grid { grid-template-columns: repeat(2, 1fr); }
 }
 
