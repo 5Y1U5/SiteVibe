@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>無料サイト診断 — SiteVibe</title>
+  <meta name="description" content="3分で完了。質問に答えるだけで、あなたに最適なWebサイトプランがわかります。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/diagnosis.css">
+</head>
+<body>
+  <!-- ナビ（シンプル版） -->
+  <nav class="diag-nav">
+    <div class="container diag-nav__inner">
+      <a href="../" class="nav__logo">
+        <span class="nav__logo-icon">S</span>
+        <span class="nav__logo-text">SiteVibe</span>
+      </a>
+      <span class="diag-nav__label">無料サイト診断</span>
+    </div>
+  </nav>
+
+  <!-- メイン -->
+  <main class="diag">
+    <div class="diag__bg">
+      <div class="hero__orb hero__orb--1"></div>
+      <div class="hero__orb hero__orb--2"></div>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="diag__progress">
+      <div class="diag__progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- ステップコンテナ -->
+    <div class="container diag__container" id="diagContainer">
+
+      <!-- イントロ -->
+      <div class="diag__step active" data-step="0">
+        <div class="diag__step-inner">
+          <div class="diag__step-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h1 class="diag__title">無料サイト診断</h1>
+          <p class="diag__desc">簡単な質問に答えるだけで、あなたに最適なWebサイトプランをご提案します。所要時間は約3分です。</p>
+          <button class="btn btn--primary btn--lg diag__start-btn" onclick="nextStep()">
+            <span>診断を始める</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Q1: 業種 -->
+      <div class="diag__step" data-step="1">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">Q1</span>
+            <span class="diag__q-total">/ 8</span>
+          </div>
+          <h2 class="diag__q-title">あなたの業種を教えてください</h2>
+          <div class="diag__options diag__options--grid" data-name="industry">
+            <button class="diag__option" data-value="美容・サロン">
+              <span class="diag__option-emoji">💇</span>
+              <span class="diag__option-label">美容・サロン</span>
+            </button>
+            <button class="diag__option" data-value="飲食">
+              <span class="diag__option-emoji">🍽️</span>
+              <span class="diag__option-label">飲食</span>
+            </button>
+            <button class="diag__option" data-value="小売・EC">
+              <span class="diag__option-emoji">🛍️</span>
+              <span class="diag__option-label">小売・EC</span>
+            </button>
+            <button class="diag__option" data-value="士業・コンサル">
+              <span class="diag__option-emoji">⚖️</span>
+              <span class="diag__option-label">士業・コンサル</span>
+            </button>
+            <button class="diag__option" data-value="医療・クリニック">
+              <span class="diag__option-emoji">🏥</span>
+              <span class="diag__option-label">医療・クリニック</span>
+            </button>
+            <button class="diag__option" data-value="不動産">
+              <span class="diag__option-emoji">🏠</span>
+              <span class="diag__option-label">不動産</span>
+            </button>
+            <button class="diag__option" data-value="教育・スクール">
+              <span class="diag__option-emoji">📚</span>
+              <span class="diag__option-label">教育・スクール</span>
+            </button>
+            <button class="diag__option" data-value="その他">
+              <span class="diag__option-emoji">💼</span>
+              <span class="diag__option-label">その他</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2: サイトの目的 -->
+      <div class="diag__step" data-step="2">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">Q2</span>
+            <span class="diag__q-total">/ 8</span>
+          </div>
+          <h2 class="diag__q-title">Webサイトの主な目的は？</h2>
+          <div class="diag__options diag__options--list" data-name="purpose">
+            <button class="diag__option" data-value="会社・店舗の紹介">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">会社・店舗の紹介（コーポレートサイト）</span>
+            </button>
+            <button class="diag__option" data-value="集客・問い合わせ獲得">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">集客・問い合わせを増やしたい</span>
+            </button>
+            <button class="diag__option" data-value="採用・求人">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">採用・求人サイトとして</span>
+            </button>
+            <button class="diag__option" data-value="ブランディング">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">ブランドイメージの向上</span>
+            </button>
+            <button class="diag__option" data-value="リニューアル">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">既存サイトのリニューアル</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3: 現在のサイト有無 -->
+      <div class="diag__step" data-step="3">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">Q3</span>
+            <span class="diag__q-total">/ 8</span>
+          </div>
+          <h2 class="diag__q-title">現在Webサイトはお持ちですか？</h2>
+          <div class="diag__options diag__options--list" data-name="currentSite">
+            <button class="diag__option" data-value="持っていない">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">持っていない（新規制作）</span>
+            </button>
+            <button class="diag__option" data-value="あるがリニューアルしたい">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">あるが、リニューアルしたい</span>
+            </button>
+            <button class="diag__option" data-value="あるが活用できていない">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">あるが、うまく活用できていない</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q4: ページ数 -->
+      <div class="diag__step" data-step="4">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">Q4</span>
+            <span class="diag__q-total">/ 8</span>
+          </div>
+          <h2 class="diag__q-title">希望するページ数は？</h2>
+          <p class="diag__q-hint">トップページ・会社概要・サービス紹介・お問い合わせなど</p>
+          <div class="diag__options diag__options--list" data-name="pages">
+            <button class="diag__option" data-value="1〜3ページ" data-plan="light">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">1〜3ページ（シンプルに）</span>
+            </button>
+            <button class="diag__option" data-value="4〜5ページ" data-plan="light">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">4〜5ページ（基本的な構成）</span>
+            </button>
+            <button class="diag__option" data-value="6〜10ページ" data-plan="standard">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">6〜10ページ（しっかり情報発信）</span>
+            </button>
+            <button class="diag__option" data-value="11ページ以上" data-plan="premium">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">11ページ以上（本格的に）</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q5: デザインの好み -->
+      <div class="diag__step" data-step="5">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">Q5</span>
+            <span class="diag__q-total">/ 8</span>
+          </div>
+          <h2 class="diag__q-title">好みのデザインテイストは？</h2>
+          <div class="diag__options diag__options--grid" data-name="design">
+            <button class="diag__option" data-value="シンプル・クリーン">
+              <span class="diag__option-emoji">✨</span>
+              <span class="diag__option-label">シンプル・クリーン</span>
+            </button>
+            <button class="diag__option" data-value="モダン・スタイリッシュ">
+              <span class="diag__option-emoji">🖤</span>
+              <span class="diag__option-label">モダン・スタイリッシュ</span>
+            </button>
+            <button class="diag__option" data-value="ナチュラル・温かみ">
+              <span class="diag__option-emoji">🌿</span>
+              <span class="diag__option-label">ナチュラル・温かみ</span>
+            </button>
+            <button class="diag__option" data-value="ポップ・カラフル">
+              <span class="diag__option-emoji">🎨</span>
+              <span class="diag__option-label">ポップ・カラフル</span>
+            </button>
+            <button class="diag__option" data-value="高級感・洗練">
+              <span class="diag__option-emoji">👑</span>
+              <span class="diag__option-label">高級感・洗練</span>
+            </button>
+            <button class="diag__option" data-value="おまかせ">
+              <span class="diag__option-emoji">🤝</span>
+              <span class="diag__option-label">おまかせ</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q6: 必要な機能 -->
+      <div class="diag__step" data-step="6">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">Q6</span>
+            <span class="diag__q-total">/ 8</span>
+          </div>
+          <h2 class="diag__q-title">必要な機能はありますか？</h2>
+          <p class="diag__q-hint">複数選択OK</p>
+          <div class="diag__options diag__options--list diag__options--multi" data-name="features" data-multi="true">
+            <button class="diag__option" data-value="お問い合わせフォーム">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">お問い合わせフォーム</span>
+            </button>
+            <button class="diag__option" data-value="AIチャットボット">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">AIチャットボット（自動接客）</span>
+            </button>
+            <button class="diag__option" data-value="ブログ・お知らせ">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">ブログ・お知らせ機能</span>
+            </button>
+            <button class="diag__option" data-value="予約機能">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">予約機能</span>
+            </button>
+            <button class="diag__option" data-value="Googleマップ埋め込み">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">Googleマップ埋め込み</span>
+            </button>
+            <button class="diag__option" data-value="SNS連携">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">SNS連携（Instagram等）</span>
+            </button>
+          </div>
+          <button class="btn btn--primary diag__next-btn" onclick="nextStep()">次へ進む</button>
+        </div>
+      </div>
+
+      <!-- Q7: チャットボットへの関心 -->
+      <div class="diag__step" data-step="7">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">Q7</span>
+            <span class="diag__q-total">/ 8</span>
+          </div>
+          <h2 class="diag__q-title">AIによる自動Web接客に興味はありますか？</h2>
+          <p class="diag__q-hint">Standard以上のプランに「Chatta」が付属します</p>
+          <div class="diag__options diag__options--list" data-name="chatbot">
+            <button class="diag__option" data-value="ぜひ使いたい">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">ぜひ使いたい</span>
+            </button>
+            <button class="diag__option" data-value="興味がある">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">興味がある、詳しく知りたい</span>
+            </button>
+            <button class="diag__option" data-value="今は不要">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">今は不要</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q8: 希望時期 -->
+      <div class="diag__step" data-step="8">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">Q8</span>
+            <span class="diag__q-total">/ 8</span>
+          </div>
+          <h2 class="diag__q-title">サイト公開の希望時期は？</h2>
+          <div class="diag__options diag__options--list" data-name="timeline">
+            <button class="diag__option" data-value="すぐにでも">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">すぐにでも欲しい</span>
+            </button>
+            <button class="diag__option" data-value="1ヶ月以内">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">1ヶ月以内</span>
+            </button>
+            <button class="diag__option" data-value="2〜3ヶ月以内">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">2〜3ヶ月以内</span>
+            </button>
+            <button class="diag__option" data-value="まだ未定">
+              <span class="diag__option-check"></span>
+              <span class="diag__option-label">まだ決まっていない</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 連絡先入力 -->
+      <div class="diag__step" data-step="9">
+        <div class="diag__step-inner">
+          <div class="diag__q-header">
+            <span class="diag__q-num">最後に</span>
+          </div>
+          <h2 class="diag__q-title">診断結果をお送りします</h2>
+          <p class="diag__q-hint">ご入力いただいた情報をもとに、最適なプランと見積もりをご提案します。</p>
+          <form class="diag__form" id="diagForm" onsubmit="submitDiagnosis(event)">
+            <div class="diag__field">
+              <label for="name">お名前 <span class="diag__required">必須</span></label>
+              <input type="text" id="name" name="name" placeholder="山田 太郎" required>
+            </div>
+            <div class="diag__field">
+              <label for="company">会社名・店舗名</label>
+              <input type="text" id="company" name="company" placeholder="株式会社○○ / ○○サロン">
+            </div>
+            <div class="diag__field">
+              <label for="email">メールアドレス <span class="diag__required">必須</span></label>
+              <input type="email" id="email" name="email" placeholder="info@example.com" required>
+            </div>
+            <div class="diag__field">
+              <label for="tel">電話番号</label>
+              <input type="tel" id="tel" name="tel" placeholder="090-0000-0000">
+            </div>
+            <div class="diag__field">
+              <label for="note">その他ご要望</label>
+              <textarea id="note" name="note" rows="3" placeholder="参考にしたいサイトのURLや、特別な要望があればご記入ください"></textarea>
+            </div>
+            <button type="submit" class="btn btn--primary btn--lg btn--block">
+              <span>診断結果を受け取る</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 完了画面 -->
+      <div class="diag__step" data-step="10">
+        <div class="diag__step-inner diag__complete">
+          <div class="diag__complete-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h2 class="diag__q-title">診断完了！</h2>
+          <div class="diag__result" id="diagResult"></div>
+          <p class="diag__desc">ご入力いただいたメールアドレスに、詳しい診断結果と最適なプランのご提案をお送りします。</p>
+          <a href="../" class="btn btn--ghost btn--lg">トップページに戻る</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 戻るボタン -->
+    <div class="container">
+      <button class="diag__back" id="backBtn" onclick="prevStep()" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12l-4-4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        前の質問に戻る
+      </button>
+    </div>
+  </main>
+
+  <script src="../js/diagnosis.js"></script>
+</body>
+</html>

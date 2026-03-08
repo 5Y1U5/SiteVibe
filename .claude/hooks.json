@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": {
+          "tool_name": "Write|Edit",
+          "file_paths": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.json", "*.css", "*.scss"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \"$CLAUDE_FILE_PATH\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": {
+          "tool_name": "Write|Edit",
+          "file_paths": [".env*", "*.pem", "*.key", "*secret*", "*credential*"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '⚠️ 警告: 機密ファイルを編集しようとしています。内容にAPIキーやパスワードが含まれていないか確認してください。'"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Write|Edit",
+          "file_paths": ["**/migrations/**", "**/schema.prisma", "**/drizzle.config.*"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '⚠️ 警告: DB関連ファイルを編集しようとしています。マイグレーションの影響を十分確認してください。'"
+          }
+        ]
+      }
+    ]
+  }
+}
