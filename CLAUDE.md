@@ -6,7 +6,8 @@
 ## 技術スタック
 - フレームワーク: 静的HTML/CSS/JS（フレームワークなし）
 - DB: なし（フォーム送信は今後API連携予定）
-- ホスティング: Cloudflare Pages
+- ホスティング: Cloudflare Pages（https://sitevibe.pages.dev）
+- 独自ドメイン: https://sitevibe-web.com（www.sitevibe-web.com も設定済み）
 - 主要ライブラリ: なし（バニラJS）
 - フォント: Inter + Noto Sans JP（Google Fonts）
 - デザインカラー: #077BDC（ブルー）ベース

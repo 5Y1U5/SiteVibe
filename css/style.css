@@ -231,19 +231,35 @@ img { max-width: 100%; display: block; }
   font-weight: 800;
   font-size: var(--font-size-lg);
   color: var(--c-black);
+  text-decoration: none;
+}
+
+.nav__logo-text {
+  background: var(--g-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .nav__logo-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  background: var(--c-primary);
+  width: 32px;
+  height: 32px;
+  background: var(--g-primary);
   color: var(--c-white);
   font-size: var(--font-size-xs);
   font-weight: 900;
-  border-radius: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(7, 123, 220, 0.3);
+  letter-spacing: -0.5px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nav__logo:hover .nav__logo-icon {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(7, 123, 220, 0.45);
 }
 
 .nav__links {
