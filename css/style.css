@@ -435,6 +435,42 @@ img { max-width: 100%; display: block; }
   animation: fadeInUp 0.8s var(--ease) 0.2s both;
 }
 
+.hero__features {
+  display: flex;
+  gap: var(--space-lg);
+  justify-content: center;
+  max-width: 720px;
+  margin: 0 auto var(--space-2xl);
+  animation: fadeInUp 0.8s var(--ease) 0.2s both;
+}
+
+.hero__feature {
+  flex: 1;
+  text-align: left;
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+}
+
+.hero__feature-num {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--c-primary);
+  margin-bottom: var(--space-xs);
+  letter-spacing: 0.05em;
+}
+
+.hero__feature p {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--c-text);
+  line-height: 1.6;
+  margin: 0;
+}
+
 /* 制作費フォーカスブロック */
 .hero__price-block {
   display: flex;
@@ -561,6 +597,8 @@ img { max-width: 100%; display: block; }
   .hero { padding: 100px 0 60px; min-height: auto; }
   .hero__title { font-size: var(--font-size-3xl); }
   .hero__sub { font-size: var(--font-size-base); }
+  .hero__features { flex-direction: column; gap: var(--space-sm); }
+  .hero__feature { padding: var(--space-sm) var(--space-md); }
   .hero__stats { gap: var(--space-xl); }
   .hero__stat-num { font-size: var(--font-size-2xl); }
 }
