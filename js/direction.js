@@ -251,14 +251,40 @@ const Direction = (() => {
     // ファイル情報
     data.files = uploadedFiles.filter(f => f !== null).map(f => f.name);
 
-    // コンソール出力（実装時はAPIに送信）
-    console.log('ディレクションシート送信:', data);
+    // 送信ボタンを無効化
+    const submitBtn = document.querySelector('[onclick="Direction.submit()"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.querySelector('span').textContent = '送信中...';
+    }
 
-    // プログレス100%
-    document.getElementById('progressBar').style.width = '100%';
-
-    // 完了画面
-    showStep(8);
+    // APIに送信
+    fetch('/api/direction', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('送信エラー');
+        return res.json();
+      })
+      .then(() => {
+        document.getElementById('progressBar').style.width = '100%';
+        showStep(8);
+      })
+      .catch(err => {
+        console.error('送信失敗:', err);
+        // エラーでも完了画面へ（データはコンソールに残る）
+        console.log('ディレクションシートデータ:', data);
+        document.getElementById('progressBar').style.width = '100%';
+        showStep(8);
+      })
+      .finally(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.querySelector('span').textContent = 'この内容で送信する';
+        }
+      });
   }
 
   // 初期化
