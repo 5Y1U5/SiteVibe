@@ -614,26 +614,25 @@ img { max-width: 100%; display: block; }
 
 .problem-card {
   padding: var(--space-xl);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 3px solid #F59E0B;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-lg);
   transition: all var(--duration) var(--ease);
 }
 
 .problem-card:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.06);
   transform: translateY(-2px);
 }
 
 .problem-card__icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(245, 158, 11, 0.12);
-  color: #FBBF24;
+  background: none;
+  color: rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-sm);
   margin-bottom: var(--space-md);
 }
