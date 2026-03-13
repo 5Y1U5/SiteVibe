@@ -6,7 +6,7 @@
   /* カラー */
   --c-bg: #ffffff;
   --c-bg-alt: #f8f9fb;
-  --c-bg-dark: #0B1A2E;
+  --c-bg-dark: #102A43;
   --c-bg-dark-card: rgba(255, 255, 255, 0.06);
   --c-surface: #ffffff;
   --c-surface-hover: #f4f5f7;
@@ -616,7 +616,7 @@ img { max-width: 100%; display: block; }
   padding: var(--space-xl);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 3px solid #dc2626;
+  border-left: 3px solid #F59E0B;
   border-radius: var(--radius-lg);
   transition: all var(--duration) var(--ease);
 }
@@ -632,8 +632,8 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(220, 38, 38, 0.12);
-  color: #f87171;
+  background: rgba(245, 158, 11, 0.12);
+  color: #FBBF24;
   border-radius: var(--radius-sm);
   margin-bottom: var(--space-md);
 }
@@ -1529,7 +1529,7 @@ img { max-width: 100%; display: block; }
    ============================================ */
 
 .footer {
-  background: #06101F;
+  background: #0C2236;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: var(--space-3xl);
 }
