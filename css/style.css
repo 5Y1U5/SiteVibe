@@ -471,85 +471,11 @@ img { max-width: 100%; display: block; }
   margin: 0;
 }
 
-/* 制作費フォーカスブロック */
-.hero__price-block {
-  display: flex;
-  justify-content: center;
-  margin-bottom: var(--space-2xl);
-  animation: fadeInUp 0.8s var(--ease) 0.3s both;
-}
-
-.hero__price-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--space-xl) var(--space-3xl);
-  background: var(--c-white);
-  border: 2px solid var(--c-primary);
-  border-radius: var(--radius-xl);
-  box-shadow: 0 0 0 4px var(--c-primary-bg), var(--shadow-lg);
-  position: relative;
-}
-
-.hero__price-label {
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 20px;
-  background: var(--c-primary);
-  color: var(--c-white);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  border-radius: var(--radius-full);
-  white-space: nowrap;
-}
-
-.hero__price-main {
-  display: flex;
-  align-items: baseline;
-  gap: 2px;
-  margin-top: var(--space-sm);
-}
-
-.hero__price-yen {
-  font-size: var(--font-size-2xl);
-  font-weight: 800;
-  color: var(--c-primary);
-}
-
-.hero__price-amount {
-  font-size: 4rem;
-  font-weight: 900;
-  color: var(--c-primary);
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-
-.hero__price-tax {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--c-text-muted);
-  margin-left: 4px;
-}
-
-.hero__price-note {
-  font-size: var(--font-size-sm);
-  color: var(--c-text-muted);
-  margin-top: var(--space-sm);
-  font-weight: 500;
-}
-
 .hero__stat-unit {
   font-size: 0.5em;
   font-weight: 600;
 }
 
-@media (max-width: 768px) {
-  .hero__price-inner { padding: var(--space-lg) var(--space-xl); }
-  .hero__price-amount { font-size: 3rem; }
-  .hero__price-note { font-size: var(--font-size-xs); }
-}
 
 .hero__cta {
   display: flex;
