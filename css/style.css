@@ -1550,3 +1550,74 @@ img { max-width: 100%; display: block; }
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ============================================
+   なぜ安いのか
+   ============================================ */
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+  margin-top: var(--space-2xl);
+}
+
+.why-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+}
+
+.why-card__num {
+  font-size: var(--font-size-3xl);
+  font-weight: 900;
+  color: var(--c-primary-light);
+  opacity: 0.4;
+  margin-bottom: var(--space-md);
+  line-height: 1;
+}
+
+.why-card h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--c-white);
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+}
+
+.why-card p {
+  font-size: var(--font-size-sm);
+  color: var(--c-text-dim);
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  .why-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
+  .why-card { padding: var(--space-xl); }
+}
+
+/* フロー追加スタイル */
+.flow__step-time {
+  display: inline-block;
+  margin-left: var(--space-sm);
+  padding: 2px 10px;
+  background: var(--c-primary-bg);
+  color: var(--c-primary);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  vertical-align: middle;
+}
+
+.flow__step--highlight {
+  background: var(--c-primary-bg);
+  border: 1px solid rgba(7, 123, 220, 0.15);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin: calc(-1 * var(--space-sm)) 0;
+}
+
+.flow__step--highlight .flow__step-num {
+  box-shadow: 0 0 0 4px var(--c-primary-bg), 0 0 0 6px var(--c-primary);
+}

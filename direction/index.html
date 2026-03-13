@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ディレクションシート — SiteVibe</title>
+  <meta name="description" content="お申込みありがとうございます。制作に必要な情報をご入力ください。約10分で完了します。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/direction.css">
+</head>
+<body>
+  <!-- ナビ -->
+  <nav class="dir-nav">
+    <div class="container dir-nav__inner">
+      <a href="../" class="nav__logo">
+        <span class="nav__logo-icon">S</span>
+        <span class="nav__logo-text">SiteVibe</span>
+      </a>
+      <span class="dir-nav__label">ディレクションシート</span>
+    </div>
+  </nav>
+
+  <!-- メイン -->
+  <main class="dir">
+    <div class="dir__bg">
+      <div class="hero__orb hero__orb--1"></div>
+      <div class="hero__orb hero__orb--2"></div>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="dir__progress">
+      <div class="dir__progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- ステップインジケーター -->
+    <div class="container dir__indicators" id="stepIndicators">
+      <div class="dir__indicator active" data-ind="1"><span>1</span>基本情報</div>
+      <div class="dir__indicator" data-ind="2"><span>2</span>サービス</div>
+      <div class="dir__indicator" data-ind="3"><span>3</span>デザイン</div>
+      <div class="dir__indicator" data-ind="4"><span>4</span>ページ構成</div>
+      <div class="dir__indicator" data-ind="5"><span>5</span>素材・SNS</div>
+      <div class="dir__indicator" data-ind="6"><span>6</span>AI接客</div>
+      <div class="dir__indicator" data-ind="7"><span>7</span>確認</div>
+    </div>
+
+    <!-- ステップコンテナ -->
+    <div class="container dir__container" id="dirContainer">
+
+      <!-- イントロ -->
+      <div class="dir__step active" data-step="0">
+        <div class="dir__step-inner dir__step-inner--center">
+          <div class="dir__step-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h1 class="dir__title">ディレクションシート</h1>
+          <p class="dir__desc">お申込みありがとうございます。<br>制作に必要な情報をご入力ください。<br>約10分で完了します。打ち合わせは不要です。</p>
+          <div class="dir__intro-features">
+            <div class="dir__intro-feature">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/></svg>
+              <span>所要時間 約10分</span>
+            </div>
+            <div class="dir__intro-feature">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>途中保存OK・後から修正可</span>
+            </div>
+            <div class="dir__intro-feature">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>不明点はチャットで相談OK</span>
+            </div>
+          </div>
+          <button class="btn btn--primary btn--lg dir__start-btn" onclick="Direction.nextStep()">
+            <span>入力を始める</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 1: ビジネス基本情報 -->
+      <div class="dir__step" data-step="1">
+        <div class="dir__step-inner">
+          <div class="dir__step-header">
+            <span class="dir__step-num">Step 1 / 7</span>
+            <h2 class="dir__step-title">ビジネス基本情報</h2>
+            <p class="dir__step-desc">サイトに掲載する基本的な情報を教えてください</p>
+          </div>
+          <div class="dir__fields">
+            <div class="dir__field">
+              <label for="businessName">店舗名・会社名 <span class="dir__required">必須</span></label>
+              <input type="text" id="businessName" name="businessName" placeholder="例: ヘアサロン ○○" required>
+            </div>
+            <div class="dir__field">
+              <label for="businessType">業種 <span class="dir__required">必須</span></label>
+              <input type="text" id="businessType" name="businessType" placeholder="例: 美容室 / カフェ / 整体院">
+            </div>
+            <div class="dir__field">
+              <label for="address">住所</label>
+              <input type="text" id="address" name="address" placeholder="例: 石川県金沢市○○町1-2-3">
+            </div>
+            <div class="dir__field-row">
+              <div class="dir__field">
+                <label for="phone">電話番号</label>
+                <input type="tel" id="phone" name="phone" placeholder="076-000-0000">
+              </div>
+              <div class="dir__field">
+                <label for="email">メールアドレス</label>
+                <input type="email" id="email" name="email" placeholder="info@example.com">
+              </div>
+            </div>
+            <div class="dir__field-row">
+              <div class="dir__field">
+                <label for="hours">営業時間</label>
+                <input type="text" id="hours" name="hours" placeholder="例: 10:00〜20:00">
+              </div>
+              <div class="dir__field">
+                <label for="holidays">定休日</label>
+                <input type="text" id="holidays" name="holidays" placeholder="例: 毎週月曜、第3火曜">
+              </div>
+            </div>
+          </div>
+          <div class="dir__nav-buttons">
+            <button class="btn btn--ghost" onclick="Direction.prevStep()">戻る</button>
+            <button class="btn btn--primary" onclick="Direction.nextStep()">次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: サービス・ターゲット -->
+      <div class="dir__step" data-step="2">
+        <div class="dir__step-inner">
+          <div class="dir__step-header">
+            <span class="dir__step-num">Step 2 / 7</span>
+            <h2 class="dir__step-title">サービス内容・ターゲット</h2>
+            <p class="dir__step-desc">あなたのビジネスの強みや、来てほしいお客様像を教えてください</p>
+          </div>
+          <div class="dir__fields">
+            <div class="dir__field">
+              <label for="mainServices">主なサービス・メニュー <span class="dir__required">必須</span></label>
+              <textarea id="mainServices" name="mainServices" rows="3" placeholder="例:&#10;・カット ¥4,400&#10;・カラー ¥6,600〜&#10;・パーマ ¥8,800〜"></textarea>
+            </div>
+            <div class="dir__field">
+              <label for="strengths">お店・サービスの強み・こだわり</label>
+              <textarea id="strengths" name="strengths" rows="3" placeholder="例: 髪質改善に特化。オーガニック薬剤のみ使用。完全個室でリラックスできる空間。"></textarea>
+            </div>
+            <div class="dir__field">
+              <label for="target">来てほしいお客様像</label>
+              <textarea id="target" name="target" rows="2" placeholder="例: 30〜40代女性、髪のダメージに悩んでいる方、落ち着いた雰囲気のサロンを探している方"></textarea>
+            </div>
+            <div class="dir__field">
+              <label for="competitors">競合・参考にしているお店（任意）</label>
+              <input type="text" id="competitors" name="competitors" placeholder="例: 近隣の○○サロン、○○美容室">
+            </div>
+          </div>
+          <div class="dir__nav-buttons">
+            <button class="btn btn--ghost" onclick="Direction.prevStep()">戻る</button>
+            <button class="btn btn--primary" onclick="Direction.nextStep()">次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: デザインの方向性 -->
+      <div class="dir__step" data-step="3">
+        <div class="dir__step-inner">
+          <div class="dir__step-header">
+            <span class="dir__step-num">Step 3 / 7</span>
+            <h2 class="dir__step-title">デザインの方向性</h2>
+            <p class="dir__step-desc">好みのテイストやカラーを選んでください</p>
+          </div>
+
+          <!-- デザインテイスト -->
+          <div class="dir__section-label">デザインテイスト（1つ選択）</div>
+          <div class="dir__design-cards" data-name="designTaste">
+            <button class="dir__design-card" data-value="シンプル・クリーン">
+              <div class="dir__design-preview dir__design-preview--simple">
+                <div class="dir__design-bar"></div>
+                <div class="dir__design-line"></div>
+                <div class="dir__design-line dir__design-line--short"></div>
+              </div>
+              <span>シンプル・クリーン</span>
+            </button>
+            <button class="dir__design-card" data-value="モダン・スタイリッシュ">
+              <div class="dir__design-preview dir__design-preview--modern">
+                <div class="dir__design-bar"></div>
+                <div class="dir__design-line"></div>
+                <div class="dir__design-line dir__design-line--short"></div>
+              </div>
+              <span>モダン・スタイリッシュ</span>
+            </button>
+            <button class="dir__design-card" data-value="ナチュラル・温かみ">
+              <div class="dir__design-preview dir__design-preview--natural">
+                <div class="dir__design-bar"></div>
+                <div class="dir__design-line"></div>
+                <div class="dir__design-line dir__design-line--short"></div>
+              </div>
+              <span>ナチュラル・温かみ</span>
+            </button>
+            <button class="dir__design-card" data-value="高級感・洗練">
+              <div class="dir__design-preview dir__design-preview--luxury">
+                <div class="dir__design-bar"></div>
+                <div class="dir__design-line"></div>
+                <div class="dir__design-line dir__design-line--short"></div>
+              </div>
+              <span>高級感・洗練</span>
+            </button>
+            <button class="dir__design-card" data-value="ポップ・カラフル">
+              <div class="dir__design-preview dir__design-preview--pop">
+                <div class="dir__design-bar"></div>
+                <div class="dir__design-line"></div>
+                <div class="dir__design-line dir__design-line--short"></div>
+              </div>
+              <span>ポップ・カラフル</span>
+            </button>
+            <button class="dir__design-card" data-value="おまかせ">
+              <div class="dir__design-preview dir__design-preview--auto">
+                <span class="dir__design-auto-icon">?</span>
+              </div>
+              <span>おまかせ</span>
+            </button>
+          </div>
+
+          <!-- カラー -->
+          <div class="dir__section-label">メインカラー（1つ選択）</div>
+          <div class="dir__color-options" data-name="mainColor">
+            <button class="dir__color-chip" data-value="#077BDC" style="--chip-color:#077BDC" title="ブルー"></button>
+            <button class="dir__color-chip" data-value="#10B981" style="--chip-color:#10B981" title="グリーン"></button>
+            <button class="dir__color-chip" data-value="#F59E0B" style="--chip-color:#F59E0B" title="オレンジ"></button>
+            <button class="dir__color-chip" data-value="#EF4444" style="--chip-color:#EF4444" title="レッド"></button>
+            <button class="dir__color-chip" data-value="#8B5CF6" style="--chip-color:#8B5CF6" title="パープル"></button>
+            <button class="dir__color-chip" data-value="#EC4899" style="--chip-color:#EC4899" title="ピンク"></button>
+            <button class="dir__color-chip" data-value="#1F2937" style="--chip-color:#1F2937" title="ブラック"></button>
+            <button class="dir__color-chip" data-value="#92734E" style="--chip-color:#92734E" title="ゴールド"></button>
+            <button class="dir__color-chip dir__color-chip--auto" data-value="おまかせ" title="おまかせ">?</button>
+          </div>
+
+          <!-- 参考サイト -->
+          <div class="dir__fields" style="margin-top:var(--space-xl)">
+            <div class="dir__field">
+              <label for="refSites">参考にしたいサイトのURL（任意）</label>
+              <textarea id="refSites" name="refSites" rows="2" placeholder="例:&#10;https://example.com&#10;https://example2.com"></textarea>
+              <span class="dir__field-hint">「こんな雰囲気がいい」というサイトがあればURLを貼ってください</span>
+            </div>
+          </div>
+
+          <div class="dir__nav-buttons">
+            <button class="btn btn--ghost" onclick="Direction.prevStep()">戻る</button>
+            <button class="btn btn--primary" onclick="Direction.nextStep()">次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: サイト構成・掲載ページ -->
+      <div class="dir__step" data-step="4">
+        <div class="dir__step-inner">
+          <div class="dir__step-header">
+            <span class="dir__step-num">Step 4 / 7</span>
+            <h2 class="dir__step-title">サイトのページ構成</h2>
+            <p class="dir__step-desc">掲載したいページにチェックを入れてください</p>
+          </div>
+
+          <div class="dir__checklist" data-name="pages">
+            <label class="dir__check">
+              <input type="checkbox" value="トップページ" checked disabled>
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">トップページ <span class="dir__check-note">（必須）</span></span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="サービス・メニュー">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">サービス・メニュー紹介</span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="スタッフ紹介">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">スタッフ紹介</span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="アクセス・地図">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">アクセス・地図</span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="お知らせ・ブログ">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">お知らせ・ブログ</span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="ギャラリー・施術事例">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">ギャラリー・施術事例</span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="お客様の声">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">お客様の声</span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="よくある質問">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">よくある質問</span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="採用情報">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">採用情報</span>
+            </label>
+            <label class="dir__check">
+              <input type="checkbox" value="お問い合わせ">
+              <span class="dir__check-box"></span>
+              <span class="dir__check-label">お問い合わせフォーム</span>
+            </label>
+          </div>
+
+          <div class="dir__fields" style="margin-top:var(--space-lg)">
+            <div class="dir__field">
+              <label for="otherPages">その他、欲しいページがあれば</label>
+              <input type="text" id="otherPages" name="otherPages" placeholder="例: オンラインショップ、予約ページ">
+            </div>
+          </div>
+
+          <div class="dir__nav-buttons">
+            <button class="btn btn--ghost" onclick="Direction.prevStep()">戻る</button>
+            <button class="btn btn--primary" onclick="Direction.nextStep()">次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: 素材・SNS -->
+      <div class="dir__step" data-step="5">
+        <div class="dir__step-inner">
+          <div class="dir__step-header">
+            <span class="dir__step-num">Step 5 / 7</span>
+            <h2 class="dir__step-title">写真・ロゴ・SNS</h2>
+            <p class="dir__step-desc">お持ちの素材やSNSアカウントを教えてください</p>
+          </div>
+
+          <!-- ファイルアップロード -->
+          <div class="dir__section-label">ロゴ・写真素材のアップロード（任意）</div>
+          <div class="dir__upload-area" id="uploadArea">
+            <input type="file" id="fileInput" multiple accept="image/*,.pdf" style="display:none">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6h.1a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p>ここにファイルをドラッグ、またはクリックして選択</p>
+            <span class="dir__upload-hint">ロゴ、店舗写真、スタッフ写真など（JPG, PNG, WebP, PDF）</span>
+          </div>
+          <div class="dir__upload-list" id="uploadList"></div>
+
+          <div class="dir__fields" style="margin-top:var(--space-xl)">
+            <div class="dir__section-label">SNS・外部リンク</div>
+            <div class="dir__field">
+              <label for="instagram">Instagram</label>
+              <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/yourname">
+            </div>
+            <div class="dir__field">
+              <label for="line">LINE公式アカウント</label>
+              <input type="url" id="line" name="line" placeholder="https://lin.ee/xxxxx">
+            </div>
+            <div class="dir__field">
+              <label for="googleMap">Googleマップ</label>
+              <input type="url" id="googleMap" name="googleMap" placeholder="https://maps.google.com/...">
+            </div>
+            <div class="dir__field">
+              <label for="hotpepper">ホットペッパー・その他予約サイト</label>
+              <input type="url" id="hotpepper" name="hotpepper" placeholder="https://beauty.hotpepper.jp/...">
+            </div>
+          </div>
+
+          <div class="dir__nav-buttons">
+            <button class="btn btn--ghost" onclick="Direction.prevStep()">戻る</button>
+            <button class="btn btn--primary" onclick="Direction.nextStep()">次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: Chatta FAQ -->
+      <div class="dir__step" data-step="6">
+        <div class="dir__step-inner">
+          <div class="dir__step-header">
+            <span class="dir__step-num">Step 6 / 7</span>
+            <h2 class="dir__step-title">AI接客（Chatta）の設定</h2>
+            <p class="dir__step-desc">お客様からよくある質問と、その回答を登録してください。<br>AIがこの情報をもとに自動で接客します。</p>
+          </div>
+
+          <div class="dir__faq-list" id="faqList">
+            <!-- FAQ 1 -->
+            <div class="dir__faq-item">
+              <div class="dir__faq-item-header">
+                <span class="dir__faq-item-num">FAQ 1</span>
+                <button class="dir__faq-remove" onclick="Direction.removeFaq(this)" title="削除" style="display:none">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="dir__field">
+                <label>よくある質問</label>
+                <input type="text" name="faq_q" placeholder="例: 予約は必要ですか？">
+              </div>
+              <div class="dir__field">
+                <label>回答</label>
+                <textarea name="faq_a" rows="2" placeholder="例: はい、お電話またはLINEからご予約をお願いしております。当日予約も空きがあれば可能です。"></textarea>
+              </div>
+            </div>
+            <!-- FAQ 2 -->
+            <div class="dir__faq-item">
+              <div class="dir__faq-item-header">
+                <span class="dir__faq-item-num">FAQ 2</span>
+                <button class="dir__faq-remove" onclick="Direction.removeFaq(this)" title="削除">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="dir__field">
+                <label>よくある質問</label>
+                <input type="text" name="faq_q" placeholder="例: 駐車場はありますか？">
+              </div>
+              <div class="dir__field">
+                <label>回答</label>
+                <textarea name="faq_a" rows="2" placeholder="例: 店舗前に3台分の無料駐車場がございます。"></textarea>
+              </div>
+            </div>
+            <!-- FAQ 3 -->
+            <div class="dir__faq-item">
+              <div class="dir__faq-item-header">
+                <span class="dir__faq-item-num">FAQ 3</span>
+                <button class="dir__faq-remove" onclick="Direction.removeFaq(this)" title="削除">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="dir__field">
+                <label>よくある質問</label>
+                <input type="text" name="faq_q" placeholder="例: 支払い方法は？">
+              </div>
+              <div class="dir__field">
+                <label>回答</label>
+                <textarea name="faq_a" rows="2" placeholder="例: 現金、クレジットカード、PayPay、交通系ICに対応しています。"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <button class="dir__faq-add" id="addFaqBtn" onclick="Direction.addFaq()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            質問を追加する
+          </button>
+
+          <div class="dir__faq-tip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>あとから追加・修正できます。まずは思いつくものだけでOKです。</span>
+          </div>
+
+          <div class="dir__nav-buttons">
+            <button class="btn btn--ghost" onclick="Direction.prevStep()">戻る</button>
+            <button class="btn btn--primary" onclick="Direction.nextStep()">次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 7: 確認・その他要望 -->
+      <div class="dir__step" data-step="7">
+        <div class="dir__step-inner">
+          <div class="dir__step-header">
+            <span class="dir__step-num">Step 7 / 7</span>
+            <h2 class="dir__step-title">確認・その他要望</h2>
+            <p class="dir__step-desc">最後に、その他のご要望があればお聞かせください</p>
+          </div>
+
+          <div class="dir__fields">
+            <div class="dir__field">
+              <label for="otherRequests">その他ご要望・伝えておきたいこと</label>
+              <textarea id="otherRequests" name="otherRequests" rows="4" placeholder="例:&#10;・名刺に載せたいのでQRコードも作ってほしい&#10;・○月○日までに公開したい&#10;・英語ページも欲しい"></textarea>
+            </div>
+          </div>
+
+          <!-- 入力サマリー -->
+          <div class="dir__summary" id="dirSummary"></div>
+
+          <div class="dir__nav-buttons">
+            <button class="btn btn--ghost" onclick="Direction.prevStep()">戻る</button>
+            <button class="btn btn--primary btn--lg" onclick="Direction.submit()">
+              <span>この内容で送信する</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 完了 -->
+      <div class="dir__step" data-step="8">
+        <div class="dir__step-inner dir__step-inner--center">
+          <div class="dir__complete-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h2 class="dir__title">送信完了！</h2>
+          <p class="dir__desc">ディレクションシートを受け取りました。<br>いただいた情報をもとに、制作を開始いたします。</p>
+          <div class="dir__complete-info">
+            <div class="dir__complete-info-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span>制作期間: 約7日</span>
+            </div>
+            <div class="dir__complete-info-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span>進捗はメールでお知らせします</span>
+            </div>
+          </div>
+          <a href="../" class="btn btn--ghost btn--lg">トップページに戻る</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/direction.js"></script>
+</body>
+</html>
