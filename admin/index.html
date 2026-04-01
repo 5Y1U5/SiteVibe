@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Agent Console — SiteVibe</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- ヘッダー -->
+  <header class="admin-header">
+    <div class="admin-header__inner">
+      <a href="../" class="admin-header__logo">
+        <span class="admin-header__logo-icon">S</span>
+        <span class="admin-header__logo-text">SiteVibe</span>
+      </a>
+      <div class="admin-header__status">
+        <span class="admin-header__status-dot"></span>
+        <span class="admin-header__status-label">Agent Console</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインエリア -->
+  <main class="agent">
+    <!-- 背景エフェクト -->
+    <div class="agent__bg">
+      <div class="agent__orb agent__orb--1"></div>
+      <div class="agent__orb agent__orb--2"></div>
+    </div>
+
+    <!-- Vibe キャラクターエリア -->
+    <div class="agent__vibe-area">
+      <div class="agent__vibe-container" id="vibeContainer">
+        <!-- vibe.js が SVG を挿入 -->
+      </div>
+      <div class="agent__speech-bubble" id="speechBubble">
+        <p id="speechText">なんか用っすか〜？</p>
+      </div>
+    </div>
+
+    <!-- チャット履歴 -->
+    <div class="agent__chat" id="chatArea">
+      <div class="agent__chat-inner" id="chatMessages">
+        <!-- メッセージが動的に追加される -->
+      </div>
+    </div>
+
+    <!-- マイクボタン -->
+    <div class="agent__mic-area">
+      <button class="agent__mic-btn" id="micBtn" aria-label="音声入力">
+        <svg class="agent__mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
+        <div class="agent__mic-pulse" id="micPulse"></div>
+        <div class="agent__mic-pulse agent__mic-pulse--2" id="micPulse2"></div>
+      </button>
+      <p class="agent__mic-hint" id="micHint">タップして話しかける</p>
+    </div>
+
+    <!-- テキスト入力（補助） -->
+    <div class="agent__input-area">
+      <form class="agent__input-form" id="inputForm">
+        <input
+          type="text"
+          class="agent__input"
+          id="textInput"
+          placeholder="テキストで入力することもできます..."
+          autocomplete="off"
+        >
+        <button type="submit" class="agent__send-btn" id="sendBtn" aria-label="送信">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- プレビューパネル（オーバーレイ） -->
+  <div class="preview-overlay" id="previewOverlay">
+    <div class="preview-panel">
+      <div class="preview-panel__header">
+        <div class="preview-panel__tabs">
+          <button class="preview-panel__tab active" data-tab="preview">プレビュー</button>
+          <button class="preview-panel__tab" data-tab="diff">差分コード</button>
+        </div>
+        <div class="preview-panel__device-toggle">
+          <button class="preview-panel__device active" data-device="desktop" aria-label="デスクトップ">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </button>
+          <button class="preview-panel__device" data-device="mobile" aria-label="モバイル">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+          </button>
+        </div>
+        <button class="preview-panel__close" id="previewClose" aria-label="閉じる">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="preview-panel__body">
+        <!-- プレビュータブ -->
+        <div class="preview-panel__content active" data-content="preview">
+          <div class="preview-panel__iframe-wrap" id="previewIframeWrap">
+            <iframe class="preview-panel__iframe" id="previewIframe" sandbox="allow-same-origin"></iframe>
+          </div>
+        </div>
+        <!-- 差分タブ -->
+        <div class="preview-panel__content" data-content="diff">
+          <div class="preview-panel__diff" id="previewDiff"></div>
+        </div>
+      </div>
+      <div class="preview-panel__footer">
+        <button class="preview-panel__btn preview-panel__btn--reject" id="previewReject">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          却下する
+        </button>
+        <button class="preview-panel__btn preview-panel__btn--approve" id="previewApprove">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+          承認してデプロイ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 紙吹雪コンテナ -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <script src="js/vibe.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
