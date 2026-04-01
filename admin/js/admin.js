@@ -40,6 +40,44 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Vibe 初期化 */
   Vibe.init(vibeContainer, speechBubble, speechText);
 
+  /* ─── スクロール連動: Vibe → ミニVibe ─── */
+  const vibeArea = document.querySelector('.agent__vibe-area');
+  const miniVibe = document.getElementById('miniVibe');
+  const miniVibeAvatar = document.getElementById('miniVibeAvatar');
+  const miniVibeSpeech = document.getElementById('miniVibeSpeech');
+  let vibeCollapsed = false;
+
+  // ミニVibeにSVGアバターをコピー
+  miniVibeAvatar.innerHTML = `
+    <svg viewBox="0 0 160 160" width="32" height="32">
+      <defs><linearGradient id="mvg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#055DA6"/><stop offset="50%" stop-color="#077BDC"/><stop offset="100%" stop-color="#4DA3E8"/>
+      </linearGradient></defs>
+      <circle cx="80" cy="85" r="44" fill="url(#mvg)"/>
+      <circle cx="64" cy="80" r="6" fill="white"/><circle cx="64" cy="79.5" r="3.5" fill="#102A43"/>
+      <circle cx="96" cy="80" r="6" fill="white"/><circle cx="96" cy="79.5" r="3.5" fill="#102A43"/>
+      <path d="M72 98 Q80 106 88 98" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>`;
+
+  chatArea.addEventListener('scroll', () => {
+    const shouldCollapse = chatArea.scrollTop > 80;
+    if (shouldCollapse !== vibeCollapsed) {
+      vibeCollapsed = shouldCollapse;
+      vibeArea.classList.toggle('collapsed', shouldCollapse);
+      miniVibe.classList.toggle('visible', shouldCollapse);
+      if (shouldCollapse) {
+        miniVibeSpeech.textContent = speechText.textContent;
+      }
+    }
+  }, { passive: true });
+
+  // セリフ変更時にミニVibeも同期
+  const origSay = Vibe.say;
+  Vibe.say = function(text) {
+    origSay.call(Vibe, text);
+    if (vibeCollapsed) miniVibeSpeech.textContent = text;
+  };
+
   /* モックの依頼テキスト */
   const mockRequests = [
     'お客様の声セクションを追加して',
