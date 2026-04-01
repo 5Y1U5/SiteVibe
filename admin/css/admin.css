@@ -97,12 +97,7 @@ html, .admin-body {
 }
 
 .admin-header__mini-vibe-speech {
-  font-size: var(--font-size-xs);
-  color: var(--admin-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 160px;
+  display: none;
 }
 
 .admin-header__logo-icon {

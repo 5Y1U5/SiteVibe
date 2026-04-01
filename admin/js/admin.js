@@ -232,12 +232,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function openPreview(diff) {
     currentDiff = diff;
 
-    // iframe にプレビューURLをロード
-    if (diff.previewUrl) {
-      previewIframe.src = diff.previewUrl;
-    }
+    // デフォルトで差分コードタブを表示（プレビューiframeは認証で表示できないため）
+    document.querySelectorAll('.preview-panel__tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.preview-panel__content').forEach(c => c.classList.remove('active'));
+    document.querySelector('.preview-panel__tab[data-tab="diff"]').classList.add('active');
+    document.querySelector('.preview-panel__content[data-content="diff"]').classList.add('active');
 
-    // diff タブにフル差分を表示（rawDiff があればそちらを優先）
+    // diff 表示
     previewDiff.innerHTML = diff.rawDiff ? buildRawDiffHtml(diff.rawDiff) : buildFullDiffHtml(diff);
 
     // パネルを開く
@@ -292,22 +293,23 @@ document.addEventListener('DOMContentLoaded', () => {
   previewApprove.addEventListener('click', async () => {
     closePreview();
     Vibe.setState('done');
-    Vibe.say('承認されたっす！デプロイ開始しますよ〜！');
-    addMessage('status', 'デプロイ中...');
+    Vibe.say('承認されたっす！');
+    const deployStatus = addMessage('status', 'デプロイ中...');
 
     try {
       if (currentDiff?._jobId) {
         await approveJob(currentDiff._jobId);
       }
-      const statusMsg = addMessage('status', '');
-      statusMsg.querySelector('.chat-msg__status-dot').style.background = 'var(--c-accent-green)';
-      statusMsg.querySelector('.chat-msg__status-dot').style.animation = 'none';
-      statusMsg.querySelector('span:last-child').textContent = 'デプロイ完了！サイトに反映されました';
-      statusMsg.classList.add('chat-msg__status--done');
+      // 「デプロイ中」を「完了」に更新
+      deployStatus.querySelector('.chat-msg__status-dot').style.background = 'var(--c-accent-green)';
+      deployStatus.querySelector('.chat-msg__status-dot').style.animation = 'none';
+      deployStatus.querySelector('span:last-child').textContent = 'デプロイ完了！';
+      deployStatus.classList.add('chat-msg__status--done');
       Vibe.setState('done');
       addMessage('vibe', 'デプロイ完了っす！サイトを確認してみてください〜！');
       if (ttsEnabled) Audio.speak('デプロイ完了っす！').catch(() => {});
     } catch (err) {
+      deployStatus.querySelector('span:last-child').textContent = 'デプロイ失敗';
       Vibe.setState('error');
       addMessage('vibe', 'デプロイでエラーが出ちゃいました...');
     }
