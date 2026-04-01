@@ -238,11 +238,30 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.preview-panel__tab[data-tab="preview"]').classList.add('active');
     document.querySelector('.preview-panel__content[data-content="preview"]').classList.add('active');
 
-    // ジョブランナーから変更後のHTMLを取得して表示
+    // プレビューiframeのロード処理
+    previewIframeWrap.classList.add('loading');
+    previewIframe.onload = () => {
+      previewIframeWrap.classList.remove('loading');
+    };
+    previewIframe.onerror = () => {
+      previewIframeWrap.classList.remove('loading');
+      previewIframeWrap.classList.add('error');
+    };
+
+    // ジョブランナーからプレビューを取得（タイムアウト付き）
     previewIframe.src = '/api/preview';
+    setTimeout(() => {
+      previewIframeWrap.classList.remove('loading');
+    }, 8000);
 
     // diff 表示
-    previewDiff.innerHTML = diff.rawDiff ? buildRawDiffHtml(diff.rawDiff) : buildFullDiffHtml(diff);
+    if (diff.rawDiff) {
+      previewDiff.innerHTML = buildRawDiffHtml(diff.rawDiff);
+    } else if (diff.file && (diff.add.length || diff.del.length)) {
+      previewDiff.innerHTML = buildFullDiffHtml(diff);
+    } else {
+      previewDiff.innerHTML = '<span class="diff-context">現在の差分はありません</span>';
+    }
 
     // パネルを開く
     previewOverlay.classList.add('active');
@@ -252,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     previewOverlay.classList.remove('active');
     setTimeout(() => {
       previewIframe.src = 'about:blank';
+      previewIframeWrap.classList.remove('loading', 'error');
       currentDiff = null;
     }, 300);
   }
@@ -368,17 +388,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (container) container.style.transform = '';
   }
 
-  /* ─── インテント判定（チャット vs コード変更） ─── */
-  const CODE_KEYWORDS = [
-    '追加して', '変更して', '変えて', '修正して', '削除して', '入れて',
-    'セクション', 'ページ', 'ヘッダー', 'フッター', 'FAQ', 'テキスト',
-    '色', 'カラー', 'フォント', '画像', 'リンク', 'ボタン', 'メニュー',
-    'SEO', 'meta', 'title', 'CSS', 'HTML', 'デザイン', 'レイアウト',
-    '埋め込', 'マップ', 'SNS', 'アイコン',
-  ];
-
-  function isCodeRequest(text) {
-    return CODE_KEYWORDS.some(kw => text.includes(kw));
+  /* ─── インテント判定（AI判定: チャット vs コード変更） ─── */
+  async function classifyIntent(text) {
+    try {
+      const res = await fetch('/api/intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      });
+      const data = await res.json();
+      return data.intent === 'code' ? 'code' : 'chat';
+    } catch {
+      // API失敗時はchatにフォールバック
+      return 'chat';
+    }
   }
 
   /* ─── チャットAPI（高速、会話用） ─── */
@@ -436,7 +459,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addMessage('user', text, { isVoice });
 
-    if (isCodeRequest(text)) {
+    // AI判定でルーティング
+    const intent = await classifyIntent(text);
+    if (intent === 'code') {
       await processCodeRequest(text);
     } else {
       await processChatRequest(text);
