@@ -59,8 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
       <path d="M72 98 Q80 106 88 98" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
     </svg>`;
 
-  chatArea.addEventListener('scroll', () => {
-    const shouldCollapse = chatArea.scrollTop > 80;
+  // チャットメッセージが増えたらVibeを縮小（メッセージ数で判定）
+  function checkVibeCollapse() {
+    const msgCount = chatMessages.querySelectorAll('.chat-msg, .chat-msg__status').length;
+    const shouldCollapse = msgCount >= 3;
     if (shouldCollapse !== vibeCollapsed) {
       vibeCollapsed = shouldCollapse;
       vibeArea.classList.toggle('collapsed', shouldCollapse);
@@ -69,7 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
         miniVibeSpeech.textContent = speechText.textContent;
       }
     }
-  }, { passive: true });
+  }
+
+  // MutationObserverでチャットメッセージの追加を監視
+  const chatObserver = new MutationObserver(checkVibeCollapse);
+  chatObserver.observe(chatMessages, { childList: true });
 
   // セリフ変更時にミニVibeも同期
   const origSay = Vibe.say;
@@ -357,7 +363,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if (container) container.style.transform = '';
   }
 
-  /* ─── エージェントAPI呼び出し ─── */
+  /* ─── インテント判定（チャット vs コード変更） ─── */
+  const CODE_KEYWORDS = [
+    '追加して', '変更して', '変えて', '修正して', '削除して', '入れて',
+    'セクション', 'ページ', 'ヘッダー', 'フッター', 'FAQ', 'テキスト',
+    '色', 'カラー', 'フォント', '画像', 'リンク', 'ボタン', 'メニュー',
+    'SEO', 'meta', 'title', 'CSS', 'HTML', 'デザイン', 'レイアウト',
+    '埋め込', 'マップ', 'SNS', 'アイコン',
+  ];
+
+  function isCodeRequest(text) {
+    return CODE_KEYWORDS.some(kw => text.includes(kw));
+  }
+
+  /* ─── チャットAPI（高速、会話用） ─── */
+  async function callChat(message) {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
+    });
+    return res.json();
+  }
+
+  /* ─── エージェントAPI（コード変更用） ─── */
   async function callAgent(message) {
     const res = await fetch('/api/agent', {
       method: 'POST',
@@ -368,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function pollJobStatus(jobId) {
-    for (let i = 0; i < 60; i++) { // 最大3分
+    for (let i = 0; i < 60; i++) {
       await delay(3000);
       const res = await fetch(`/api/agent?jobId=${jobId}`);
       const data = await res.json();
@@ -395,50 +424,72 @@ document.addEventListener('DOMContentLoaded', () => {
     return res.json();
   }
 
-  /* ─── 処理フロー ─── */
+  /* ─── 処理フロー（ルーティング） ─── */
   async function processRequest(text, isVoice = false) {
     if (isProcessing) return;
     isProcessing = true;
 
-    // 1. ユーザーメッセージ表示
     addMessage('user', text, { isVoice });
 
-    // 2. Vibe が考え中
-    await delay(300);
+    if (isCodeRequest(text)) {
+      await processCodeRequest(text);
+    } else {
+      await processChatRequest(text);
+    }
+
+    isProcessing = false;
+  }
+
+  /* チャット応答（高速、1-3秒） */
+  async function processChatRequest(text) {
     Vibe.setState('thinking');
-    addMessage('status', 'バイブが考え中...');
 
     try {
-      // 3. エージェントAPI にジョブ投入
+      const result = await callChat(text);
+      Vibe.setState('idle');
+
+      if (result.error) {
+        addMessage('vibe', 'ちょっとうまくいかなかったっす...もう一度お願いします！');
+      } else {
+        addMessage('vibe', result.reply);
+        if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
+      }
+    } catch {
+      Vibe.setState('idle');
+      addMessage('vibe', 'ネットワークエラーっす...もう一度試してみてください！');
+    }
+  }
+
+  /* コード変更（Claude Code経由、時間がかかる） */
+  async function processCodeRequest(text) {
+    Vibe.setState('thinking');
+    addMessage('status', 'バイブが依頼を確認中...');
+
+    try {
       const submitResult = await callAgent(text);
 
       if (submitResult.error) {
-        // API未接続時はモックにフォールバック
         if (submitResult.error.includes('ジョブランナー') || submitResult.error.includes('接続できません')) {
-          await processRequestMock(text, isVoice);
+          await processRequestMock(text);
           return;
         }
         throw new Error(submitResult.error);
       }
 
-      // 4. 作業中
       Vibe.setState('working');
-      const statusMsg = addMessage('status', 'バイブが対応中...');
+      const statusMsg = addMessage('status', 'サイトを改修中...');
 
-      // 5. ポーリングで完了を待つ
       const jobResult = await pollJobStatus(submitResult.id);
 
       if (jobResult.status === 'error') {
         throw new Error(jobResult.error || '不明なエラー');
       }
 
-      // 6. 完了！
       statusMsg.querySelector('.chat-msg__status-dot').style.background = 'var(--c-accent-green)';
       statusMsg.querySelector('.chat-msg__status-dot').style.animation = 'none';
       statusMsg.querySelector('span:last-child').textContent = '変更完了！';
       statusMsg.classList.add('chat-msg__status--done');
 
-      // git diff をパースして表示
       const diff = parseDiff(jobResult.diff);
       currentDiff = diff;
       currentDiff._jobId = submitResult.id;
@@ -456,8 +507,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ttsEnabled) Audio.speak('すみません、エラーが出ちゃいました').catch(() => {});
       setTimeout(() => Vibe.setState('idle'), 2000);
     }
-
-    isProcessing = false;
   }
 
   /* git diff テキストをパース */
