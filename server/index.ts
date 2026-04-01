@@ -188,6 +188,22 @@ app.post('/history/:hash/rollback', async (c) => {
   }
 });
 
+// プレビュー: 変更後の index.html を返す
+app.get('/preview', async (c) => {
+  const clientId = c.req.query('clientId') || 'default';
+  const repoPath = getRepoPath(clientId);
+  try {
+    const html = await Bun.file(`${repoPath}/index.html`).text();
+    return new Response(html, {
+      headers: { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin': '*' },
+    });
+  } catch {
+    return new Response('<h1>プレビューを読み込めませんでした</h1>', {
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    });
+  }
+});
+
 // ヘルスチェック
 app.get('/health', (c) => {
   return c.json({ status: 'ok', jobs: jobs.size, history: history.length, uptime: process.uptime() });

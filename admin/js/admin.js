@@ -238,8 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.preview-panel__tab[data-tab="preview"]').classList.add('active');
     document.querySelector('.preview-panel__content[data-content="preview"]').classList.add('active');
 
-    // pages.dev経由で表示（Cloudflare Access の認証を回避）
-    previewIframe.src = 'https://sitevibe.pages.dev/';
+    // ジョブランナーから変更後のHTMLを取得して表示
+    previewIframe.src = '/api/preview';
 
     // diff 表示
     previewDiff.innerHTML = diff.rawDiff ? buildRawDiffHtml(diff.rawDiff) : buildFullDiffHtml(diff);
@@ -643,6 +643,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const historyOverlay = document.getElementById('historyOverlay');
   const historyClose = document.getElementById('historyClose');
   const historyList = document.getElementById('historyList');
+
+  // プレビューボタン（常時）
+  const previewBtn = document.getElementById('previewBtn');
+  previewBtn.addEventListener('click', () => {
+    openPreview({ rawDiff: '', file: '', add: [], del: [], context: [] });
+  });
 
   historyBtn.addEventListener('click', async () => {
     historyOverlay.classList.add('active');

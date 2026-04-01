@@ -110,6 +110,22 @@ html, .admin-body {
   height: 100%;
 }
 
+.admin-header__mini-vibe-speech {
+  font-size: 11px;
+  color: var(--admin-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+@media (max-width: 480px) {
+  .admin-header__mini-vibe-speech {
+    max-width: 80px;
+    font-size: 10px;
+  }
+}
+
 .admin-header__logo-icon {
   display: inline-flex;
   align-items: center;
@@ -134,7 +150,7 @@ html, .admin-body {
   gap: var(--space-sm);
 }
 
-.admin-header__history-btn {
+.admin-header__icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,7 +164,7 @@ html, .admin-body {
   transition: all var(--duration) var(--ease);
 }
 
-.admin-header__history-btn:hover {
+.admin-header__icon-btn:hover {
   background: var(--admin-surface-hover);
   color: var(--admin-text);
 }
