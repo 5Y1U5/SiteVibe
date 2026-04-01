@@ -1,6 +1,7 @@
 // ============================================
 // SiteVibe — プレビュー プロキシ
 // ジョブランナーから変更後のHTMLを取得してiframeに表示
+// CSS/JSパスをジョブランナーの絶対URLに書き換える
 // ============================================
 
 export async function onRequestGet(context) {
@@ -10,7 +11,6 @@ export async function onRequestGet(context) {
   const jobRunnerToken = env.JOB_RUNNER_TOKEN;
 
   if (!jobRunnerUrl || !jobRunnerToken) {
-    // ジョブランナー未接続時はpages.devにフォールバック
     return Response.redirect('https://sitevibe.pages.dev/', 302);
   }
 
@@ -23,7 +23,18 @@ export async function onRequestGet(context) {
       return Response.redirect('https://sitevibe.pages.dev/', 302);
     }
 
-    const html = await res.text();
+    let html = await res.text();
+
+    // CSS/JS/画像のパスをジョブランナー経由の絶対URLに書き換え
+    const base = jobRunnerUrl + '/preview';
+    html = html.replace(/href="css\//g, `href="${base}/css/`);
+    html = html.replace(/href="\.\.\/css\//g, `href="${base}/css/`);
+    html = html.replace(/src="js\//g, `src="${base}/js/`);
+    html = html.replace(/src="\.\.\/js\//g, `src="${base}/js/`);
+    html = html.replace(/src="images\//g, `src="${base}/images/`);
+
+    // Google Fontsはそのまま（絶対URLなので変換不要）
+
     return new Response(html, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',

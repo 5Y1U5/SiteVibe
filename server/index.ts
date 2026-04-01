@@ -188,12 +188,49 @@ app.post('/history/:hash/rollback', async (c) => {
   }
 });
 
-// プレビュー: 変更後の index.html を返す
+// プレビュー: 変更後のファイルを配信
+app.get('/preview/*', async (c) => {
+  const clientId = c.req.query('clientId') || 'default';
+  const repoPath = getRepoPath(clientId);
+  const filePath = c.req.path.replace('/preview', '') || '/index.html';
+  const fullPath = `${repoPath}${filePath}`;
+
+  try {
+    const file = Bun.file(fullPath);
+    if (!await file.exists()) {
+      return new Response('Not Found', { status: 404 });
+    }
+
+    // HTMLの場合、相対パスをプレビュー経由に書き換え
+    if (filePath.endsWith('.html') || filePath === '/') {
+      const actualPath = filePath === '/' ? `${repoPath}/index.html` : fullPath;
+      let html = await Bun.file(actualPath).text();
+      // CSS/JSのパスをジョブランナー経由に変換
+      html = html.replace(/href="css\//g, 'href="/preview/css/');
+      html = html.replace(/href="\.\.\/css\//g, 'href="/preview/css/');
+      html = html.replace(/src="js\//g, 'src="/preview/js/');
+      html = html.replace(/src="\.\.\/js\//g, 'src="/preview/js/');
+      return new Response(html, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    // CSS/JS/画像等はそのまま返す
+    return new Response(file, {
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
+  } catch {
+    return new Response('Error', { status: 500 });
+  }
+});
+
 app.get('/preview', async (c) => {
   const clientId = c.req.query('clientId') || 'default';
   const repoPath = getRepoPath(clientId);
   try {
-    const html = await Bun.file(`${repoPath}/index.html`).text();
+    let html = await Bun.file(`${repoPath}/index.html`).text();
+    html = html.replace(/href="css\//g, 'href="/preview/css/');
+    html = html.replace(/src="js\//g, 'src="/preview/js/');
     return new Response(html, {
       headers: { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin': '*' },
     });
