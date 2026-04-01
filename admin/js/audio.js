@@ -95,7 +95,7 @@ const Audio = (() => {
   }
 
   /* TTS で音声再生 */
-  async function speak(text, voice = 'nova') {
+  async function speak(text, voice = 'alloy') {
     const res = await fetch('/api/speech', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

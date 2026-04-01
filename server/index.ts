@@ -34,6 +34,8 @@ interface Job {
   error?: string;
   createdAt: number;
   completedAt?: number;
+  commitHash?: string;
+  approvedAt?: number;
 }
 
 const jobs = new Map<string, Job>();
@@ -226,11 +228,15 @@ app.get('/preview/*', async (c) => {
 
 app.get('/preview', async (c) => {
   const clientId = c.req.query('clientId') || 'default';
+  const raw = c.req.query('raw') === '1';
   const repoPath = getRepoPath(clientId);
   try {
     let html = await Bun.file(`${repoPath}/index.html`).text();
-    html = html.replace(/href="css\//g, 'href="/preview/css/');
-    html = html.replace(/src="js\//g, 'src="/preview/js/');
+    // raw=1: パス書き換えなし（Cloudflare Pagesプロキシ経由で使う）
+    if (!raw) {
+      html = html.replace(/href="css\//g, 'href="/preview/css/');
+      html = html.replace(/src="js\//g, 'src="/preview/js/');
+    }
     return new Response(html, {
       headers: { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin': '*' },
     });

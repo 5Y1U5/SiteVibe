@@ -15,7 +15,7 @@ export async function onRequestGet(context) {
   }
 
   try {
-    const res = await fetch(`${jobRunnerUrl}/preview`, {
+    const res = await fetch(`${jobRunnerUrl}/preview?raw=1`, {
       headers: { 'Authorization': `Bearer ${jobRunnerToken}` },
     });
 
@@ -25,20 +25,15 @@ export async function onRequestGet(context) {
 
     let html = await res.text();
 
-    // CSS/JS/画像のパスをジョブランナー経由の絶対URLに書き換え
-    // ジョブランナーが既に /preview/ に書き換えている場合も対応
+    // CSS/JS/画像の相対パスをジョブランナーの絶対URLに書き換え
+    // raw=1 で取得しているため、ジョブランナー側のパス書き換えは未適用
     const base = jobRunnerUrl + '/preview';
-    html = html.replace(/href="\/preview\/css\//g, `href="${base}/css/`);
     html = html.replace(/href="css\//g, `href="${base}/css/`);
     html = html.replace(/href="\.\.\/css\//g, `href="${base}/css/`);
-    html = html.replace(/src="\/preview\/js\//g, `src="${base}/js/`);
     html = html.replace(/src="js\//g, `src="${base}/js/`);
     html = html.replace(/src="\.\.\/js\//g, `src="${base}/js/`);
-    html = html.replace(/src="\/preview\/images\//g, `src="${base}/images/`);
     html = html.replace(/src="images\//g, `src="${base}/images/`);
     html = html.replace(/src="\.\.\/images\//g, `src="${base}/images/`);
-
-    // Google Fontsはそのまま（絶対URLなので変換不要）
 
     return new Response(html, {
       headers: {
