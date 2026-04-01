@@ -18,16 +18,36 @@ SiteVibe/
 ├── index.html          # メインLP（10セクション構成）
 ├── diagnosis/
 │   └── index.html      # 診断フォーム（7問 + 連絡先 + 結果）
+├── direction/
+│   └── index.html      # ディレクションシート（7ステップ）
+├── admin/              # Vibe Agent Console（管理画面）
+│   ├── index.html      # メインHTML（ダークテーマ）
+│   ├── css/admin.css   # 管理画面スタイル + アニメーション
+│   └── js/
+│       ├── admin.js    # チャット管理、エージェント連携、プレビューパネル
+│       ├── vibe.js     # Vibeキャラクター（SVG、5表情、セリフ）
+│       └── audio.js    # 音声録音(MediaRecorder) + Whisper STT + TTS再生
 ├── css/
 │   ├── style.css       # 共通スタイル（カラー変数・レイアウト・全コンポーネント）
-│   └── diagnosis.css   # 診断ページ専用スタイル
+│   ├── diagnosis.css   # 診断ページ専用スタイル
+│   └── direction.css   # ディレクションページ専用スタイル
 ├── js/
 │   ├── main.js         # LP用スクリプト（ナビ・FAQ・スクロールアニメーション）
-│   └── diagnosis.js    # 診断フォームスクリプト（ステップ管理・推薦ロジック）
+│   ├── diagnosis.js    # 診断フォームスクリプト
+│   └── direction.js    # ディレクションシートスクリプト
+├── functions/api/      # Cloudflare Pages Functions
+│   ├── transcribe.js   # OpenAI Whisper API プロキシ（STT）
+│   ├── speech.js       # OpenAI TTS API プロキシ
+│   ├── agent.js        # ジョブランナー転送プロキシ
+│   └── direction.js    # ディレクションシート送信
+├── server/             # ジョブランナー（Mac mini で稼働）
+│   ├── index.ts        # Hono + Bun API サーバー
+│   ├── run-claude.sh   # Claude Code CLI ラッパー
+│   └── AGENT.md        # ガードレール（許可/禁止操作）
+├── docs/               # ドキュメント
+│   └── PLAN-admin-agent.md  # 実装計画書（6フェーズ）
 ├── images/             # 画像アセット
-├── docs/               # ドキュメント（ADR等）
 └── .claude/            # Claude Code 設定
-    └── skills/         # スキル定義
 ```
 
 ## 開発コマンド
@@ -71,6 +91,21 @@ npx serve .
 - アイコン: stroke-width 1.5 のミニマルラインアイコン（統一感重視）
 - 特徴カードのアイコン背景色は全て統一（カラフルにしない）
 
+## Agent Console（/admin/）
+- コンセプト: 「話しかけるだけでサイトが変わる、機能が増える」
+- エージェント名: Vibe（バイブ）— 音波から生まれたAIアシスタント
+- 音声入力（Whisper STT）メイン、テキスト入力は補助
+- Claude Code CLI で実際にサイトのコードを変更
+- ジョブランナー（server/）が Mac mini で稼働、Tailscale Funnel で外部公開
+- 変更はプレビューパネルで確認 → 承認/却下フロー
+
+## 環境変数
+- `OPENAI_API_KEY` — Cloudflare Pages シークレット（Whisper + TTS 用）
+- `JOB_RUNNER_URL` — ジョブランナーの公開URL（Tailscale Funnel）
+- `JOB_RUNNER_TOKEN` — ジョブランナー認証トークン
+- `RESEND_API_KEY` — メール送信用（ディレクションシート）
+
 ## 禁止事項
-- main ブランチへの直接コミット
-- .env ファイルのコミット
+- main ブランチへの直接コミット（feature ブランチで PR 経由）
+- .env / .dev.vars ファイルのコミット
+- admin/ ディレクトリの変更をジョブランナー経由で行わない
