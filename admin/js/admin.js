@@ -232,11 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function openPreview(diff) {
     currentDiff = diff;
 
-    // デフォルトで差分コードタブを表示（プレビューiframeは認証で表示できないため）
+    // プレビュータブをデフォルトに
     document.querySelectorAll('.preview-panel__tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.preview-panel__content').forEach(c => c.classList.remove('active'));
-    document.querySelector('.preview-panel__tab[data-tab="diff"]').classList.add('active');
-    document.querySelector('.preview-panel__content[data-content="diff"]').classList.add('active');
+    document.querySelector('.preview-panel__tab[data-tab="preview"]').classList.add('active');
+    document.querySelector('.preview-panel__content[data-content="preview"]').classList.add('active');
+
+    // pages.dev経由で表示（Cloudflare Access の認証を回避）
+    previewIframe.src = 'https://sitevibe.pages.dev/';
 
     // diff 表示
     previewDiff.innerHTML = diff.rawDiff ? buildRawDiffHtml(diff.rawDiff) : buildFullDiffHtml(diff);

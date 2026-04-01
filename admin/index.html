@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="css/admin.css?v=1775080127">
+  <link rel="stylesheet" href="css/admin.css?v=1775080269">
 </head>
 <body class="admin-body">
 
@@ -131,13 +131,21 @@
   <div class="preview-overlay" id="previewOverlay">
     <div class="preview-panel">
       <div class="preview-panel__header">
-        <h3 style="font-size:var(--font-size-sm);font-weight:700;color:var(--admin-text);">変更内容</h3>
+        <div class="preview-panel__tabs">
+          <button class="preview-panel__tab active" data-tab="preview">プレビュー</button>
+          <button class="preview-panel__tab" data-tab="diff">差分コード</button>
+        </div>
         <button class="preview-panel__close" id="previewClose" aria-label="閉じる">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="preview-panel__body">
-        <div class="preview-panel__content active" data-content="diff">
+        <div class="preview-panel__content active" data-content="preview">
+          <div class="preview-panel__iframe-wrap" id="previewIframeWrap">
+            <iframe class="preview-panel__iframe" id="previewIframe" sandbox="allow-same-origin allow-scripts"></iframe>
+          </div>
+        </div>
+        <div class="preview-panel__content" data-content="diff">
           <div class="preview-panel__diff" id="previewDiff"></div>
         </div>
       </div>
@@ -157,8 +165,8 @@
   <!-- 紙吹雪コンテナ -->
   <div class="confetti-container" id="confettiContainer"></div>
 
-  <script src="js/vibe.js?v=1775080127"></script>
-  <script src="js/audio.js?v=1775080127"></script>
-  <script src="js/admin.js?v=1775080127"></script>
+  <script src="js/vibe.js?v=1775080269"></script>
+  <script src="js/audio.js?v=1775080269"></script>
+  <script src="js/admin.js?v=1775080269"></script>
 </body>
 </html>

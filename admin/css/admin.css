@@ -77,6 +77,13 @@ html, .admin-body {
   opacity: 1;
   transform: translateX(0) scale(1);
   pointer-events: auto;
+  animation: miniVibeAppear 0.5s var(--ease);
+}
+
+@keyframes miniVibeAppear {
+  0% { opacity: 0; transform: translateY(20px) scale(2); }
+  60% { opacity: 1; transform: translateY(-3px) scale(1.1); }
+  100% { transform: translateY(0) scale(1); }
 }
 
 .admin-header__mini-vibe-avatar {
@@ -89,15 +96,18 @@ html, .admin-body {
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
+  animation: miniVibeFloat 2s ease-in-out infinite;
+  box-shadow: 0 0 12px var(--admin-glow);
+}
+
+@keyframes miniVibeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
 }
 
 .admin-header__mini-vibe-avatar svg {
   width: 100%;
   height: 100%;
-}
-
-.admin-header__mini-vibe-speech {
-  display: none;
 }
 
 .admin-header__logo-icon {
@@ -278,11 +288,12 @@ html, .admin-body {
 
 .agent__vibe-area.collapsed {
   opacity: 0;
-  transform: scale(0.6) translateY(-20px);
+  transform: scale(0.2) translateY(-120px);
   max-height: 0;
   padding: 0;
   overflow: hidden;
   pointer-events: none;
+  transition: opacity 0.4s, transform 0.5s var(--ease), max-height 0.5s var(--ease), padding 0.3s;
 }
 
 .agent__vibe-container {
