@@ -12,12 +12,7 @@ export async function onRequestPost(context) {
   }
 
   try {
-    const contentType = request.headers.get('Content-Type') || '';
-    if (!contentType.includes('multipart/form-data')) {
-      return jsonResponse({ error: 'Content-Type は multipart/form-data である必要があります' }, 400);
-    }
-
-    // クライアントからの FormData をそのまま取得
+    // クライアントからのリクエストボディをそのまま取得
     const formData = await request.formData();
     const audioFile = formData.get('file');
 
@@ -30,9 +25,13 @@ export async function onRequestPost(context) {
       return jsonResponse({ error: '音声ファイルは25MB以下にしてください' }, 400);
     }
 
-    // OpenAI Whisper API に転送
+    // 音声データを ArrayBuffer として読み出し
+    const audioBuffer = await audioFile.arrayBuffer();
+    const audioBlob = new Blob([audioBuffer], { type: audioFile.type || 'audio/webm' });
+
+    // OpenAI Whisper API 用の FormData を構築
     const openaiForm = new FormData();
-    openaiForm.append('file', audioFile, audioFile.name || 'recording.webm');
+    openaiForm.append('file', audioBlob, 'recording.webm');
     openaiForm.append('model', 'whisper-1');
     openaiForm.append('language', 'ja');
 
@@ -47,15 +46,15 @@ export async function onRequestPost(context) {
     if (!res.ok) {
       const errBody = await res.text();
       console.error('Whisper API エラー:', res.status, errBody);
-      return jsonResponse({ error: '音声認識に失敗しました' }, 502);
+      return jsonResponse({ error: '音声認識に失敗しました', detail: errBody }, 502);
     }
 
     const result = await res.json();
     return jsonResponse({ text: result.text });
 
   } catch (err) {
-    console.error('transcribe エラー:', err);
-    return jsonResponse({ error: 'サーバーエラーが発生しました' }, 500);
+    console.error('transcribe エラー:', err.message, err.stack);
+    return jsonResponse({ error: 'サーバーエラーが発生しました', detail: err.message }, 500);
   }
 }
 

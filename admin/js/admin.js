@@ -23,6 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewApprove = document.getElementById('previewApprove');
   const previewReject = document.getElementById('previewReject');
 
+  /* TTS トグル */
+  const ttsToggle = document.getElementById('ttsToggle');
+  let ttsEnabled = true;
+
+  ttsToggle.addEventListener('click', () => {
+    ttsEnabled = !ttsEnabled;
+    ttsToggle.classList.toggle('active', ttsEnabled);
+  });
+
   /* 状態 */
   let isRecording = false;
   let isProcessing = false;
@@ -154,6 +163,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return html;
   }
 
+  /* rawDiff をシンタックスハイライト */
+  function buildRawDiffHtml(rawDiff) {
+    return rawDiff.split('\n').map(line => {
+      const escaped = escapeHtml(line);
+      if (line.startsWith('+') && !line.startsWith('+++')) {
+        return `<span class="diff-add">${escaped}</span>`;
+      } else if (line.startsWith('-') && !line.startsWith('---')) {
+        return `<span class="diff-del">${escaped}</span>`;
+      } else if (line.startsWith('@@')) {
+        return `<span class="diff-file">${escaped}</span>`;
+      } else if (line.startsWith('diff ')) {
+        return `<span class="diff-file">${escaped}</span>`;
+      }
+      return `<span class="diff-context">${escaped}</span>`;
+    }).join('');
+  }
+
   function escapeHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
@@ -167,8 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
       previewIframe.src = diff.previewUrl;
     }
 
-    // diff タブにフル差分を表示
-    previewDiff.innerHTML = buildFullDiffHtml(diff);
+    // diff タブにフル差分を表示（rawDiff があればそちらを優先）
+    previewDiff.innerHTML = diff.rawDiff ? buildRawDiffHtml(diff.rawDiff) : buildFullDiffHtml(diff);
 
     // パネルを開く
     previewOverlay.classList.add('active');
@@ -219,27 +245,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 承認ボタン
-  previewApprove.addEventListener('click', () => {
+  previewApprove.addEventListener('click', async () => {
     closePreview();
     Vibe.setState('done');
     Vibe.say('承認されたっす！デプロイ開始しますよ〜！');
-    addMessage('status', 'デプロイ中...', {});
+    addMessage('status', 'デプロイ中...');
 
-    setTimeout(() => {
-      const statusMsg = addMessage('status', '', {});
+    try {
+      if (currentDiff?._jobId) {
+        await approveJob(currentDiff._jobId);
+      }
+      const statusMsg = addMessage('status', '');
       statusMsg.querySelector('.chat-msg__status-dot').style.background = 'var(--c-accent-green)';
       statusMsg.querySelector('.chat-msg__status-dot').style.animation = 'none';
       statusMsg.querySelector('span:last-child').textContent = 'デプロイ完了！サイトに反映されました';
       statusMsg.classList.add('chat-msg__status--done');
       Vibe.setState('done');
       addMessage('vibe', 'デプロイ完了っす！サイトを確認してみてください〜！');
-    }, 2000);
+      if (ttsEnabled) Audio.speak('デプロイ完了っす！').catch(() => {});
+    } catch (err) {
+      Vibe.setState('error');
+      addMessage('vibe', 'デプロイでエラーが出ちゃいました...');
+    }
   });
 
   // 却下ボタン
-  previewReject.addEventListener('click', () => {
+  previewReject.addEventListener('click', async () => {
     closePreview();
     Vibe.setState('error');
+
+    try {
+      if (currentDiff?._jobId) {
+        await rejectJob(currentDiff._jobId);
+      }
+    } catch { /* 無視 */ }
+
     setTimeout(() => {
       Vibe.setState('idle');
       addMessage('vibe', '了解っす！変更を取り消しました。別の依頼があればどうぞ〜');
@@ -279,7 +319,45 @@ document.addEventListener('DOMContentLoaded', () => {
     if (container) container.style.transform = '';
   }
 
-  /* ─── 処理フロー（モック + リアル共通） ─── */
+  /* ─── エージェントAPI呼び出し ─── */
+  async function callAgent(message) {
+    const res = await fetch('/api/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
+    });
+    return res.json();
+  }
+
+  async function pollJobStatus(jobId) {
+    for (let i = 0; i < 60; i++) { // 最大3分
+      await delay(3000);
+      const res = await fetch(`/api/agent?jobId=${jobId}`);
+      const data = await res.json();
+      if (data.status === 'done' || data.status === 'error') return data;
+    }
+    return { status: 'error', error: 'タイムアウト' };
+  }
+
+  async function approveJob(jobId) {
+    const res = await fetch('/api/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'approve', jobId }),
+    });
+    return res.json();
+  }
+
+  async function rejectJob(jobId) {
+    const res = await fetch('/api/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reject', jobId }),
+    });
+    return res.json();
+  }
+
+  /* ─── 処理フロー ─── */
   async function processRequest(text, isVoice = false) {
     if (isProcessing) return;
     isProcessing = true;
@@ -288,33 +366,116 @@ document.addEventListener('DOMContentLoaded', () => {
     addMessage('user', text, { isVoice });
 
     // 2. Vibe が考え中
-    await delay(500);
+    await delay(300);
     Vibe.setState('thinking');
     addMessage('status', 'バイブが内容を確認中...');
 
-    // 3. 作業開始
-    await delay(1500);
-    Vibe.setState('working');
-    const statusMsg = addMessage('status', 'コードを変更中...');
+    try {
+      // 3. エージェントAPI にジョブ投入
+      const submitResult = await callAgent(text);
 
-    // 4. 作業完了
+      if (submitResult.error) {
+        // API未接続時はモックにフォールバック
+        if (submitResult.error.includes('ジョブランナー') || submitResult.error.includes('接続できません')) {
+          await processRequestMock(text, isVoice);
+          return;
+        }
+        throw new Error(submitResult.error);
+      }
+
+      // 4. 作業中
+      Vibe.setState('working');
+      const statusMsg = addMessage('status', 'Claude Code でコードを変更中...');
+
+      // 5. ポーリングで完了を待つ
+      const jobResult = await pollJobStatus(submitResult.id);
+
+      if (jobResult.status === 'error') {
+        throw new Error(jobResult.error || '不明なエラー');
+      }
+
+      // 6. 完了！
+      statusMsg.querySelector('.chat-msg__status-dot').style.background = 'var(--c-accent-green)';
+      statusMsg.querySelector('.chat-msg__status-dot').style.animation = 'none';
+      statusMsg.querySelector('span:last-child').textContent = '変更完了！';
+      statusMsg.classList.add('chat-msg__status--done');
+
+      // git diff をパースして表示
+      const diff = parseDiff(jobResult.diff);
+      currentDiff = diff;
+      currentDiff._jobId = submitResult.id;
+      Vibe.setState('done');
+
+      const vibeReply = jobResult.result || 'できましたよ〜！';
+      addMessage('vibe', vibeReply, { diff });
+
+      if (ttsEnabled) Audio.speak('できましたよ〜！確認してくださいっす！').catch(() => {});
+
+    } catch (err) {
+      console.error('処理エラー:', err);
+      Vibe.setState('error');
+      addMessage('vibe', `エラーが出ちゃいました...「${err.message}」`);
+      if (ttsEnabled) Audio.speak('すみません、エラーが出ちゃいました').catch(() => {});
+      setTimeout(() => Vibe.setState('idle'), 2000);
+    }
+
+    isProcessing = false;
+  }
+
+  /* git diff テキストをパース */
+  function parseDiff(diffText) {
+    if (!diffText || diffText === '（変更なし）') {
+      return { file: '（変更なし）', add: [], del: [], context: [], rawDiff: diffText };
+    }
+
+    const lines = diffText.split('\n');
+    const add = [];
+    const del = [];
+    const context = [];
+    let file = '';
+
+    for (const line of lines) {
+      if (line.startsWith('diff --git')) {
+        const match = line.match(/b\/(.+)$/);
+        if (match) file = match[1];
+      } else if (line.startsWith('+') && !line.startsWith('+++')) {
+        add.push(line);
+      } else if (line.startsWith('-') && !line.startsWith('---')) {
+        del.push(line);
+      } else if (line.startsWith(' ')) {
+        context.push(line);
+      }
+    }
+
+    return {
+      file: file || 'index.html',
+      add: add.slice(0, 20),
+      del: del.slice(0, 20),
+      context: context.slice(0, 5),
+      rawDiff: diffText,
+      previewUrl: '../',
+    };
+  }
+
+  /* モックフォールバック（ジョブランナー未接続時） */
+  async function processRequestMock(text) {
+    Vibe.setState('working');
+    const statusMsg = addMessage('status', 'コードを変更中...（デモモード）');
+
     await delay(2500);
     statusMsg.querySelector('.chat-msg__status-dot').style.background = 'var(--c-accent-green)';
     statusMsg.querySelector('.chat-msg__status-dot').style.animation = 'none';
-    statusMsg.querySelector('span:last-child').textContent = '変更完了！';
+    statusMsg.querySelector('span:last-child').textContent = '変更完了！（デモ）';
     statusMsg.classList.add('chat-msg__status--done');
 
-    // 5. 結果表示 + プレビューボタン付き
     const diff = mockDiffs[text] || mockDiffs.default;
     currentDiff = diff;
     Vibe.setState('done');
 
-    const vibeReply = 'できましたよ〜！こんな感じに変更しました：';
+    const vibeReply = 'できましたよ〜！こんな感じに変更しました：（デモモード）';
     addMessage('vibe', vibeReply, { diff });
 
-    // 6. TTS で読み上げ（バックグラウンド、失敗しても問題なし）
-    Audio.speak(vibeReply).catch(() => {});
-
+    if (ttsEnabled) Audio.speak(vibeReply).catch(() => {});
     isProcessing = false;
   }
 
