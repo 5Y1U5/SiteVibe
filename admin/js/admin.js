@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Vibe が考え中
     await delay(300);
     Vibe.setState('thinking');
-    addMessage('status', 'バイブが内容を確認中...');
+    addMessage('status', 'バイブが考え中...');
 
     try {
       // 3. エージェントAPI にジョブ投入
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 4. 作業中
       Vibe.setState('working');
-      const statusMsg = addMessage('status', 'Claude Code でコードを変更中...');
+      const statusMsg = addMessage('status', 'バイブが対応中...');
 
       // 5. ポーリングで完了を待つ
       const jobResult = await pollJobStatus(submitResult.id);
@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* モックフォールバック（ジョブランナー未接続時） */
   async function processRequestMock(text) {
     Vibe.setState('working');
-    const statusMsg = addMessage('status', 'コードを変更中...（デモモード）');
+    const statusMsg = addMessage('status', 'バイブが対応中...（デモモード）');
 
     await delay(2500);
     statusMsg.querySelector('.chat-msg__status-dot').style.background = 'var(--c-accent-green)';

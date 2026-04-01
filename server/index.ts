@@ -195,7 +195,8 @@ app.get('/health', (c) => {
 
 // ─── Claude Code CLI 実行 ───
 
-const AGENT_MD_PATH = new URL('./AGENT.md', import.meta.url).pathname;
+// run-claude.sh がパス解決を担当
+const RUN_SCRIPT = import.meta.dir + '/run-claude.sh';
 
 function getRepoPath(clientId: string): string {
   const repos: Record<string, string> = {
@@ -215,24 +216,11 @@ async function runJob(job: Job) {
       await Bun.$`cd ${repoPath} && git stash`.quiet();
     } catch { /* stash 対象がない場合は無視 */ }
 
-    // AGENT.md を読み込み
-    const agentPrompt = await Bun.file(AGENT_MD_PATH).text();
-
-    // Claude Code CLI 実行
-    const proc = Bun.spawn([
-      'claude',
-      '--print',
-      '--dangerously-skip-permissions',
-      '--max-turns', '10',
-      '--model', 'sonnet',
-      '--project-dir', repoPath,
-      '--system-prompt', agentPrompt,
-      job.message,
-    ], {
+    // run-claude.sh 経由でCLI実行
+    const proc = Bun.spawn(["bash", RUN_SCRIPT, repoPath, job.message], {
       cwd: repoPath,
-      stdout: 'pipe',
-      stderr: 'pipe',
-      env: { ...process.env, HOME: process.env.HOME },
+      stdout: "pipe",
+      stderr: "pipe",
     });
 
     // タイムアウト（120秒）
