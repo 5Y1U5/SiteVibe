@@ -254,7 +254,32 @@ document.addEventListener('DOMContentLoaded', () => {
     openPreview(diff);
   });
 
-  /* ─── モック処理フロー ─── */
+  /* ─── 波形連動アニメーション ─── */
+  let waveformAnimId = null;
+
+  function startWaveformAnimation() {
+    const container = document.getElementById('vibeContainer');
+    function tick() {
+      const vol = Audio.getVolume();
+      // マイクボタンのスケールを音量に連動
+      const scale = 1 + vol * 0.15;
+      micBtn.style.transform = `scale(${scale})`;
+      // Vibe の体をわずかに膨張
+      if (container) container.style.transform = `translateY(-4px) scale(${1 + vol * 0.08})`;
+      waveformAnimId = requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  function stopWaveformAnimation() {
+    if (waveformAnimId) cancelAnimationFrame(waveformAnimId);
+    waveformAnimId = null;
+    micBtn.style.transform = '';
+    const container = document.getElementById('vibeContainer');
+    if (container) container.style.transform = '';
+  }
+
+  /* ─── 処理フロー（モック + リアル共通） ─── */
   async function processRequest(text, isVoice = false) {
     if (isProcessing) return;
     isProcessing = true;
@@ -283,7 +308,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const diff = mockDiffs[text] || mockDiffs.default;
     currentDiff = diff;
     Vibe.setState('done');
-    addMessage('vibe', 'できましたよ〜！こんな感じに変更しました：', { diff });
+
+    const vibeReply = 'できましたよ〜！こんな感じに変更しました：';
+    addMessage('vibe', vibeReply, { diff });
+
+    // 6. TTS で読み上げ（バックグラウンド、失敗しても問題なし）
+    Audio.speak(vibeReply).catch(() => {});
 
     isProcessing = false;
   }
@@ -293,17 +323,55 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isProcessing) return;
 
     if (!isRecording) {
-      isRecording = true;
-      micBtn.classList.add('recording');
-      micHint.textContent = 'もう一度タップで停止';
-      Vibe.setState('listening');
+      // 録音開始
+      try {
+        await Audio.startRecording();
+        isRecording = true;
+        micBtn.classList.add('recording');
+        micHint.textContent = 'もう一度タップで停止';
+        Vibe.setState('listening');
+        startWaveformAnimation();
+      } catch (err) {
+        console.error('マイク取得エラー:', err);
+        Vibe.say('マイクが使えないっす...テキストで入力してください！');
+        addMessage('vibe', 'マイクの許可が必要です。ブラウザの設定を確認してください。');
+      }
     } else {
+      // 録音停止 → 文字起こし → 処理
       isRecording = false;
       micBtn.classList.remove('recording');
-      micHint.textContent = 'タップして話しかける';
+      micHint.textContent = '文字起こし中...';
+      stopWaveformAnimation();
+      Vibe.setState('thinking');
+      Vibe.say('ふむふむ、聞き取り中っす...');
 
-      const request = mockRequests[Math.floor(Math.random() * mockRequests.length)];
-      await processRequest(request, true);
+      try {
+        const audioBlob = await Audio.stopRecording();
+        if (!audioBlob || audioBlob.size < 1000) {
+          // 音声が短すぎる
+          micHint.textContent = 'タップして話しかける';
+          Vibe.setState('idle');
+          Vibe.say('あれ、聞こえなかったっす。もう一度どうぞ！');
+          return;
+        }
+
+        const text = await Audio.transcribe(audioBlob);
+        micHint.textContent = 'タップして話しかける';
+
+        if (!text.trim()) {
+          Vibe.setState('idle');
+          Vibe.say('うーん、聞き取れなかったっす。もう一度お願いします！');
+          return;
+        }
+
+        await processRequest(text, true);
+      } catch (err) {
+        console.error('文字起こしエラー:', err);
+        micHint.textContent = 'タップして話しかける';
+        Vibe.setState('error');
+        addMessage('vibe', '文字起こしでエラーが出ちゃいました...テキストで入力してもらえますか？');
+        setTimeout(() => Vibe.setState('idle'), 2000);
+      }
     }
   });
 
