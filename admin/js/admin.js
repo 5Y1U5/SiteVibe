@@ -546,6 +546,96 @@ document.addEventListener('DOMContentLoaded', () => {
     await processRequest(text, false);
   });
 
+  /* ─── 変更履歴 ─── */
+  const historyBtn = document.getElementById('historyBtn');
+  const historyOverlay = document.getElementById('historyOverlay');
+  const historyClose = document.getElementById('historyClose');
+  const historyList = document.getElementById('historyList');
+
+  historyBtn.addEventListener('click', async () => {
+    historyOverlay.classList.add('active');
+    await loadHistory();
+  });
+
+  historyClose.addEventListener('click', () => {
+    historyOverlay.classList.remove('active');
+  });
+
+  historyOverlay.addEventListener('click', (e) => {
+    if (e.target === historyOverlay) historyOverlay.classList.remove('active');
+  });
+
+  async function loadHistory() {
+    historyList.innerHTML = '<p class="history-panel__empty">読み込み中...</p>';
+
+    try {
+      const res = await fetch('/api/agent?action=history');
+      const data = await res.json();
+
+      if (!data.history || data.history.length === 0) {
+        historyList.innerHTML = '<p class="history-panel__empty">まだ変更履歴がありません</p>';
+        return;
+      }
+
+      historyList.innerHTML = data.history.map(entry => `
+        <div class="history-item">
+          <div class="history-item__header">
+            <span class="history-item__message">${escapeHtml(entry.message)}</span>
+            <span class="history-item__hash">${entry.commitHash}</span>
+          </div>
+          <div class="history-item__time">${formatTime(entry.approvedAt)}</div>
+          <button class="history-item__rollback" data-hash="${entry.commitHash}">この変更を取り消す</button>
+        </div>
+      `).join('');
+
+    } catch {
+      historyList.innerHTML = '<p class="history-panel__empty">履歴を取得できません（ジョブランナー未接続）</p>';
+    }
+  }
+
+  // ロールバック
+  historyList.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.history-item__rollback');
+    if (!btn) return;
+
+    const hash = btn.dataset.hash;
+    if (!confirm(`コミット ${hash} の変更を取り消しますか？`)) return;
+
+    btn.textContent = '取り消し中...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'rollback', hash }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        Vibe.setState('done');
+        addMessage('vibe', `ロールバック完了っす！${hash} の変更を取り消しました。`);
+        historyOverlay.classList.remove('active');
+      } else {
+        throw new Error(data.error || 'ロールバック失敗');
+      }
+    } catch (err) {
+      btn.textContent = 'この変更を取り消す';
+      btn.disabled = false;
+      Vibe.setState('error');
+      addMessage('vibe', `ロールバックでエラーが出ちゃいました...「${err.message}」`);
+    }
+  });
+
+  function formatTime(ts) {
+    const d = new Date(ts);
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const mins = String(d.getMinutes()).padStart(2, '0');
+    return `${month}/${day} ${hours}:${mins}`;
+  }
+
   /* ─── ユーティリティ ─── */
   function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

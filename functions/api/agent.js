@@ -20,6 +20,19 @@ export async function onRequestPost(context) {
   try {
     const body = await request.json();
 
+    // ロールバック
+    if (body.action === 'rollback' && body.hash) {
+      const res = await fetch(`${jobRunnerUrl}/history/${body.hash}/rollback`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${jobRunnerToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      return jsonResponse(data, res.status);
+    }
+
     // アクション（承認/却下）の場合
     if (body.action && body.jobId) {
       if (!ACTIONS.includes(body.action)) {
@@ -77,18 +90,26 @@ export async function onRequestGet(context) {
 
   const url = new URL(request.url);
   const jobId = url.searchParams.get('jobId');
-
-  if (!jobId) {
-    return jsonResponse({ error: 'jobId パラメータは必須です' }, 400);
-  }
+  const action = url.searchParams.get('action');
 
   try {
-    const res = await fetch(`${jobRunnerUrl}/jobs/${jobId}`, {
-      headers: {
-        'Authorization': `Bearer ${jobRunnerToken}`,
-      },
-    });
+    // 履歴取得
+    if (action === 'history') {
+      const res = await fetch(`${jobRunnerUrl}/history`, {
+        headers: { 'Authorization': `Bearer ${jobRunnerToken}` },
+      });
+      const data = await res.json();
+      return jsonResponse(data, res.status);
+    }
 
+    // ジョブ状態確認
+    if (!jobId) {
+      return jsonResponse({ error: 'jobId パラメータは必須です' }, 400);
+    }
+
+    const res = await fetch(`${jobRunnerUrl}/jobs/${jobId}`, {
+      headers: { 'Authorization': `Bearer ${jobRunnerToken}` },
+    });
     const data = await res.json();
     return jsonResponse(data, res.status);
 
