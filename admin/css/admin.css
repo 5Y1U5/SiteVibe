@@ -3,6 +3,10 @@
    ============================================ */
 
 /* ダークテーマ変数の上書き */
+html, .admin-body {
+  overscroll-behavior-y: contain;
+}
+
 .admin-body {
   --admin-bg: #0B1929;
   --admin-bg-subtle: #102A43;
