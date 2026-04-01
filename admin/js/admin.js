@@ -23,6 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewApprove = document.getElementById('previewApprove');
   const previewReject = document.getElementById('previewReject');
 
+  /* TTS トグル */
+  const ttsToggle = document.getElementById('ttsToggle');
+  let ttsEnabled = true;
+
+  ttsToggle.addEventListener('click', () => {
+    ttsEnabled = !ttsEnabled;
+    ttsToggle.classList.toggle('active', ttsEnabled);
+  });
+
   /* 状態 */
   let isRecording = false;
   let isProcessing = false;
@@ -312,8 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const vibeReply = 'できましたよ〜！こんな感じに変更しました：';
     addMessage('vibe', vibeReply, { diff });
 
-    // 6. TTS で読み上げ（バックグラウンド、失敗しても問題なし）
-    Audio.speak(vibeReply).catch(() => {});
+    // 6. TTS で読み上げ（オンの場合のみ、失敗しても問題なし）
+    if (ttsEnabled) Audio.speak(vibeReply).catch(() => {});
 
     isProcessing = false;
   }

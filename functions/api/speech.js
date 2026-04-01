@@ -30,9 +30,9 @@ export async function onRequestPost(context) {
       body: JSON.stringify({
         model: 'tts-1',
         input,
-        voice: voice || 'nova',
+        voice: voice || 'alloy',
         response_format: 'mp3',
-        speed: 1.1,
+        speed: 1.25,
       }),
     });
 
