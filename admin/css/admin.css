@@ -100,12 +100,13 @@
   background: rgba(7, 123, 220, 0.1);
 }
 
-.admin-header__tts-icon--off {
+.admin-header__tts-icon {
   display: none;
+  pointer-events: none;
 }
 
-.admin-header__tts-toggle:not(.active) .admin-header__tts-icon--on {
-  display: none;
+.admin-header__tts-toggle.active .admin-header__tts-icon--on {
+  display: block;
 }
 
 .admin-header__tts-toggle:not(.active) .admin-header__tts-icon--off {
