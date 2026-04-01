@@ -99,9 +99,26 @@ app.post('/jobs/:id/approve', async (c) => {
     const commitMsg = `[Vibe] ${job.message}`;
 
     await Bun.$`cd ${repoPath} && git add -A && git commit -m ${commitMsg}`.text();
-    await Bun.$`cd ${repoPath} && git push`.text();
+    const pushResult = await Bun.$`cd ${repoPath} && git push`.text();
 
-    return c.json({ success: true, commit: commitMsg });
+    // コミットハッシュを取得して履歴に記録
+    const hash = (await Bun.$`cd ${repoPath} && git rev-parse --short HEAD`.text()).trim();
+    job.commitHash = hash;
+    job.approvedAt = Date.now();
+
+    // 履歴に追加
+    history.unshift({
+      id: job.id,
+      message: job.message,
+      commitHash: hash,
+      diff: job.diff,
+      result: job.result,
+      approvedAt: Date.now(),
+      clientId: job.clientId,
+    });
+    if (history.length > 50) history.pop();
+
+    return c.json({ success: true, commit: commitMsg, hash });
   } catch (err: any) {
     return c.json({ error: 'デプロイに失敗しました', detail: err.message }, 500);
   }
@@ -123,9 +140,57 @@ app.post('/jobs/:id/reject', async (c) => {
   }
 });
 
+// ─── 変更履歴 ───
+
+interface HistoryEntry {
+  id: string;
+  message: string;
+  commitHash: string;
+  diff?: string;
+  result?: string;
+  approvedAt: number;
+  clientId: string;
+}
+
+const history: HistoryEntry[] = [];
+
+// 履歴一覧
+app.get('/history', (c) => {
+  const clientId = c.req.query('clientId') || 'default';
+  const entries = history.filter(h => h.clientId === clientId).slice(0, 20);
+  return c.json({ history: entries });
+});
+
+// ロールバック（指定コミットの変更を取り消し）
+app.post('/history/:hash/rollback', async (c) => {
+  const hash = c.req.param('hash');
+  const clientId = c.req.query('clientId') || 'default';
+  const repoPath = getRepoPath(clientId);
+
+  try {
+    // git revert で安全に取り消し
+    await Bun.$`cd ${repoPath} && git revert --no-edit ${hash}`.text();
+    await Bun.$`cd ${repoPath} && git push`.text();
+
+    const newHash = (await Bun.$`cd ${repoPath} && git rev-parse --short HEAD`.text()).trim();
+
+    history.unshift({
+      id: `rollback-${Date.now()}`,
+      message: `ロールバック: ${hash} を取り消し`,
+      commitHash: newHash,
+      approvedAt: Date.now(),
+      clientId,
+    });
+
+    return c.json({ success: true, revertedHash: hash, newHash });
+  } catch (err: any) {
+    return c.json({ error: 'ロールバックに失敗しました', detail: err.message }, 500);
+  }
+});
+
 // ヘルスチェック
 app.get('/health', (c) => {
-  return c.json({ status: 'ok', jobs: jobs.size, uptime: process.uptime() });
+  return c.json({ status: 'ok', jobs: jobs.size, history: history.length, uptime: process.uptime() });
 });
 
 // ─── Claude Code CLI 実行 ───
