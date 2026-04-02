@@ -7,17 +7,17 @@
 // ベースプラン: Stripe Price ID → D1 plan + monthly_limit
 // scripts/stripe-setup.sh 実行後に実際の Price ID で置き換える
 const PRICE_MAP = {
-  // 'price_xxxxx': { plan: 'light', monthlyLimit: 3 },
-  // 'price_yyyyy': { plan: 'standard', monthlyLimit: 10 },
-  // 'price_zzzzz': { plan: 'premium', monthlyLimit: 30 },
+  'price_1THf6DJFnEGuQY4KhoOdN2Zx': { plan: 'light', monthlyLimit: 3 },
+  'price_1THf6EJFnEGuQY4K6MNaLn8Z': { plan: 'standard', monthlyLimit: 10 },
+  'price_1THf6GJFnEGuQY4Ktz3ov9LQ': { plan: 'premium', monthlyLimit: 30 },
 };
 
 // オプション: Stripe Price ID → D1 カラム + 値
 const ADDON_MAP = {
-  // 'price_clight': { field: 'chatta_plan', value: 'chatta_light' },
-  // 'price_cpro':   { field: 'chatta_plan', value: 'chatta_pro' },
-  // 'price_blight': { field: 'blog_plan', value: 'blog_light' },
-  // 'price_bpro':   { field: 'blog_plan', value: 'blog_pro' },
+  'price_1THf6IJFnEGuQY4KBxfDXjFx': { field: 'chatta_plan', value: 'chatta_light' },
+  'price_1THf6JJFnEGuQY4KsdLbQp8H': { field: 'chatta_plan', value: 'chatta_pro' },
+  'price_1THf6LJFnEGuQY4KFgzh7QKA': { field: 'blog_plan', value: 'blog_light' },
+  'price_1THf6MJFnEGuQY4K5KYZQyIQ': { field: 'blog_plan', value: 'blog_pro' },
 };
 
 // ── Webhook 署名検証 ──

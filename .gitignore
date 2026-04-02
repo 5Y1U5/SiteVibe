@@ -7,3 +7,4 @@ server/.env
 server/node_modules/
 server/bun.lock
 *.log
+scripts/stripe-prices.json
