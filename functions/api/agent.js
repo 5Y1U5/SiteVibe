@@ -54,12 +54,43 @@ export async function onRequestPost(context) {
       });
 
       const data = await res.json();
+
+      // 承認成功時に usage を記録
+      if (body.action === 'approve' && res.ok && env.DB && user) {
+        const now = new Date();
+        const billingPeriod = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        await env.DB.prepare(
+          `INSERT INTO usage (client_id, action, job_id, billing_period)
+           VALUES (?, 'code_change', ?, ?)`
+        ).bind(clientId, body.jobId, billingPeriod).run();
+      }
+
       return jsonResponse(data, res.status);
     }
 
     // 新規ジョブ投入
     if (!body.message?.trim()) {
       return jsonResponse({ error: 'message は必須です' }, 400);
+    }
+
+    // ── 利用制限チェック ──
+    if (env.DB && user) {
+      const now = new Date();
+      const billingPeriod = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+      const usage = await env.DB.prepare(
+        `SELECT COUNT(*) as count FROM usage
+         WHERE client_id = ? AND billing_period = ? AND action = 'code_change'`
+      ).bind(clientId, billingPeriod).first();
+
+      if (usage.count >= user.monthlyLimit) {
+        return jsonResponse({
+          error: '今月のAI更新回数の上限に達しました',
+          code: 'USAGE_LIMIT_EXCEEDED',
+          usage: { used: usage.count, limit: user.monthlyLimit },
+          hint: '超過更新（¥1,100/回）をご利用ください',
+        }, 429);
+      }
     }
 
     const res = await fetch(`${jobRunnerUrl}/jobs`, {

@@ -208,6 +208,31 @@ html, .admin-body {
   display: block;
 }
 
+.admin-header__usage {
+  display: none;
+  font-size: var(--font-size-xs);
+  color: var(--admin-text-muted);
+  font-weight: 600;
+  padding: 4px 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.admin-header__usage.visible {
+  display: inline-block;
+}
+
+.admin-header__usage.warning {
+  color: #F59E0B;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.admin-header__usage.exceeded {
+  color: #EF4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
 .admin-header__status {
   display: flex;
   align-items: center;
