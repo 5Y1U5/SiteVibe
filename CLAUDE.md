@@ -52,9 +52,10 @@ SiteVibe/
 │   ├── agent.js        # ジョブランナー転送プロキシ + 利用制限
 │   └── direction.js    # ディレクションシート送信
 ├── server/             # ジョブランナー（Mac mini で稼働）
-│   ├── index.ts        # Hono + Bun API サーバー
+│   ├── index.ts        # Hono + Bun API サーバー（SQLite永続化 + ジョブキュー）
 │   ├── run-claude.sh   # Claude Code CLI ラッパー
-│   └── AGENT.md        # ガードレール（許可/禁止操作）
+│   ├── AGENT.md        # ガードレール（許可/禁止操作）
+│   └── data/           # SQLite DB（jobs.db、git管理外）
 ├── docs/               # ドキュメント
 │   └── PLAN-admin-agent.md  # 実装計画書（6フェーズ）
 ├── images/             # 画像アセット
