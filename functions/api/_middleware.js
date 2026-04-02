@@ -47,7 +47,9 @@ export async function onRequest(context) {
     const payload = await verifyAccessJWT(jwt, env);
 
     if (!payload) {
-      return jsonResponse({ error: 'JWT署名検証に失敗しました', debug: { jwtLength: jwt.length, hasDB: !!env.DB } }, 401);
+      // 検証失敗の詳細デバッグ
+      const debugInfo = await debugVerifyJWT(jwt, env);
+      return jsonResponse({ error: 'JWT署名検証に失敗しました', debug: debugInfo }, 401);
     }
 
     if (!payload.email) {
@@ -92,6 +94,58 @@ export async function onRequest(context) {
     console.error('認証エラー:', err.message);
     return jsonResponse({ error: '認証処理でエラーが発生しました' }, 500);
   }
+}
+
+// ─── JWT デバッグ（本番安定後に削除） ───
+
+async function debugVerifyJWT(token, env) {
+  const info = { jwtLength: token.length, hasDB: !!env.DB };
+  try {
+    const parts = token.split('.');
+    info.parts = parts.length;
+    if (parts.length !== 3) return info;
+
+    const header = JSON.parse(decodeBase64Url(parts[0]));
+    info.alg = header.alg;
+    info.kid = header.kid;
+
+    const teamDomain = env.CF_ACCESS_TEAM_DOMAIN || 'istyle';
+    const jwksUrl = `https://${teamDomain}.cloudflareaccess.com/cdn-cgi/access/certs`;
+    info.jwksUrl = jwksUrl;
+
+    const res = await fetch(jwksUrl);
+    info.jwksFetchOk = res.ok;
+    if (!res.ok) return info;
+
+    const jwks = await res.json();
+    info.jwksKeyCount = (jwks.keys || []).length;
+    info.jwksKids = (jwks.keys || []).map(k => k.kid?.slice(0, 12));
+
+    const jwk = header.kid ? jwks.keys.find(k => k.kid === header.kid) : jwks.keys[0];
+    info.keyFound = !!jwk;
+    if (!jwk) return info;
+
+    try {
+      const key = await crypto.subtle.importKey('jwk', jwk, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
+      info.keyImported = true;
+
+      const signatureData = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
+      const signature = base64UrlToArrayBuffer(parts[2]);
+      const isValid = await crypto.subtle.verify({ name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, key, signature, signatureData);
+      info.signatureValid = isValid;
+    } catch (e) {
+      info.cryptoError = e.message;
+    }
+
+    const payload = JSON.parse(decodeBase64Url(parts[1]));
+    info.email = payload.email;
+    info.exp = payload.exp;
+    info.now = Math.floor(Date.now() / 1000);
+    info.expired = payload.exp ? payload.exp < info.now : false;
+  } catch (e) {
+    info.error = e.message;
+  }
+  return info;
 }
 
 // ─── JWT 署名検証 ───
