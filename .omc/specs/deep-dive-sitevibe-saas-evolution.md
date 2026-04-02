@@ -150,10 +150,26 @@ CREATE TABLE job_history (
 | Cloudflare Access | $0 (50人まで無料) |
 | Cloudflare for SaaS | $0 (100ドメインまで) |
 | OpenAI API (Whisper+TTS+Chat) | ~$10-30 |
-| Claude API (ブログ生成) | ~$5-20 |
+| Claude API (コード変更+ブログ生成) | ~$20-50 |
 | Stripe 手数料 | 3.6% + ¥30/取引 |
 | Mac mini | $0 (既存資産) |
-| **合計** | **~$15-50/月 + Stripe手数料** |
+| **合計** | **~$30-80/月 + Stripe手数料**
+
+### 料金プラン（2026-04-02 再設計）
+
+**コンセプト変更**: Web接客+Chatta標準 → AI管理画面「Vibe」中心、Chatta/ブログはオプション化
+
+詳細は `docs/PRICING-PLAN-2026-04.md` を参照。
+
+**ベースプラン（月額）:**
+- Light ¥5,500（AI更新月3回）/ Standard ¥11,000（月10回）/ Premium ¥33,000（月30回）
+
+**制作費（段階制）:**
+- Light ¥55,000 / Standard ¥110,000 / Premium ¥220,000
+
+**オプション:**
+- Chatta: +¥3,300（Light, Haiku 4.5）/ +¥8,800（Pro, Sonnet 4.6選択可）
+- ブログ: +¥3,300（Light, 月5本）/ +¥5,500（Pro, 月15本） |
 
 ## Trace Findings
 
