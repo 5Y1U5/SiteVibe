@@ -388,11 +388,27 @@ export async function onRequestGet(context) {
 
 Stripe ダッシュボードまたは API で以下を作成:
 
+**ベースプラン:**
 | プラン | Product 名 | Price | monthly_limit |
 |--------|-----------|-------|---------------|
 | Light | SiteVibe Light | ¥5,500/月 | 3 |
 | Standard | SiteVibe Standard | ¥11,000/月 | 10 |
-| Premium | SiteVibe Premium | ¥33,000/月 | 999（実質無制限） |
+| Premium | SiteVibe Premium | ¥33,000/月 | 30 |
+
+**オプション（アドオン）:**
+| オプション | Product 名 | Price |
+|-----------|-----------|-------|
+| Chatta Light | Chatta Light | ¥3,300/月 |
+| Chatta Pro | Chatta Pro | ¥8,800/月 |
+| ブログ Light | Blog Light | ¥3,300/月 |
+| ブログ Pro | Blog Pro | ¥5,500/月 |
+
+**従量課金:**
+| 項目 | Product 名 | Price |
+|------|-----------|-------|
+| 超過更新 | Vibe Extra Update | ¥1,100/回 |
+
+※ 料金設計の詳細は `docs/PRICING-PLAN-2026-04.md` を参照
 
 ##### B-2: Stripe Webhook ハンドラー
 
@@ -455,7 +471,7 @@ function mapPriceToPlan(priceId, env) {
 }
 
 function planToLimit(plan) {
-  const limits = { light: 3, standard: 10, premium: 999 };
+  const limits = { light: 3, standard: 10, premium: 30 };
   return limits[plan] || 3;
 }
 
@@ -609,10 +625,12 @@ export async function onRequestGet(context) {
 ```
 
 #### 受入基準
-- [ ] Stripe に 3 プラン（Light/Standard/Premium）の Product + Price が作成されている
+- [ ] Stripe にベース3プラン + オプション4種 + 従量課金の Product/Price が作成されている
 - [ ] /api/stripe-webhook が subscription.created/updated/deleted, invoice.paid を処理する
 - [ ] D1 の clients テーブルに plan, stripe_subscription_id が記録される
+- [ ] オプション（chatta_plan, blog_plan）が D1 に記録される
 - [ ] /api/agent がジョブ投入前に月次利用回数をチェックし、上限超過で 429 を返す
+- [ ] Premium の上限は月30回（旧: 実質無制限 → 変更）
 - [ ] invoice.paid で billing_period が進み、カウントが実質リセットされる
 
 #### 依存関係
