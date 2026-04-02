@@ -88,7 +88,7 @@ function renderClients() {
       <td>${esc(c.name)}</td>
       <td><span class="setup-badge setup-badge--plan">${esc(c.plan)}</span></td>
       <td>${c.monthly_limit}</td>
-      <td>${c.stripe_customer_id ? `<code>${esc(c.stripe_customer_id)}</code>` : '<span style="color:var(--admin-text-dim)">—</span>'}</td>
+      <td>${[c.blog_plan, c.chatta_plan].filter(Boolean).map(p => `<span class="setup-badge setup-badge--plan">${esc(p)}</span>`).join(' ') || '<span style="color:var(--admin-text-dim)">—</span>'}</td>
       <td><span class="setup-badge ${c.active ? 'setup-badge--active' : 'setup-badge--inactive'}">${c.active ? '有効' : '無効'}</span></td>
       <td>
         <button class="setup-btn setup-btn--secondary setup-btn--sm" onclick="editClient('${esc(c.id)}')">編集</button>
@@ -146,6 +146,8 @@ function initClientModal() {
       monthly_limit: parseInt(limitInput.value),
       repo_path: document.getElementById('clientRepo').value.trim() || undefined,
       stripe_customer_id: document.getElementById('clientStripe').value.trim() || undefined,
+      blog_plan: document.getElementById('clientBlogPlan').value || null,
+      chatta_plan: document.getElementById('clientChattaPlan').value || null,
       writing_profile: document.getElementById('clientWritingProfile').value.trim() || undefined,
     };
 
@@ -196,6 +198,8 @@ function openClientModal(mode, clientId) {
     document.getElementById('clientLimit').value = c.monthly_limit;
     document.getElementById('clientRepo').value = c.repo_path || '';
     document.getElementById('clientStripe').value = c.stripe_customer_id || '';
+    document.getElementById('clientBlogPlan').value = c.blog_plan || '';
+    document.getElementById('clientChattaPlan').value = c.chatta_plan || '';
     document.getElementById('clientWritingProfile').value = c.writing_profile || '';
   }
 
