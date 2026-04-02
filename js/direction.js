@@ -3,7 +3,7 @@
 // ============================================
 
 const Direction = (() => {
-  const TOTAL_STEPS = 7;
+  const TOTAL_STEPS = 8;
   let currentStep = 0;
   const data = {};
   const uploadedFiles = [];
@@ -41,8 +41,8 @@ const Direction = (() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     currentStep = step;
 
-    // Step 7（確認画面）でサマリー生成
-    if (step === 7) buildSummary();
+    // Step 8（確認画面）でサマリー生成
+    if (step === 8) buildSummary();
   }
 
   function nextStep() {
@@ -203,6 +203,11 @@ const Direction = (() => {
     const filledFaqs = Array.from(faqs).filter(f => f.querySelector('input[name="faq_q"]')?.value?.trim());
     items.push(['FAQ登録数', filledFaqs.length + '件']);
 
+    // ブログ設定
+    if (data.blogTone) items.push(['ブログトーン', data.blogTone]);
+    const blogAudience = document.getElementById('blogAudience')?.value?.trim();
+    if (blogAudience) items.push(['ブログ読者', blogAudience]);
+
     // アップロードファイル数
     const fileCount = uploadedFiles.filter(f => f !== null).length;
     if (fileCount > 0) items.push(['アップロード', fileCount + 'ファイル']);
@@ -225,7 +230,8 @@ const Direction = (() => {
     // フォームデータ収集
     const fields = ['businessName', 'businessType', 'address', 'phone', 'email',
       'hours', 'holidays', 'mainServices', 'strengths', 'target', 'competitors',
-      'refSites', 'otherPages', 'instagram', 'line', 'googleMap', 'hotpepper', 'otherRequests'];
+      'refSites', 'otherPages', 'instagram', 'line', 'googleMap', 'hotpepper',
+      'blogAudience', 'blogTopics', 'blogFirstPerson', 'otherRequests'];
 
     fields.forEach(id => {
       const el = document.getElementById(id);
@@ -270,14 +276,14 @@ const Direction = (() => {
       })
       .then(() => {
         document.getElementById('progressBar').style.width = '100%';
-        showStep(8);
+        showStep(9);
       })
       .catch(err => {
         console.error('送信失敗:', err);
         // エラーでも完了画面へ（データはコンソールに残る）
         console.log('ディレクションシートデータ:', data);
         document.getElementById('progressBar').style.width = '100%';
-        showStep(8);
+        showStep(9);
       })
       .finally(() => {
         if (submitBtn) {
@@ -287,12 +293,26 @@ const Direction = (() => {
       });
   }
 
+  // ブログトーン選択
+  function initBlogTone() {
+    document.querySelectorAll('.dir__options-inline').forEach(group => {
+      group.querySelectorAll('.dir__option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.dir__option-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          data[group.dataset.name] = btn.dataset.value;
+        });
+      });
+    });
+  }
+
   // 初期化
   function init() {
     showStep(0);
     initDesignCards();
     initColorChips();
     initUpload();
+    initBlogTone();
   }
 
   document.addEventListener('DOMContentLoaded', init);
