@@ -123,27 +123,31 @@ function recommendPlan(data) {
 
   // 目的
   if (data.purpose === '集客・問い合わせ獲得') score += 1;
+  if (data.purpose === 'ブランディング') score += 1;
 
   if (score >= 6) {
     return {
       id: 'premium',
       name: 'Premium',
-      price: '月額 ¥33,000 + 制作費 ¥55,000',
-      reason: 'ページ数や問い合わせ対応の課題から、Premiumプランが最適です。FAQ無制限・トーン調整で、AIが最高の接客を実現します。'
+      setup: '¥220,000',
+      monthly: '¥33,000/月',
+      reason: 'ページ数や集客ニーズから、Premiumプランが最適です。AI更新月30回でサイトを常に最新に保ち、ブログやチャットボットのオプションで集客を最大化できます。'
     };
   } else if (score >= 2) {
     return {
       id: 'standard',
       name: 'Standard',
-      price: '月額 ¥11,000 + 制作費 ¥55,000',
-      reason: 'AI接客のカスタマイズが充実したStandardプランがおすすめです。FAQ30件で的確な自動応答を実現します。'
+      setup: '¥110,000',
+      monthly: '¥11,000/月',
+      reason: 'バランスの取れたStandardプランがおすすめです。AI更新月10回で定期的なサイト更新に対応。独自ドメイン・SSL・SEO対策もすべて含まれています。'
     };
   } else {
     return {
       id: 'light',
       name: 'Light',
-      price: '月額 ¥5,500 + 制作費 ¥55,000',
-      reason: 'まずはLightプランでスタートがおすすめです。AI接客も標準搭載で、すぐに始められます。'
+      setup: '¥55,000',
+      monthly: '¥5,500/月',
+      reason: 'まずはLightプランでスタートがおすすめです。AI管理画面「バイブ」で音声から簡単にサイト更新。独自ドメイン・SSL・メール転送も付いています。'
     };
   }
 }
@@ -155,7 +159,7 @@ function showResult(plan) {
     <div class="diag__result-plan">
       <span class="diag__result-plan-badge">おすすめ</span>
       <span class="diag__result-plan-name">${plan.name}プラン</span>
-      <span class="diag__result-plan-price">${plan.price}</span>
+      <span class="diag__result-plan-price">制作費 ${plan.setup}　月額 ${plan.monthly}</span>
     </div>
     <div class="diag__result-items">
       <div class="diag__result-item">
@@ -176,6 +180,14 @@ function showResult(plan) {
       </div>
     </div>
     <p style="margin-top:var(--space-lg);font-size:var(--font-size-sm);color:var(--c-text-muted);line-height:1.7;">${plan.reason}</p>
+    <p style="font-size:var(--font-size-xs);color:var(--c-text-muted);margin-top:var(--space-xs);">全プラン共通: 独自ドメイン・SSL・レスポンシブ対応・メール転送1アドレス付き</p>
+    <div class="diag__result-actions">
+      <a href="../apply/?plan=${plan.id}" class="btn btn--cta btn--lg btn--block">
+        <span>このプランで申し込む</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="../apply/" class="btn btn--ghost" style="margin-top:var(--space-sm);">別のプランを選ぶ</a>
+    </div>
   `;
 }
 
