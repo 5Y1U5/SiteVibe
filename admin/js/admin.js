@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statusLabel && currentUser.clientName) {
           statusLabel.textContent = currentUser.clientName;
         }
+        // admin ロールの場合はセットアップリンクを表示
+        if (currentUser.role === 'admin') {
+          const setupLink = document.getElementById('setupLink');
+          if (setupLink) setupLink.style.display = '';
+        }
       }
     } catch {
       // 認証なし環境（ローカル開発等）では無視

@@ -22,9 +22,13 @@ SiteVibe/
 │   └── index.html      # ディレクションシート（7ステップ）
 ├── admin/              # Vibe Agent Console（管理画面）
 │   ├── index.html      # メインHTML（ダークテーマ）
-│   ├── css/admin.css   # 管理画面スタイル + アニメーション
+│   ├── setup.html      # 管理者セットアップ画面（クライアント・ユーザー管理）
+│   ├── css/
+│   │   ├── admin.css   # 管理画面スタイル + アニメーション
+│   │   └── setup.css   # セットアップ画面スタイル
 │   └── js/
 │       ├── admin.js    # チャット管理、エージェント連携、プレビューパネル
+│       ├── setup.js    # セットアップ画面（クライアント・ユーザーCRUD）
 │       ├── vibe.js     # Vibeキャラクター（SVG、5表情、セリフ）
 │       └── audio.js    # 音声録音(MediaRecorder) + Whisper STT + TTS再生
 ├── css/
@@ -39,6 +43,8 @@ SiteVibe/
 │   ├── index.html      # 記事一覧
 │   └── post.html       # 記事詳細
 ├── functions/api/      # Cloudflare Pages Functions
+│   ├── clients.js      # クライアントCRUD API（admin専用）
+│   ├── admin-users.js  # ユーザーCRUD API（admin専用）
 │   ├── blog-generate.js # AI記事生成（GPT-4o-mini、利用制限付き）
 │   ├── blog-posts.js   # ブログCRUD API
 │   ├── transcribe.js   # OpenAI Whisper API プロキシ（STT）

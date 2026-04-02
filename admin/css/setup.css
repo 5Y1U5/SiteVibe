@@ -1,0 +1,454 @@
+/* ============================================
+   SiteVibe Setup — 管理者セットアップ画面
+   admin.css のダークテーマ変数を継承
+   ============================================ */
+
+/* ─── レイアウト ─── */
+.setup-main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: calc(60px + var(--space-xl)) var(--space-lg) var(--space-xl);
+}
+
+/* ─── ヘッダーリンク ─── */
+.setup-header__link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--admin-text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.setup-header__link:hover {
+  color: var(--admin-text);
+}
+
+/* ─── ローディング / エラー ─── */
+.setup-loading,
+.setup-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  min-height: 300px;
+  color: var(--admin-text-muted);
+}
+
+.setup-loading__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--admin-border);
+  border-top-color: var(--c-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── タブ ─── */
+.setup-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.setup-tab {
+  padding: var(--space-sm) var(--space-lg);
+  background: none;
+  border: none;
+  color: var(--admin-text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.setup-tab:hover {
+  color: var(--admin-text);
+}
+
+.setup-tab.active {
+  color: var(--c-primary);
+}
+
+.setup-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--c-primary);
+  border-radius: 2px 2px 0 0;
+}
+
+/* ─── パネル ─── */
+.setup-panel {
+  display: none;
+}
+
+.setup-panel.active {
+  display: block;
+}
+
+.setup-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.setup-panel__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.setup-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ─── テーブル ─── */
+.setup-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-surface);
+}
+
+.setup-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.setup-table th,
+.setup-table td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.setup-table th {
+  color: var(--admin-text-muted);
+  font-weight: 500;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--admin-border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.setup-table td {
+  color: var(--admin-text);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.setup-table tbody tr:hover {
+  background: var(--admin-surface-hover);
+}
+
+.setup-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ─── バッジ ─── */
+.setup-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.setup-badge--active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+}
+
+.setup-badge--inactive {
+  background: rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+}
+
+.setup-badge--admin {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0EA5E9;
+}
+
+.setup-badge--client {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8B5CF6;
+}
+
+.setup-badge--plan {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--admin-text-muted);
+}
+
+/* ─── ボタン ─── */
+.setup-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.setup-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.setup-btn--primary {
+  background: var(--c-primary);
+  color: #fff;
+}
+
+.setup-btn--primary:hover:not(:disabled) {
+  background: #0284C7;
+}
+
+.setup-btn--secondary {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+}
+
+.setup-btn--secondary:hover:not(:disabled) {
+  background: var(--admin-surface-hover);
+}
+
+.setup-btn--danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+}
+
+.setup-btn--danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.setup-btn--sm {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+}
+
+/* ─── セレクト ─── */
+.setup-select {
+  padding: 6px 12px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  color: var(--admin-text);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.setup-select:focus {
+  outline: none;
+  border-color: var(--c-primary);
+}
+
+/* ─── モーダル ─── */
+.setup-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+
+.setup-modal-overlay[hidden] {
+  display: none;
+}
+
+.setup-modal {
+  background: var(--admin-bg-subtle);
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.setup-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.setup-modal__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.setup-modal__close {
+  background: none;
+  border: none;
+  color: var(--admin-text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.setup-modal__close:hover {
+  color: var(--admin-text);
+}
+
+/* ─── フォーム ─── */
+.setup-form {
+  padding: var(--space-lg);
+}
+
+.setup-form__group {
+  margin-bottom: var(--space-md);
+}
+
+.setup-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.setup-form__label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--admin-text-muted);
+}
+
+.setup-form__required {
+  color: #EF4444;
+}
+
+.setup-form__input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  color: var(--admin-text);
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.setup-form__input:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 2px var(--admin-glow);
+}
+
+.setup-form__input::placeholder {
+  color: var(--admin-text-dim);
+}
+
+.setup-form__input[readonly] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.setup-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+/* ─── リマインダー ─── */
+.setup-reminder {
+  position: fixed;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  color: #F59E0B;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  animation: slideUp 0.3s ease;
+}
+
+.setup-reminder[hidden] {
+  display: none;
+}
+
+.setup-reminder__close {
+  background: none;
+  border: none;
+  color: #F59E0B;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ─── 空状態 ─── */
+.setup-empty {
+  padding: var(--space-xl);
+  text-align: center;
+  color: var(--admin-text-dim);
+  font-size: 0.9rem;
+}
+
+/* ─── レスポンシブ ─── */
+@media (max-width: 768px) {
+  .setup-main {
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+  }
+
+  .setup-panel__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .setup-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-reminder {
+    left: var(--space-sm);
+    right: var(--space-sm);
+    transform: none;
+    white-space: normal;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
