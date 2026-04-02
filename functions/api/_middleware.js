@@ -162,21 +162,35 @@ async function verifyAccessJWT(token, env) {
 
   // JWKS から公開鍵を取得
   const teamDomain = env.CF_ACCESS_TEAM_DOMAIN || 'istyle';
-  const publicKey = await getAccessPublicKey(teamDomain, header.kid);
-  if (!publicKey) return null;
+  const jwks = await getJWKS(teamDomain);
+  if (!jwks) return null;
 
-  // 署名を検証
   const signatureData = new TextEncoder().encode(`${headerB64}.${payloadB64}`);
   const signature = base64UrlToArrayBuffer(signatureB64);
 
-  const isValid = await crypto.subtle.verify(
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    publicKey,
-    signature,
-    signatureData
-  );
-
-  if (!isValid) return null;
+  // kid で一致する鍵を探す
+  const publicKey = await findKeyByKid(jwks, header.kid);
+  if (publicKey) {
+    const isValid = await crypto.subtle.verify(
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+      publicKey, signature, signatureData
+    );
+    if (!isValid) return null;
+  } else {
+    // kid 不一致の場合、全鍵で順に検証（キーローテーション対応）
+    const allKeys = await tryAllKeys(jwks);
+    let verified = false;
+    for (const key of allKeys) {
+      try {
+        const isValid = await crypto.subtle.verify(
+          { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+          key, signature, signatureData
+        );
+        if (isValid) { verified = true; break; }
+      } catch { /* try next key */ }
+    }
+    if (!verified) return null;
+  }
 
   // ペイロードをデコード
   const payload = JSON.parse(decodeBase64Url(payloadB64));
@@ -189,10 +203,10 @@ async function verifyAccessJWT(token, env) {
   return payload;
 }
 
-async function getAccessPublicKey(teamDomain, kid) {
+async function getJWKS(teamDomain) {
   // キャッシュチェック（5分間有効）
   if (jwksCache && Date.now() < jwksCacheExpiry) {
-    return findKeyByKid(jwksCache, kid);
+    return jwksCache;
   }
 
   // CF Access の JWKS エンドポイントから公開鍵を取得
@@ -204,21 +218,39 @@ async function getAccessPublicKey(teamDomain, kid) {
   jwksCache = jwks;
   jwksCacheExpiry = Date.now() + 5 * 60 * 1000;
 
-  return findKeyByKid(jwks, kid);
+  return jwks;
 }
 
 async function findKeyByKid(jwks, kid) {
   const keys = jwks.keys || [];
-  const jwk = kid ? keys.find(k => k.kid === kid) : keys[0];
-  if (!jwk) return null;
 
-  return crypto.subtle.importKey(
-    'jwk',
-    jwk,
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    false,
-    ['verify']
-  );
+  // kid が一致する鍵を優先
+  const exactMatch = kid ? keys.find(k => k.kid === kid) : null;
+  if (exactMatch) {
+    return crypto.subtle.importKey(
+      'jwk', exactMatch,
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']
+    );
+  }
+
+  // kid が一致しない場合、全ての鍵を返して順に検証する
+  return null;
+}
+
+// 全ての鍵で検証を試みる
+async function tryAllKeys(jwks) {
+  const keys = jwks.keys || [];
+  const imported = [];
+  for (const jwk of keys) {
+    try {
+      const key = await crypto.subtle.importKey(
+        'jwk', jwk,
+        { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']
+      );
+      imported.push(key);
+    } catch { /* skip invalid keys */ }
+  }
+  return imported;
 }
 
 // ─── Base64URL ユーティリティ ───
