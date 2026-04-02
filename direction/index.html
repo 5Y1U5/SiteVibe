@@ -43,7 +43,8 @@
       <div class="dir__indicator" data-ind="4"><span>4</span>ページ構成</div>
       <div class="dir__indicator" data-ind="5"><span>5</span>素材・SNS</div>
       <div class="dir__indicator" data-ind="6"><span>6</span>AI接客</div>
-      <div class="dir__indicator" data-ind="7"><span>7</span>確認</div>
+      <div class="dir__indicator" data-ind="7"><span>7</span>ブログ</div>
+      <div class="dir__indicator" data-ind="8"><span>8</span>確認</div>
     </div>
 
     <!-- ステップコンテナ -->
@@ -452,11 +453,52 @@
         </div>
       </div>
 
-      <!-- Step 7: 確認・その他要望 -->
+      <!-- Step 7: ブログ設定（オプション） -->
       <div class="dir__step" data-step="7">
         <div class="dir__step-inner">
           <div class="dir__step-header">
-            <span class="dir__step-num">Step 7 / 7</span>
+            <span class="dir__step-num">Step 7 / 8</span>
+            <h2 class="dir__step-title">ブログ設定</h2>
+            <p class="dir__step-desc">ブログオプションをお申し込みの方はご入力ください。<br>不要な場合はそのまま「次へ進む」で大丈夫です。</p>
+          </div>
+
+          <div class="dir__fields">
+            <div class="dir__field">
+              <label for="blogTone">ブログの雰囲気・トーン</label>
+              <div class="dir__options-inline" data-name="blogTone">
+                <button class="dir__option-btn" data-value="カジュアル">カジュアル</button>
+                <button class="dir__option-btn" data-value="丁寧・フォーマル">丁寧・フォーマル</button>
+                <button class="dir__option-btn" data-value="親しみやすい">親しみやすい</button>
+                <button class="dir__option-btn" data-value="専門的">専門的</button>
+                <button class="dir__option-btn" data-value="おまかせ">おまかせ</button>
+              </div>
+            </div>
+            <div class="dir__field">
+              <label for="blogAudience">ブログの想定読者</label>
+              <input type="text" id="blogAudience" name="blogAudience" placeholder="例: 30〜40代の女性、髪の悩みを持つ方">
+            </div>
+            <div class="dir__field">
+              <label for="blogTopics">書きたい記事のテーマ（複数OK）</label>
+              <textarea id="blogTopics" name="blogTopics" rows="3" placeholder="例:&#10;・ヘアケアのコツ&#10;・季節のおすすめスタイル&#10;・お客様のビフォーアフター"></textarea>
+            </div>
+            <div class="dir__field">
+              <label for="blogFirstPerson">ブログでの一人称</label>
+              <input type="text" id="blogFirstPerson" name="blogFirstPerson" placeholder="例: 私 / 僕 / 当店 / 店名">
+            </div>
+          </div>
+
+          <div class="dir__nav-buttons">
+            <button class="btn btn--ghost" onclick="Direction.prevStep()">戻る</button>
+            <button class="btn btn--primary" onclick="Direction.nextStep()">次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 8: 確認・その他要望 -->
+      <div class="dir__step" data-step="8">
+        <div class="dir__step-inner">
+          <div class="dir__step-header">
+            <span class="dir__step-num">Step 8 / 8</span>
             <h2 class="dir__step-title">確認・その他要望</h2>
             <p class="dir__step-desc">最後に、その他のご要望があればお聞かせください</p>
           </div>
@@ -482,7 +524,7 @@
       </div>
 
       <!-- 完了 -->
-      <div class="dir__step" data-step="8">
+      <div class="dir__step" data-step="9">
         <div class="dir__step-inner dir__step-inner--center">
           <div class="dir__complete-icon">
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>

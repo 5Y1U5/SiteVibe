@@ -677,6 +677,35 @@
 
 .dir__faq-tip svg { flex-shrink: 0; color: var(--c-primary); }
 
+/* ブログトーン選択ボタン */
+.dir__options-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+.dir__option-btn {
+  padding: 8px 16px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.dir__option-btn:hover {
+  border-color: var(--c-primary);
+  color: var(--c-primary);
+}
+.dir__option-btn.selected {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: #fff;
+}
+
 /* ナビゲーションボタン */
 .dir__nav-buttons {
   display: flex;
