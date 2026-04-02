@@ -1,6 +1,8 @@
 // ============================================
 // SiteVibe — ブログ記事生成 API
 // AI で SEO 記事を生成し D1 に保存
+// ライティングDNA（writing_profile）対応
+// Anthropic API 優先、フォールバック OpenAI
 // ============================================
 
 const BLOG_LIMITS = {
@@ -18,7 +20,7 @@ export async function onRequestPost(context) {
 
   // blog_plan チェック
   const client = await env.DB.prepare(
-    `SELECT blog_plan FROM clients WHERE id = ?`
+    `SELECT blog_plan, writing_profile FROM clients WHERE id = ?`
   ).bind(user.clientId).first();
 
   if (!client?.blog_plan) {
@@ -45,55 +47,68 @@ export async function onRequestPost(context) {
 
   // リクエストボディ
   const body = await request.json();
-  const { topic, keywords } = body;
+  const { topic, keywords, transcript } = body;
 
-  if (!topic?.trim()) {
-    return jsonResponse({ error: 'topic は必須です' }, 400);
+  if (!topic?.trim() && !transcript?.trim()) {
+    return jsonResponse({ error: 'topic または transcript は必須です' }, 400);
   }
 
-  // AI で記事生成
-  const apiKey = env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return jsonResponse({ error: 'API キーが設定されていません' }, 500);
+  // ライティングDNA プロンプト構築
+  let writingDna = '';
+  if (client.writing_profile) {
+    try {
+      const profile = JSON.parse(client.writing_profile);
+      const parts = [];
+      if (profile.tone) parts.push(`トーン: ${profile.tone}`);
+      if (profile.style) parts.push(`文体: ${profile.style}`);
+      if (profile.audience) parts.push(`対象読者: ${profile.audience}`);
+      if (profile.notes) parts.push(`その他の特徴: ${profile.notes}`);
+      if (parts.length > 0) {
+        writingDna = `\n\n## ライティングスタイル（この人らしい書き方で書いてください）\n${parts.join('\n')}`;
+      }
+    } catch { /* JSON パースエラーは無視 */ }
   }
 
   const keywordStr = keywords?.length ? `キーワード: ${keywords.join(', ')}\n` : '';
-  const prompt = `あなたはSEOに詳しいプロのWebライターです。以下のトピックについて、日本語でブログ記事を書いてください。
+
+  // transcript がある場合は音声メモベースの記事生成
+  let contentInstruction;
+  if (transcript?.trim()) {
+    contentInstruction = `以下は音声メモの文字起こしです。この内容をもとに、整理されたブログ記事を書いてください。
+話し手の意図や気づきを活かしつつ、読みやすく構成してください。
+
+音声メモ:
+${transcript}
+
+${topic ? `テーマ: ${topic}\n` : ''}${keywordStr}`;
+  } else {
+    contentInstruction = `以下のトピックについてブログ記事を書いてください。
 
 トピック: ${topic}
-${keywordStr}
+${keywordStr}`;
+  }
+
+  const systemPrompt = `あなたはプロのブログライターです。${writingDna}
+
 要件:
-- タイトル（SEOを意識した魅力的なもの、40文字以内）
-- 本文（Markdown形式、1500〜2000文字程度）
+- タイトル（魅力的で読みたくなるもの、40文字以内）
+- 本文（Markdown形式、1500〜2500文字程度）
 - slug（英語、ハイフン区切り、30文字以内）
 
 以下のJSON形式で出力してください:
 {"title": "...", "content": "...", "slug": "..."}`;
 
   try {
-    const aiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 3000,
-        response_format: { type: 'json_object' },
-      }),
-    });
+    let generated;
 
-    if (!aiRes.ok) {
-      const err = await aiRes.text();
-      console.error('OpenAI API エラー:', err);
-      return jsonResponse({ error: 'AI記事生成に失敗しました' }, 502);
+    // Anthropic API が設定されていれば優先使用
+    if (env.ANTHROPIC_API_KEY) {
+      generated = await generateWithAnthropic(env.ANTHROPIC_API_KEY, systemPrompt, contentInstruction);
+    } else if (env.OPENAI_API_KEY) {
+      generated = await generateWithOpenAI(env.OPENAI_API_KEY, systemPrompt, contentInstruction);
+    } else {
+      return jsonResponse({ error: 'API キーが設定されていません' }, 500);
     }
-
-    const aiData = await aiRes.json();
-    const generated = JSON.parse(aiData.choices[0].message.content);
 
     // slug の正規化
     let slug = generated.slug
@@ -128,6 +143,7 @@ ${keywordStr}
     return jsonResponse({
       id: postId,
       title: generated.title,
+      content: generated.content,
       slug,
       status: 'draft',
       usage: { used: usage.count + 1, limit },
@@ -137,6 +153,69 @@ ${keywordStr}
     console.error('ブログ生成エラー:', err.message);
     return jsonResponse({ error: 'ブログ生成中にエラーが発生しました' }, 500);
   }
+}
+
+// ─── Anthropic Claude API ───
+async function generateWithAnthropic(apiKey, systemPrompt, userMessage) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-opus-4-6',
+      max_tokens: 4000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('Anthropic API エラー:', err);
+    throw new Error('Anthropic API エラー');
+  }
+
+  const data = await res.json();
+  const text = data.content[0].text;
+
+  // JSON を抽出（コードブロック内の場合も対応）
+  const jsonMatch = text.match(/\{[\s\S]*"title"[\s\S]*"content"[\s\S]*"slug"[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('JSON パース失敗');
+
+  return JSON.parse(jsonMatch[0]);
+}
+
+// ─── OpenAI API ───
+async function generateWithOpenAI(apiKey, systemPrompt, userMessage) {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage },
+      ],
+      temperature: 0.7,
+      max_tokens: 4000,
+      response_format: { type: 'json_object' },
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('OpenAI API エラー:', err);
+    throw new Error('OpenAI API エラー');
+  }
+
+  const data = await res.json();
+  return JSON.parse(data.choices[0].message.content);
 }
 
 function jsonResponse(data, status = 200) {

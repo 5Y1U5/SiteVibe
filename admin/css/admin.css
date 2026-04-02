@@ -1299,3 +1299,340 @@ html, .admin-body {
     height: 72px;
   }
 }
+
+/* ─── ブログ管理パネル ─── */
+.blog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease);
+}
+
+.blog-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.blog-panel {
+  width: 560px;
+  max-width: 100%;
+  height: 100%;
+  background: var(--admin-bg);
+  border-left: 1px solid var(--admin-border);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s var(--ease);
+}
+
+.blog-overlay.active .blog-panel {
+  transform: translateX(0);
+}
+
+.blog-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-lg);
+  border-bottom: 1px solid var(--admin-border);
+  flex-shrink: 0;
+}
+
+.blog-panel__tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.blog-panel__tab {
+  padding: var(--space-xs) var(--space-md);
+  background: none;
+  border: none;
+  color: var(--admin-text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.blog-panel__tab:hover {
+  color: var(--admin-text);
+}
+
+.blog-panel__tab.active {
+  color: var(--c-primary);
+  background: rgba(14, 165, 233, 0.1);
+}
+
+.blog-panel__close {
+  background: none;
+  border: none;
+  color: var(--admin-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.blog-panel__close:hover {
+  color: var(--admin-text);
+  background: var(--admin-surface);
+}
+
+.blog-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.blog-panel__content {
+  display: none;
+  height: 100%;
+}
+
+.blog-panel__content.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* フィルターボタン */
+.blog-panel__filter {
+  display: flex;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.blog-panel__filter-btn {
+  padding: 4px 12px;
+  background: none;
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  color: var(--admin-text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.blog-panel__filter-btn:hover {
+  border-color: var(--admin-text-muted);
+}
+
+.blog-panel__filter-btn.active {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: #fff;
+}
+
+/* 記事リスト */
+.blog-panel__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-sm) 0;
+}
+
+.blog-panel__empty {
+  text-align: center;
+  color: var(--admin-text-dim);
+  padding: var(--space-xl);
+  font-size: 0.9rem;
+}
+
+.blog-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.blog-item:hover {
+  background: var(--admin-surface);
+}
+
+.blog-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.blog-item__title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--admin-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blog-item__meta {
+  font-size: 0.75rem;
+  color: var(--admin-text-dim);
+  margin-top: 2px;
+}
+
+.blog-item__actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: var(--space-sm);
+}
+
+.blog-item__btn {
+  padding: 4px 8px;
+  background: none;
+  border: 1px solid var(--admin-border);
+  border-radius: 4px;
+  color: var(--admin-text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.blog-item__btn:hover {
+  background: var(--admin-surface-hover);
+  color: var(--admin-text);
+}
+
+.blog-item__btn--publish {
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10B981;
+}
+
+.blog-item__btn--publish:hover {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.blog-item__btn--delete {
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #EF4444;
+}
+
+.blog-item__btn--delete:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* エディタ */
+.blog-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--space-md) var(--space-lg);
+  gap: var(--space-sm);
+}
+
+.blog-editor__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.blog-editor__field--grow {
+  flex: 1;
+  min-height: 0;
+}
+
+.blog-editor__label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--admin-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.blog-editor__input {
+  padding: 8px 12px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  color: var(--admin-text);
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.blog-editor__input:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 2px var(--admin-glow);
+}
+
+.blog-editor__input--sm {
+  font-size: 0.8rem;
+  color: var(--admin-text-muted);
+}
+
+.blog-editor__textarea {
+  flex: 1;
+  padding: 12px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  color: var(--admin-text);
+  font-size: 0.85rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  line-height: 1.6;
+  resize: none;
+  min-height: 200px;
+}
+
+.blog-editor__textarea:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 2px var(--admin-glow);
+}
+
+/* フッター */
+.blog-panel__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  border-top: 1px solid var(--admin-border);
+  flex-shrink: 0;
+}
+
+.blog-panel__btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.blog-panel__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.blog-panel__btn--secondary {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+}
+
+.blog-panel__btn--secondary:hover:not(:disabled) {
+  background: var(--admin-surface-hover);
+}
+
+.blog-panel__btn--primary {
+  background: #10B981;
+  color: #fff;
+}
+
+.blog-panel__btn--primary:hover:not(:disabled) {
+  background: #059669;
+}
+
+@media (max-width: 768px) {
+  .blog-panel {
+    width: 100%;
+  }
+}

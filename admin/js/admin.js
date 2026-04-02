@@ -443,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ message: text }),
       });
       const data = await res.json();
-      return data.intent === 'code' ? 'code' : 'chat';
+      return data.intent === 'code' ? 'code' : data.intent === 'blog' ? 'blog' : 'chat';
     } catch {
       // API失敗時はchatにフォールバック
       return 'chat';
@@ -514,6 +514,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const intent = await classifyIntent(text);
     if (intent === 'code') {
       await processCodeRequest(text);
+    } else if (intent === 'blog') {
+      await processBlogRequest(text);
     } else {
       await processChatRequest(text);
     }
@@ -817,6 +819,212 @@ document.addEventListener('DOMContentLoaded', () => {
     const hours = String(d.getHours()).padStart(2, '0');
     const mins = String(d.getMinutes()).padStart(2, '0');
     return `${month}/${day} ${hours}:${mins}`;
+  }
+
+  /* ─── ブログ管理 ─── */
+  const blogOverlay = document.getElementById('blogOverlay');
+  const blogClose = document.getElementById('blogClose');
+  const blogBtn = document.getElementById('blogBtn');
+  const blogList = document.getElementById('blogList');
+  const blogFooter = document.getElementById('blogFooter');
+  let blogCurrentStatus = 'draft';
+  let blogCurrentId = null;
+
+  // パネル開閉
+  if (blogBtn) {
+    blogBtn.addEventListener('click', () => {
+      blogOverlay.classList.add('active');
+      switchBlogTab('blog-list');
+      loadBlogPosts();
+    });
+  }
+  if (blogClose) {
+    blogClose.addEventListener('click', () => blogOverlay.classList.remove('active'));
+  }
+  blogOverlay.addEventListener('click', (e) => {
+    if (e.target === blogOverlay) blogOverlay.classList.remove('active');
+  });
+
+  // タブ切り替え
+  document.querySelectorAll('.blog-panel__tab').forEach(tab => {
+    tab.addEventListener('click', () => switchBlogTab(tab.dataset.tab));
+  });
+
+  function switchBlogTab(tabName) {
+    document.querySelectorAll('.blog-panel__tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.blog-panel__content').forEach(c => c.classList.remove('active'));
+    document.querySelector(`.blog-panel__tab[data-tab="${tabName}"]`)?.classList.add('active');
+    document.querySelector(`.blog-panel__content[data-content="${tabName}"]`)?.classList.add('active');
+    // フッターはエディタタブのみ表示
+    blogFooter.style.display = tabName === 'blog-editor' ? '' : 'none';
+  }
+
+  // フィルター（draft / published）
+  document.querySelectorAll('.blog-panel__filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.blog-panel__filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      blogCurrentStatus = btn.dataset.status;
+      loadBlogPosts();
+    });
+  });
+
+  // 記事一覧取得
+  async function loadBlogPosts() {
+    if (!currentUser) return;
+    try {
+      const res = await fetch(`/api/blog-posts?client_id=${currentUser.clientId}&status=${blogCurrentStatus}`);
+      const data = await res.json();
+      renderBlogList(data.posts || []);
+    } catch {
+      blogList.innerHTML = '<p class="blog-panel__empty">読み込みに失敗しました</p>';
+    }
+  }
+
+  function renderBlogList(posts) {
+    if (posts.length === 0) {
+      blogList.innerHTML = '<p class="blog-panel__empty">記事がありません</p>';
+      return;
+    }
+
+    blogList.innerHTML = posts.map(p => {
+      const date = p.published_at ? formatTime(p.published_at * 1000) : formatTime(p.created_at * 1000);
+      const publishBtn = p.status === 'draft'
+        ? `<button class="blog-item__btn blog-item__btn--publish" data-action="publish" data-id="${p.id}">公開</button>`
+        : '';
+      return `
+        <div class="blog-item" data-id="${p.id}">
+          <div class="blog-item__info">
+            <div class="blog-item__title">${escHtml(p.title)}</div>
+            <div class="blog-item__meta">${date} · ${p.slug}</div>
+          </div>
+          <div class="blog-item__actions">
+            <button class="blog-item__btn" data-action="edit" data-id="${p.id}">編集</button>
+            ${publishBtn}
+            <button class="blog-item__btn blog-item__btn--delete" data-action="delete" data-id="${p.id}">削除</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // 記事リストのクリックイベント
+  blogList.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    e.stopPropagation();
+
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+
+    if (action === 'edit') {
+      await openBlogEditor(id);
+    } else if (action === 'publish') {
+      if (!confirm('この記事を公開しますか？')) return;
+      await saveBlogPost(id, { status: 'published' });
+      loadBlogPosts();
+    } else if (action === 'delete') {
+      if (!confirm('この記事を削除しますか？')) return;
+      await fetch(`/api/blog-posts?id=${id}`, { method: 'DELETE' });
+      loadBlogPosts();
+    }
+  });
+
+  // エディタを開く
+  async function openBlogEditor(postId) {
+    try {
+      const res = await fetch(`/api/blog-posts?id=${postId}`);
+      const post = await res.json();
+      if (post.error) return;
+
+      blogCurrentId = post.id;
+      document.getElementById('blogEditId').value = post.id;
+      document.getElementById('blogEditTitle').value = post.title;
+      document.getElementById('blogEditSlug').value = post.slug;
+      document.getElementById('blogEditContent').value = post.content;
+      switchBlogTab('blog-editor');
+    } catch { /* 無視 */ }
+  }
+
+  // 保存ボタン
+  document.getElementById('blogSave').addEventListener('click', async () => {
+    const id = document.getElementById('blogEditId').value;
+    if (!id) return;
+    await saveBlogPost(id, {
+      title: document.getElementById('blogEditTitle').value,
+      slug: document.getElementById('blogEditSlug').value,
+      content: document.getElementById('blogEditContent').value,
+    });
+    Vibe.say('記事を保存しましたっす！');
+  });
+
+  // 公開ボタン
+  document.getElementById('blogPublish').addEventListener('click', async () => {
+    const id = document.getElementById('blogEditId').value;
+    if (!id) return;
+    if (!confirm('この記事を公開しますか？')) return;
+    await saveBlogPost(id, {
+      title: document.getElementById('blogEditTitle').value,
+      slug: document.getElementById('blogEditSlug').value,
+      content: document.getElementById('blogEditContent').value,
+      status: 'published',
+    });
+    Vibe.say('記事を公開しましたっす！');
+    switchBlogTab('blog-list');
+    blogCurrentStatus = 'published';
+    document.querySelectorAll('.blog-panel__filter-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.status === 'published');
+    });
+    loadBlogPosts();
+  });
+
+  // 記事保存 API
+  async function saveBlogPost(id, data) {
+    await fetch('/api/blog-posts', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...data }),
+    });
+  }
+
+  // ブログ生成リクエスト（Vibeチャット経由）
+  async function processBlogRequest(text) {
+    Vibe.setState('working');
+    Vibe.say('ブログ記事を生成中っす...');
+    addMessage('status', 'ブログ記事を生成しています...');
+
+    try {
+      const res = await fetch('/api/blog-generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcript: text, topic: text }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        Vibe.setState('error');
+        addMessage('vibe', `すみません...${data.error || 'ブログ生成でエラーが出ちゃいました'}`);
+        return;
+      }
+
+      Vibe.setState('done');
+      addMessage('vibe', `ブログ記事ができましたっす！「${data.title}」\n確認・編集はブログパネルからどうぞ！`);
+
+      // ブログパネルを開いてエディタに表示
+      blogOverlay.classList.add('active');
+      await openBlogEditor(data.id);
+
+    } catch (err) {
+      Vibe.setState('error');
+      addMessage('vibe', 'ブログ生成中にエラーが出ちゃいました...');
+    }
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
   /* ─── ユーティリティ ─── */

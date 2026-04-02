@@ -131,6 +131,7 @@ export async function onRequestPut(context) {
   if (chatta_plan !== undefined) { updates.push('chatta_plan = ?'); values.push(chatta_plan || null); }
   if (blog_plan !== undefined) { updates.push('blog_plan = ?'); values.push(blog_plan || null); }
   if (active !== undefined) { updates.push('active = ?'); values.push(active ? 1 : 0); }
+  if (body.writing_profile !== undefined) { updates.push('writing_profile = ?'); values.push(body.writing_profile || null); }
 
   if (updates.length === 0) {
     return jsonResponse({ error: '更新するフィールドがありません' }, 400);
