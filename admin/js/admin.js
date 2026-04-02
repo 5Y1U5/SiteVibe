@@ -3,6 +3,26 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+  /* ─── ユーザー情報取得（マルチテナント対応） ─── */
+  let currentUser = null;
+
+  async function loadCurrentUser() {
+    try {
+      const res = await fetch('/api/me');
+      if (res.ok) {
+        currentUser = await res.json();
+        // ヘッダーにクライアント名を表示
+        const statusLabel = document.querySelector('.admin-header__status-label');
+        if (statusLabel && currentUser.clientName) {
+          statusLabel.textContent = currentUser.clientName;
+        }
+      }
+    } catch {
+      // 認証なし環境（ローカル開発等）では無視
+    }
+  }
+  loadCurrentUser();
+
   /* DOM参照 */
   const vibeContainer = document.getElementById('vibeContainer');
   const speechBubble = document.getElementById('speechBubble');
