@@ -9,6 +9,7 @@ const ACTIONS = ['approve', 'reject'];
 // ジョブ投入: POST /api/agent
 export async function onRequestPost(context) {
   const { request, env } = context;
+  const user = context.data?.user;
 
   const jobRunnerUrl = env.JOB_RUNNER_URL;
   const jobRunnerToken = env.JOB_RUNNER_TOKEN;
@@ -19,6 +20,11 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json();
+
+    // 認証済みユーザーから clientId を取得（admin は対象クライアント指定可能）
+    const clientId = user
+      ? (user.role === 'admin' && body.targetClientId ? body.targetClientId : user.clientId)
+      : body.clientId || 'default';
 
     // ロールバック
     if (body.action === 'rollback' && body.hash) {
@@ -64,7 +70,7 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         message: body.message,
-        clientId: body.clientId || 'default',
+        clientId: clientId,
       }),
     });
 
