@@ -23,6 +23,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   loadCurrentUser();
 
+  /* ─── 利用状況取得 ─── */
+  async function loadUsageStatus() {
+    try {
+      const res = await fetch('/api/usage');
+      if (res.ok) {
+        const data = await res.json();
+        const badge = document.getElementById('usageBadge');
+        if (badge) {
+          badge.textContent = `${data.used}/${data.limit}回`;
+          badge.classList.add('visible');
+          if (data.remaining === 0) {
+            badge.classList.add('exceeded');
+          } else if (data.remaining <= Math.ceil(data.limit * 0.2)) {
+            badge.classList.add('warning');
+          }
+        }
+      }
+    } catch { /* 無視 */ }
+  }
+  loadUsageStatus();
+
   /* DOM参照 */
   const vibeContainer = document.getElementById('vibeContainer');
   const speechBubble = document.getElementById('speechBubble');
@@ -441,7 +462,9 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
     });
-    return res.json();
+    const data = await res.json();
+    data._status = res.status;
+    return data;
   }
 
   async function pollJobStatus(jobId) {
@@ -460,7 +483,10 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'approve', jobId }),
     });
-    return res.json();
+    const data = await res.json();
+    // 承認成功後にバッジを更新
+    loadUsageStatus();
+    return data;
   }
 
   async function rejectJob(jobId) {
@@ -517,6 +543,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const submitResult = await callAgent(text);
+
+      if (submitResult._status === 429 && submitResult.code === 'USAGE_LIMIT_EXCEEDED') {
+        Vibe.setState('sad');
+        const msg = `今月のAI更新回数（${submitResult.usage.limit}回）を使い切りました。超過更新をご利用ください。`;
+        addMessage('vibe', msg);
+        if (Audio.ttsEnabled) Audio.speak(msg);
+        isProcessing = false;
+        return;
+      }
 
       if (submitResult.error) {
         if (submitResult.error.includes('ジョブランナー') || submitResult.error.includes('接続できません')) {
