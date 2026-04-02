@@ -6,6 +6,7 @@ node_modules/
 server/.env
 server/node_modules/
 server/bun.lock
+server/data/
 *.log
 scripts/stripe-prices.json
 .omc/

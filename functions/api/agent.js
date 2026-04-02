@@ -102,6 +102,7 @@ export async function onRequestPost(context) {
       body: JSON.stringify({
         message: body.message,
         clientId: clientId,
+        repoPath: user?.repoPath || undefined,
       }),
     });
 
