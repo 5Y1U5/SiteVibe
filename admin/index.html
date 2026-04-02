@@ -38,6 +38,11 @@
             <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
           </svg>
         </button>
+        <button class="admin-header__icon-btn" id="blogBtn" aria-label="ブログ管理" title="ブログ管理">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </button>
         <button class="admin-header__icon-btn" id="historyBtn" aria-label="変更履歴" title="変更履歴">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
@@ -169,6 +174,55 @@
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
           承認してデプロイ
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ブログ管理パネル -->
+  <div class="blog-overlay" id="blogOverlay">
+    <div class="blog-panel">
+      <div class="blog-panel__header">
+        <div class="blog-panel__tabs">
+          <button class="blog-panel__tab active" data-tab="blog-list">記事一覧</button>
+          <button class="blog-panel__tab" data-tab="blog-editor">エディタ</button>
+        </div>
+        <button class="blog-panel__close" id="blogClose" aria-label="閉じる">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="blog-panel__body">
+        <!-- 記事一覧 -->
+        <div class="blog-panel__content active" data-content="blog-list">
+          <div class="blog-panel__filter">
+            <button class="blog-panel__filter-btn active" data-status="draft">下書き</button>
+            <button class="blog-panel__filter-btn" data-status="published">公開済み</button>
+          </div>
+          <div class="blog-panel__list" id="blogList">
+            <p class="blog-panel__empty">記事がありません</p>
+          </div>
+        </div>
+        <!-- エディタ -->
+        <div class="blog-panel__content" data-content="blog-editor">
+          <div class="blog-editor" id="blogEditor">
+            <input type="hidden" id="blogEditId">
+            <div class="blog-editor__field">
+              <label class="blog-editor__label">タイトル</label>
+              <input type="text" class="blog-editor__input" id="blogEditTitle" placeholder="記事タイトル">
+            </div>
+            <div class="blog-editor__field">
+              <label class="blog-editor__label">Slug</label>
+              <input type="text" class="blog-editor__input blog-editor__input--sm" id="blogEditSlug" placeholder="url-slug">
+            </div>
+            <div class="blog-editor__field blog-editor__field--grow">
+              <label class="blog-editor__label">本文（Markdown）</label>
+              <textarea class="blog-editor__textarea" id="blogEditContent" placeholder="Markdown で記事を書く..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="blog-panel__footer" id="blogFooter">
+        <button class="blog-panel__btn blog-panel__btn--secondary" id="blogSave">保存</button>
+        <button class="blog-panel__btn blog-panel__btn--primary" id="blogPublish">公開する</button>
       </div>
     </div>
   </div>

@@ -146,6 +146,7 @@ function initClientModal() {
       monthly_limit: parseInt(limitInput.value),
       repo_path: document.getElementById('clientRepo').value.trim() || undefined,
       stripe_customer_id: document.getElementById('clientStripe').value.trim() || undefined,
+      writing_profile: document.getElementById('clientWritingProfile').value.trim() || undefined,
     };
 
     try {
@@ -195,6 +196,7 @@ function openClientModal(mode, clientId) {
     document.getElementById('clientLimit').value = c.monthly_limit;
     document.getElementById('clientRepo').value = c.repo_path || '';
     document.getElementById('clientStripe').value = c.stripe_customer_id || '';
+    document.getElementById('clientWritingProfile').value = c.writing_profile || '';
   }
 
   modal.hidden = false;
