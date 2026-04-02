@@ -406,6 +406,228 @@ process.on("SIGTERM", () => {
   }, 60_000);
 });
 
+// ─── ブログ公開 → 静的HTML生成 ───
+app.use("/blog-publish", async (c, next) => {
+  const auth = c.req.header("Authorization");
+  if (auth !== `Bearer ${API_TOKEN}`) {
+    return c.json({ error: "認証が必要です" }, 401);
+  }
+  await next();
+});
+
+app.post("/blog-publish", async (c) => {
+  const body = await c.req.json<{
+    repoPath: string;
+    post: { title: string; content: string; slug: string; meta_description?: string; published_at?: number };
+    allPosts: Array<{ title: string; slug: string; meta_description?: string; published_at?: number }>;
+    siteUrl?: string;
+    siteName?: string;
+  }>();
+
+  const { repoPath, post, allPosts, siteUrl, siteName } = body;
+
+  if (!repoPath || !post?.slug || !post?.title || !post?.content) {
+    return c.json({ error: "repoPath, post.slug, post.title, post.content は必須です" }, 400);
+  }
+
+  try {
+    const blogDir = `${repoPath}/blog`;
+    const postDir = `${blogDir}/${post.slug}`;
+    const { mkdirSync, writeFileSync, existsSync } = await import("fs");
+
+    // ディレクトリ作成
+    mkdirSync(postDir, { recursive: true });
+
+    // Markdown → HTML 変換
+    const articleHtml = markdownToHtml(post.content);
+    const pubDate = post.published_at ? new Date(post.published_at * 1000).toISOString() : new Date().toISOString();
+    const pubDateDisplay = post.published_at ? formatDate(post.published_at) : formatDate(Math.floor(Date.now() / 1000));
+    const metaDesc = post.meta_description || post.content.replace(/[#*\-\n]/g, " ").trim().substring(0, 160);
+    const url = siteUrl ? `${siteUrl}/blog/${post.slug}/` : "";
+    const name = siteName || "ブログ";
+
+    // 記事ページ生成
+    const postHtml = generatePostHtml({
+      title: post.title,
+      content: articleHtml,
+      metaDesc,
+      pubDate,
+      pubDateDisplay,
+      url,
+      siteName: name,
+      slug: post.slug,
+    });
+    writeFileSync(`${postDir}/index.html`, postHtml, "utf-8");
+
+    // 一覧ページ生成
+    const indexHtml = generateIndexHtml(allPosts || [], name, siteUrl || "");
+    writeFileSync(`${blogDir}/index.html`, indexHtml, "utf-8");
+
+    // git commit + push
+    const proc = Bun.spawn(["bash", "-c", `cd "${repoPath}" && git add blog/ && git commit -m "ブログ記事公開: ${post.title}" && git push`], {
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    const exitCode = await proc.exited;
+    const stdout = await new Response(proc.stdout).text();
+    const stderr = await new Response(proc.stderr).text();
+
+    if (exitCode !== 0) {
+      console.error("git push 失敗:", stderr);
+      return c.json({ error: "git push に失敗しました", detail: stderr }, 500);
+    }
+
+    console.log(`ブログ公開完了: ${post.slug} → ${repoPath}`);
+    return c.json({ success: true, slug: post.slug, path: `blog/${post.slug}/index.html` });
+
+  } catch (err: any) {
+    console.error("ブログ公開エラー:", err.message);
+    return c.json({ error: err.message }, 500);
+  }
+});
+
+// ─── Markdown → HTML ───
+function markdownToHtml(md: string): string {
+  return md
+    .split("\n\n")
+    .map(block => {
+      block = block.trim();
+      if (!block) return "";
+      // 見出し
+      if (block.startsWith("### ")) return `<h3>${escHtml(block.slice(4))}</h3>`;
+      if (block.startsWith("## ")) return `<h2>${escHtml(block.slice(3))}</h2>`;
+      if (block.startsWith("# ")) return `<h1>${escHtml(block.slice(2))}</h1>`;
+      // リスト
+      if (block.match(/^[-*] /m)) {
+        const items = block.split("\n").filter(l => l.match(/^[-*] /)).map(l => `<li>${escHtml(l.replace(/^[-*] /, ""))}</li>`).join("");
+        return `<ul>${items}</ul>`;
+      }
+      // 段落（インライン装飾）
+      let html = escHtml(block);
+      html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+      return `<p>${html}</p>`;
+    })
+    .filter(Boolean)
+    .join("\n");
+}
+
+function escHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function formatDate(ts: number): string {
+  const d = new Date(ts * 1000);
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+}
+
+// ─── 記事ページ HTML ───
+function generatePostHtml(p: { title: string; content: string; metaDesc: string; pubDate: string; pubDateDisplay: string; url: string; siteName: string; slug: string }): string {
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escHtml(p.title)} — ${escHtml(p.siteName)}</title>
+  <meta name="description" content="${escHtml(p.metaDesc)}">
+  <meta property="og:title" content="${escHtml(p.title)}">
+  <meta property="og:description" content="${escHtml(p.metaDesc)}">
+  <meta property="og:type" content="article">
+  ${p.url ? `<meta property="og:url" content="${escHtml(p.url)}">` : ""}
+  <meta property="og:site_name" content="${escHtml(p.siteName)}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="${escHtml(p.title)}">
+  <meta name="twitter:description" content="${escHtml(p.metaDesc)}">
+  ${p.url ? `<link rel="canonical" href="${escHtml(p.url)}">` : ""}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": ${JSON.stringify(p.title)},
+    "description": ${JSON.stringify(p.metaDesc)},
+    "datePublished": "${p.pubDate}",
+    "dateModified": "${p.pubDate}",
+    "author": { "@type": "Organization", "name": ${JSON.stringify(p.siteName)} }
+  }
+  </script>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .blog-article { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+    .blog-article__date { font-size: 0.85rem; color: #6b7280; margin-bottom: 0.5rem; }
+    .blog-article__title { font-size: 1.75rem; font-weight: 800; line-height: 1.4; margin: 0 0 2rem; }
+    .blog-article__body h2 { font-size: 1.3rem; font-weight: 700; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb; }
+    .blog-article__body h3 { font-size: 1.1rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
+    .blog-article__body p { line-height: 1.8; margin: 0 0 1.25rem; color: #374151; }
+    .blog-article__body ul { padding-left: 1.5rem; margin: 0 0 1.25rem; }
+    .blog-article__body li { line-height: 1.8; margin-bottom: 0.25rem; color: #374151; }
+    .blog-article__body strong { font-weight: 700; }
+    .blog-article__back { display: inline-flex; align-items: center; gap: 0.25rem; color: #6b7280; font-size: 0.85rem; text-decoration: none; margin-top: 2rem; }
+    .blog-article__back:hover { color: #111827; }
+  </style>
+</head>
+<body>
+  <main class="blog-article">
+    <p class="blog-article__date">${escHtml(p.pubDateDisplay)}</p>
+    <h1 class="blog-article__title">${escHtml(p.title)}</h1>
+    <div class="blog-article__body">
+      ${p.content}
+    </div>
+    <a href="../" class="blog-article__back">&larr; 記事一覧に戻る</a>
+  </main>
+</body>
+</html>`;
+}
+
+// ─── 一覧ページ HTML ───
+function generateIndexHtml(posts: Array<{ title: string; slug: string; meta_description?: string; published_at?: number }>, siteName: string, siteUrl: string): string {
+  const items = posts
+    .sort((a, b) => (b.published_at || 0) - (a.published_at || 0))
+    .map(p => {
+      const date = p.published_at ? formatDate(p.published_at) : "";
+      const desc = p.meta_description || "";
+      return `    <a href="${p.slug}/" class="blog-list__item">
+      <span class="blog-list__date">${escHtml(date)}</span>
+      <span class="blog-list__title">${escHtml(p.title)}</span>
+      ${desc ? `<span class="blog-list__desc">${escHtml(desc)}</span>` : ""}
+    </a>`;
+    })
+    .join("\n");
+
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ブログ — ${escHtml(siteName)}</title>
+  <meta name="description" content="${escHtml(siteName)}のブログ記事一覧">
+  <meta property="og:title" content="ブログ — ${escHtml(siteName)}">
+  <meta property="og:type" content="website">
+  ${siteUrl ? `<meta property="og:url" content="${escHtml(siteUrl)}/blog/">` : ""}
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .blog-list { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+    .blog-list__title-page { font-size: 1.5rem; font-weight: 800; margin: 0 0 2rem; }
+    .blog-list__item { display: block; padding: 1.25rem 0; border-bottom: 1px solid #e5e7eb; text-decoration: none; color: inherit; transition: opacity 0.2s; }
+    .blog-list__item:hover { opacity: 0.7; }
+    .blog-list__date { display: block; font-size: 0.8rem; color: #6b7280; margin-bottom: 0.25rem; }
+    .blog-list__title { display: block; font-size: 1.1rem; font-weight: 700; color: #111827; }
+    .blog-list__desc { display: block; font-size: 0.85rem; color: #6b7280; margin-top: 0.25rem; line-height: 1.5; }
+    .blog-list__empty { text-align: center; padding: 3rem 0; color: #9ca3af; }
+    .blog-list__back { display: inline-flex; align-items: center; gap: 0.25rem; color: #6b7280; font-size: 0.85rem; text-decoration: none; margin-top: 2rem; }
+    .blog-list__back:hover { color: #111827; }
+  </style>
+</head>
+<body>
+  <main class="blog-list">
+    <h1 class="blog-list__title-page">ブログ</h1>
+    ${items if items.strip() else '<p class="blog-list__empty">まだ記事がありません</p>'}
+    <a href="../" class="blog-list__back">&larr; トップに戻る</a>
+  </main>
+</body>
+</html>`;
+}
+
+
 // ─── サーバー起動 ───
 const PORT = parseInt(process.env.PORT || "3100");
 

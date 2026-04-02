@@ -18,7 +18,7 @@ export async function onRequestGet(context) {
   // 記事詳細
   if (id) {
     const post = await env.DB.prepare(
-      `SELECT id, client_id, title, content, slug, status, published_at, created_at, updated_at
+      `SELECT id, client_id, title, content, slug, status, meta_description, published_at, created_at, updated_at
        FROM blog_posts WHERE id = ?`
     ).bind(id).first();
 
@@ -51,7 +51,7 @@ export async function onRequestGet(context) {
   }
 
   const posts = await env.DB.prepare(
-    `SELECT id, title, slug, status, published_at, created_at, updated_at
+    `SELECT id, title, slug, status, meta_description, published_at, created_at, updated_at
      FROM blog_posts
      WHERE client_id = ? AND status = ?
      ORDER BY created_at DESC

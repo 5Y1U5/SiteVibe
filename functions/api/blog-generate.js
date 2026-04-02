@@ -94,9 +94,10 @@ ${keywordStr}`;
 - タイトル（魅力的で読みたくなるもの、40文字以内）
 - 本文（Markdown形式、1500〜2500文字程度）
 - slug（英語、ハイフン区切り、30文字以内）
+- meta_description（記事の要約、120〜160文字程度、検索結果に表示される説明文）
 
 以下のJSON形式で出力してください:
-{"title": "...", "content": "...", "slug": "..."}`;
+{"title": "...", "content": "...", "slug": "...", "meta_description": "..."}`;
 
   try {
     let generated;
@@ -129,10 +130,11 @@ ${keywordStr}`;
 
     // D1 に保存
     const postId = crypto.randomUUID();
+    const metaDesc = generated.meta_description || generated.content.replace(/[#*\-\n]/g, ' ').trim().substring(0, 160);
     await env.DB.prepare(
-      `INSERT INTO blog_posts (id, client_id, title, content, slug, status, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, 'draft', unixepoch(), unixepoch())`
-    ).bind(postId, user.clientId, generated.title, generated.content, slug).run();
+      `INSERT INTO blog_posts (id, client_id, title, content, slug, meta_description, status, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, 'draft', unixepoch(), unixepoch())`
+    ).bind(postId, user.clientId, generated.title, generated.content, slug, metaDesc).run();
 
     // usage 記録
     await env.DB.prepare(
@@ -145,6 +147,7 @@ ${keywordStr}`;
       title: generated.title,
       content: generated.content,
       slug,
+      meta_description: metaDesc,
       status: 'draft',
       usage: { used: usage.count + 1, limit },
     }, 201);
@@ -182,7 +185,7 @@ async function generateWithAnthropic(apiKey, systemPrompt, userMessage) {
   const text = data.content[0].text;
 
   // JSON を抽出（コードブロック内の場合も対応）
-  const jsonMatch = text.match(/\{[\s\S]*"title"[\s\S]*"content"[\s\S]*"slug"[\s\S]*\}/);
+  const jsonMatch = text.match(/\{[\s\S]*"title"[\s\S]*"content"[\s\S]*\}/);
   if (!jsonMatch) throw new Error('JSON パース失敗');
 
   return JSON.parse(jsonMatch[0]);

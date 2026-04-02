@@ -68,6 +68,24 @@ export async function onRequestPost(context) {
       return jsonResponse(data, res.status);
     }
 
+    // ブログ公開（静的HTML生成）
+    if (body.type === 'blog-publish') {
+      const res = await fetch(`${jobRunnerUrl}/blog-publish`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${jobRunnerToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          repoPath: body.repoPath || user?.repoPath,
+          post: body.post,
+          allPosts: body.allPosts,
+        }),
+      });
+      const data = await res.json();
+      return jsonResponse(data, res.status);
+    }
+
     // 新規ジョブ投入
     if (!body.message?.trim()) {
       return jsonResponse({ error: 'message は必須です' }, 400);

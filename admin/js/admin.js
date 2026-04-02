@@ -921,6 +921,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (action === 'publish') {
       if (!confirm('この記事を公開しますか？')) return;
       await saveBlogPost(id, { status: 'published' });
+      await triggerBlogPublish(id);
       loadBlogPosts();
     } else if (action === 'delete') {
       if (!confirm('この記事を削除しますか？')) return;
@@ -968,7 +969,9 @@ document.addEventListener('DOMContentLoaded', () => {
       content: document.getElementById('blogEditContent').value,
       status: 'published',
     });
-    Vibe.say('記事を公開しました！');
+    Vibe.say('記事を公開中です...');
+    await triggerBlogPublish(id);
+    Vibe.say('記事を公開しました！サイトに反映されます。');
     switchBlogTab('blog-list');
     blogCurrentStatus = 'published';
     document.querySelectorAll('.blog-panel__filter-btn').forEach(b => {
@@ -984,6 +987,51 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, ...data }),
     });
+  }
+
+  // ブログ公開 → ジョブランナーで静的HTML生成
+  async function triggerBlogPublish(postId) {
+    try {
+      // 公開した記事の詳細を取得
+      const postRes = await fetch(`/api/blog-posts?id=${postId}`);
+      const post = await postRes.json();
+      if (post.error) return;
+
+      // 全公開記事を取得（一覧ページ再生成用）
+      const allRes = await fetch(`/api/blog-posts?client_id=${currentUser.clientId}&status=published&limit=50`);
+      const allData = await allRes.json();
+      const allPosts = (allData.posts || []).map(p => ({
+        title: p.title,
+        slug: p.slug,
+        meta_description: p.meta_description,
+        published_at: p.published_at,
+      }));
+
+      // ジョブランナーに送信
+      const res = await fetch('/api/agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'blog-publish',
+          repoPath: currentUser.repoPath,
+          post: {
+            title: post.title,
+            content: post.content,
+            slug: post.slug,
+            meta_description: post.meta_description,
+            published_at: post.published_at,
+          },
+          allPosts,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error('ブログ公開ジョブ送信失敗:', err);
+      }
+    } catch (err) {
+      console.error('ブログ公開エラー:', err);
+    }
   }
 
   // ブログ生成リクエスト（Vibeチャット経由）
