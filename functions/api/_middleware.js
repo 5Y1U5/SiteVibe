@@ -34,18 +34,31 @@ export async function onRequest(context) {
     if (match) jwt = match[1];
   }
   if (!jwt) {
-    return jsonResponse({ error: '認証が必要です' }, 401);
+    const hasHeader = !!request.headers.get('Cf-Access-Jwt-Assertion');
+    const hasCookie = (request.headers.get('Cookie') || '').includes('CF_Authorization');
+    return jsonResponse({
+      error: '認証が必要です',
+      debug: { hasHeader, hasCookie, cookieKeys: (request.headers.get('Cookie') || '').split(';').map(c => c.trim().split('=')[0]).filter(Boolean) }
+    }, 401);
   }
 
   try {
     // JWT 署名検証（CRITICAL: Architect 指摘対応）
     const payload = await verifyAccessJWT(jwt, env);
 
-    if (!payload || !payload.email) {
-      return jsonResponse({ error: '無効なトークンです' }, 401);
+    if (!payload) {
+      return jsonResponse({ error: 'JWT署名検証に失敗しました', debug: { jwtLength: jwt.length, hasDB: !!env.DB } }, 401);
+    }
+
+    if (!payload.email) {
+      return jsonResponse({ error: 'JWTにemailクレームがありません', debug: { claims: Object.keys(payload) } }, 401);
     }
 
     // D1 でユーザー情報を取得
+    if (!env.DB) {
+      return jsonResponse({ error: 'D1バインディングが設定されていません' }, 500);
+    }
+
     const user = await env.DB.prepare(
       `SELECT u.email, u.client_id, u.role, u.display_name,
               c.name as client_name, c.plan, c.monthly_limit, c.repo_path, c.active
