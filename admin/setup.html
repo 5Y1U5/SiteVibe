@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup — SiteVibe</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/setup.css">
+</head>
+<body class="admin-body">
+
+  <!-- ヘッダー -->
+  <header class="admin-header">
+    <div class="admin-header__inner">
+      <div class="admin-header__left">
+        <a href="../" class="admin-header__logo">
+          <span class="admin-header__logo-icon">S</span>
+          <span class="admin-header__logo-text">SiteVibe</span>
+        </a>
+      </div>
+      <div class="admin-header__right">
+        <a href="./" class="setup-header__link">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          Agent Console
+        </a>
+        <div class="admin-header__status">
+          <span class="admin-header__status-dot"></span>
+          <span class="admin-header__status-label">Setup</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="setup-main">
+    <!-- 認証チェック中 -->
+    <div class="setup-loading" id="loadingState">
+      <div class="setup-loading__spinner"></div>
+      <p>認証を確認中...</p>
+    </div>
+
+    <!-- 権限エラー -->
+    <div class="setup-error" id="errorState" hidden>
+      <p>管理者権限が必要です。</p>
+      <a href="./" class="setup-btn setup-btn--secondary">Agent Console に戻る</a>
+    </div>
+
+    <!-- セットアップ画面 -->
+    <div class="setup-content" id="setupContent" hidden>
+      <!-- タブナビゲーション -->
+      <nav class="setup-tabs">
+        <button class="setup-tab active" data-tab="clients">クライアント管理</button>
+        <button class="setup-tab" data-tab="users">ユーザー管理</button>
+      </nav>
+
+      <!-- クライアント管理パネル -->
+      <section class="setup-panel active" id="panel-clients">
+        <div class="setup-panel__header">
+          <h2 class="setup-panel__title">クライアント一覧</h2>
+          <button class="setup-btn setup-btn--primary" id="addClientBtn">+ 新規追加</button>
+        </div>
+        <div class="setup-table-wrap">
+          <table class="setup-table" id="clientsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>名前</th>
+                <th>プラン</th>
+                <th>月間上限</th>
+                <th>Stripe ID</th>
+                <th>ステータス</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="clientsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ユーザー管理パネル -->
+      <section class="setup-panel" id="panel-users">
+        <div class="setup-panel__header">
+          <h2 class="setup-panel__title">ユーザー一覧</h2>
+          <div class="setup-panel__actions">
+            <select class="setup-select" id="userClientFilter">
+              <option value="">全クライアント</option>
+            </select>
+            <button class="setup-btn setup-btn--primary" id="addUserBtn">+ 新規追加</button>
+          </div>
+        </div>
+        <div class="setup-table-wrap">
+          <table class="setup-table" id="usersTable">
+            <thead>
+              <tr>
+                <th>メール</th>
+                <th>クライアント</th>
+                <th>ロール</th>
+                <th>表示名</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- リマインダーバナー -->
+      <div class="setup-reminder" id="cfAccessReminder" hidden>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="cfAccessReminderText">CF Access ポリシーにメールアドレスを追加してください</span>
+        <button class="setup-reminder__close" id="cfAccessReminderClose">&times;</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- クライアント追加/編集モーダル -->
+  <div class="setup-modal-overlay" id="clientModal" hidden>
+    <div class="setup-modal">
+      <div class="setup-modal__header">
+        <h3 class="setup-modal__title" id="clientModalTitle">クライアントを追加</h3>
+        <button class="setup-modal__close" id="clientModalClose">&times;</button>
+      </div>
+      <form class="setup-form" id="clientForm">
+        <input type="hidden" id="clientFormMode" value="create">
+        <div class="setup-form__group">
+          <label class="setup-form__label" for="clientId">ID（英小文字・数字・ハイフン）</label>
+          <input class="setup-form__input" type="text" id="clientId" required pattern="[a-z0-9][a-z0-9-]*[a-z0-9]" placeholder="例: salon-abc">
+        </div>
+        <div class="setup-form__group">
+          <label class="setup-form__label" for="clientName">クライアント名 <span class="setup-form__required">*</span></label>
+          <input class="setup-form__input" type="text" id="clientName" required placeholder="例: サロンABC">
+        </div>
+        <div class="setup-form__row">
+          <div class="setup-form__group">
+            <label class="setup-form__label" for="clientPlan">プラン</label>
+            <select class="setup-form__input" id="clientPlan">
+              <option value="light">Light（月3回）</option>
+              <option value="standard">Standard（月10回）</option>
+              <option value="premium">Premium（月30回）</option>
+            </select>
+          </div>
+          <div class="setup-form__group">
+            <label class="setup-form__label" for="clientLimit">月間上限</label>
+            <input class="setup-form__input" type="number" id="clientLimit" min="0" value="3">
+          </div>
+        </div>
+        <div class="setup-form__group">
+          <label class="setup-form__label" for="clientRepo">リポジトリパス</label>
+          <input class="setup-form__input" type="text" id="clientRepo" placeholder="例: /path/to/repo">
+        </div>
+        <div class="setup-form__group">
+          <label class="setup-form__label" for="clientStripe">Stripe Customer ID</label>
+          <input class="setup-form__input" type="text" id="clientStripe" placeholder="例: cus_xxxxx">
+        </div>
+        <div class="setup-form__actions">
+          <button type="button" class="setup-btn setup-btn--secondary" id="clientFormCancel">キャンセル</button>
+          <button type="submit" class="setup-btn setup-btn--primary" id="clientFormSubmit">作成</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ユーザー追加/編集モーダル -->
+  <div class="setup-modal-overlay" id="userModal" hidden>
+    <div class="setup-modal">
+      <div class="setup-modal__header">
+        <h3 class="setup-modal__title" id="userModalTitle">ユーザーを追加</h3>
+        <button class="setup-modal__close" id="userModalClose">&times;</button>
+      </div>
+      <form class="setup-form" id="userForm">
+        <input type="hidden" id="userFormMode" value="create">
+        <div class="setup-form__group">
+          <label class="setup-form__label" for="userEmail">メールアドレス <span class="setup-form__required">*</span></label>
+          <input class="setup-form__input" type="email" id="userEmail" required placeholder="例: user@example.com">
+        </div>
+        <div class="setup-form__group">
+          <label class="setup-form__label" for="userClient">クライアント <span class="setup-form__required">*</span></label>
+          <select class="setup-form__input" id="userClient" required>
+            <option value="">選択してください</option>
+          </select>
+        </div>
+        <div class="setup-form__row">
+          <div class="setup-form__group">
+            <label class="setup-form__label" for="userRole">ロール</label>
+            <select class="setup-form__input" id="userRole">
+              <option value="client">Client</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="setup-form__group">
+            <label class="setup-form__label" for="userDisplayName">表示名</label>
+            <input class="setup-form__input" type="text" id="userDisplayName" placeholder="例: 田中太郎">
+          </div>
+        </div>
+        <div class="setup-form__actions">
+          <button type="button" class="setup-btn setup-btn--secondary" id="userFormCancel">キャンセル</button>
+          <button type="submit" class="setup-btn setup-btn--primary" id="userFormSubmit">作成</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/setup.js"></script>
+</body>
+</html>

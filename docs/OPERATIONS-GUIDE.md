@@ -26,6 +26,8 @@
 - GET /api/agent?jobId=xxx — ジョブ状態確認（ポーリング）
 - GET /api/agent?action=history — 変更履歴取得
 - GET /api/usage — 当月利用状況（使用回数/上限）
+- GET/POST/PUT/DELETE /api/clients — クライアントCRUD（admin専用）
+- GET/POST/PUT/DELETE /api/admin-users — ユーザーCRUD（admin専用）
 - POST /api/transcribe — 音声認識（OpenAI Whisper）
 - POST /api/speech — 音声合成（OpenAI TTS）
 
@@ -106,24 +108,34 @@ Stripe でサブスク操作
 
 ## 新規クライアント追加手順
 
-### 1. Stripe で顧客を作成
+### 方法 A: セットアップ画面から（推奨）
+
+1. https://sitevibe-web.com/admin/setup.html にアクセス（admin ロール必須）
+2. 「クライアント管理」タブ → 「+ 新規追加」
+3. ID、名前、プランを入力して作成
+4. 「ユーザー管理」タブ → 「+ 新規追加」でユーザーを登録
+5. **CF Access にメール追加**（手動）: Cloudflare Dashboard → Access → Applications → sitevibe のポリシーにメールを追加
+6. Stripe で顧客作成 → サブスクリプション作成 → Webhook が自動で D1 更新
+7. クライアントに管理画面 URL を共有: https://sitevibe-web.com/admin/
+
+### 方法 B: CLI から（手動）
+
+#### 1. Stripe で顧客を作成
 
 ```bash
 stripe customers create --name "クライアント名" --email "client@example.com"
 ```
 → 出力の `id`（cus_xxx）を控える
 
-### 2. D1 にクライアント登録
+#### 2. D1 にクライアント登録
 
 ```bash
-wrangler pages secret ... # 不要（D1 は直接操作）
-
 wrangler d1 execute sitevibe-db --remote --command \
   "INSERT INTO clients (id, name, plan, monthly_limit, stripe_customer_id)
    VALUES ('client-slug', 'クライアント名', 'light', 3, 'cus_xxx');"
 ```
 
-### 3. D1 にユーザー登録
+#### 3. D1 にユーザー登録
 
 ```bash
 wrangler d1 execute sitevibe-db --remote --command \
@@ -131,11 +143,11 @@ wrangler d1 execute sitevibe-db --remote --command \
    VALUES ('client@example.com', 'client-slug', 'client', '担当者名');"
 ```
 
-### 4. CF Access にメール追加
+#### 4. CF Access にメール追加
 
 Cloudflare Dashboard → Access → Applications → sitevibe のポリシーにメールを追加。
 
-### 5. Stripe でサブスクリプション作成
+#### 5. Stripe でサブスクリプション作成
 
 ```bash
 stripe subscriptions create \
@@ -144,7 +156,7 @@ stripe subscriptions create \
 ```
 → Webhook が自動で D1 の plan / monthly_limit を更新
 
-### 6. クライアントに管理画面 URL を共有
+#### 6. クライアントに管理画面 URL を共有
 
 https://sitevibe-web.com/admin/
 （CF Access のログイン画面経由でアクセス）
