@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お申し込み — SiteVibe</title>
+  <meta name="description" content="SiteVibeのプランを選んで、すぐに始められます。">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/apply.css">
+</head>
+<body>
+  <!-- ナビ -->
+  <nav class="apply-nav">
+    <div class="container apply-nav__inner">
+      <a href="../" class="nav__logo">
+        <span class="nav__logo-icon">S</span>
+        <span class="nav__logo-text">SiteVibe</span>
+      </a>
+      <span class="apply-nav__label">お申し込み</span>
+    </div>
+  </nav>
+
+  <!-- メイン -->
+  <main class="apply">
+    <div class="apply__bg">
+      <div class="hero__orb hero__orb--1"></div>
+      <div class="hero__orb hero__orb--2"></div>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="apply__progress">
+      <div class="apply__progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- ステップインジケーター -->
+    <div class="container apply__indicators">
+      <div class="apply__indicator active" data-ind="1">
+        <span class="apply__indicator-num">1</span>
+        <span class="apply__indicator-label">プラン</span>
+      </div>
+      <div class="apply__indicator-line"></div>
+      <div class="apply__indicator" data-ind="2">
+        <span class="apply__indicator-num">2</span>
+        <span class="apply__indicator-label">オプション</span>
+      </div>
+      <div class="apply__indicator-line"></div>
+      <div class="apply__indicator" data-ind="3">
+        <span class="apply__indicator-num">3</span>
+        <span class="apply__indicator-label">お客様情報</span>
+      </div>
+    </div>
+
+    <!-- ステップコンテナ -->
+    <div class="container apply__container" id="applyContainer">
+
+      <!-- Step 1: プラン選択 -->
+      <div class="apply__step active" data-step="1">
+        <div class="apply__step-inner">
+          <div class="apply__step-header">
+            <div class="apply__vibe-bubble">
+              <div class="apply__vibe-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="var(--c-vibe)"/><path d="M4 10c0-3.3 2.7-6 6-6" stroke="var(--c-vibe)" stroke-width="1.2" stroke-linecap="round"/><path d="M16 10c0-3.3-2.7-6-6-6" stroke="var(--c-vibe)" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <span>まずはプランを選んでください！</span>
+            </div>
+            <h2 class="apply__step-title">プランを選択</h2>
+          </div>
+
+          <div class="apply__plans" id="planCards">
+            <label class="apply__plan-card" data-plan="light">
+              <input type="radio" name="plan" value="light">
+              <div class="apply__plan-card-inner">
+                <div class="apply__plan-name">Light</div>
+                <div class="apply__plan-desc">まずはWebサイトを持ちたい方に</div>
+                <div class="apply__plan-prices">
+                  <div class="apply__plan-setup">制作費 <strong>&yen;55,000</strong></div>
+                  <div class="apply__plan-monthly">&yen;<span class="apply__plan-amount">5,500</span><span class="apply__plan-period">/月</span></div>
+                </div>
+                <ul class="apply__plan-features">
+                  <li>最大3ページ</li>
+                  <li>AI更新 月3回</li>
+                  <li>メールサポート</li>
+                </ul>
+              </div>
+            </label>
+            <label class="apply__plan-card apply__plan-card--popular" data-plan="standard">
+              <div class="apply__plan-badge">おすすめ</div>
+              <input type="radio" name="plan" value="standard">
+              <div class="apply__plan-card-inner">
+                <div class="apply__plan-name">Standard</div>
+                <div class="apply__plan-desc">本格的にサイトを活用したい方に</div>
+                <div class="apply__plan-prices">
+                  <div class="apply__plan-setup">制作費 <strong>&yen;110,000</strong></div>
+                  <div class="apply__plan-monthly">&yen;<span class="apply__plan-amount">11,000</span><span class="apply__plan-period">/月</span></div>
+                </div>
+                <ul class="apply__plan-features">
+                  <li>最大7ページ</li>
+                  <li>AI更新 月10回</li>
+                  <li>チャット+メールサポート</li>
+                </ul>
+              </div>
+            </label>
+            <label class="apply__plan-card" data-plan="premium">
+              <input type="radio" name="plan" value="premium">
+              <div class="apply__plan-card-inner">
+                <div class="apply__plan-name">Premium</div>
+                <div class="apply__plan-desc">Web集客を最大化したい方に</div>
+                <div class="apply__plan-prices">
+                  <div class="apply__plan-setup">制作費 <strong>&yen;220,000</strong></div>
+                  <div class="apply__plan-monthly">&yen;<span class="apply__plan-amount">33,000</span><span class="apply__plan-period">/月</span></div>
+                </div>
+                <ul class="apply__plan-features">
+                  <li>ページ数無制限</li>
+                  <li>AI更新 月30回</li>
+                  <li>優先サポート（電話含む）</li>
+                </ul>
+              </div>
+            </label>
+          </div>
+
+          <div class="apply__nav-buttons">
+            <a href="../diagnosis/" class="btn btn--ghost">診断に戻る</a>
+            <button class="btn btn--primary" id="step1Next" disabled>次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: オプション選択 -->
+      <div class="apply__step" data-step="2">
+        <div class="apply__step-inner">
+          <div class="apply__step-header">
+            <div class="apply__vibe-bubble">
+              <div class="apply__vibe-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="var(--c-vibe)"/><path d="M4 10c0-3.3 2.7-6 6-6" stroke="var(--c-vibe)" stroke-width="1.2" stroke-linecap="round"/><path d="M16 10c0-3.3-2.7-6-6-6" stroke="var(--c-vibe)" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <span>必要なオプションがあれば追加してくださいね！</span>
+            </div>
+            <h2 class="apply__step-title">オプションを選択</h2>
+            <p class="apply__step-desc">後から追加・変更もできます。不要ならそのまま次へ進んでください。</p>
+          </div>
+
+          <div class="apply__options">
+            <!-- ブログオプション -->
+            <div class="apply__option-group">
+              <h3 class="apply__option-group-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                AIブログ生成
+              </h3>
+              <p class="apply__option-group-desc">AIがあなたのスタイルでブログ記事を自動生成。SEO対策も自動で。</p>
+              <div class="apply__option-cards" data-name="blogPlan">
+                <label class="apply__option-card">
+                  <input type="radio" name="blogPlan" value="" checked>
+                  <div class="apply__option-card-inner">
+                    <span class="apply__option-label">なし</span>
+                    <span class="apply__option-price">&yen;0</span>
+                  </div>
+                </label>
+                <label class="apply__option-card">
+                  <input type="radio" name="blogPlan" value="blog_light">
+                  <div class="apply__option-card-inner">
+                    <span class="apply__option-label">Blog Light</span>
+                    <span class="apply__option-price">+&yen;3,300/月</span>
+                    <span class="apply__option-detail">月5本生成</span>
+                  </div>
+                </label>
+                <label class="apply__option-card">
+                  <input type="radio" name="blogPlan" value="blog_pro">
+                  <div class="apply__option-card-inner">
+                    <span class="apply__option-label">Blog Pro</span>
+                    <span class="apply__option-price">+&yen;5,500/月</span>
+                    <span class="apply__option-detail">月15本・SEO最適化</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Chattaオプション -->
+            <div class="apply__option-group">
+              <h3 class="apply__option-group-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                AIチャットボット（Chatta）
+              </h3>
+              <p class="apply__option-group-desc">サイト上でAIがお客様の質問に24時間自動対応。</p>
+              <div class="apply__option-cards" data-name="chattaPlan">
+                <label class="apply__option-card">
+                  <input type="radio" name="chattaPlan" value="" checked>
+                  <div class="apply__option-card-inner">
+                    <span class="apply__option-label">なし</span>
+                    <span class="apply__option-price">&yen;0</span>
+                  </div>
+                </label>
+                <label class="apply__option-card">
+                  <input type="radio" name="chattaPlan" value="chatta_light">
+                  <div class="apply__option-card-inner">
+                    <span class="apply__option-label">Chatta Light</span>
+                    <span class="apply__option-price">+&yen;3,300/月</span>
+                    <span class="apply__option-detail">月300対話</span>
+                  </div>
+                </label>
+                <label class="apply__option-card">
+                  <input type="radio" name="chattaPlan" value="chatta_pro">
+                  <div class="apply__option-card-inner">
+                    <span class="apply__option-label">Chatta Pro</span>
+                    <span class="apply__option-price">+&yen;8,800/月</span>
+                    <span class="apply__option-detail">月2,000対話</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="apply__nav-buttons">
+            <button class="btn btn--ghost" id="step2Back">戻る</button>
+            <button class="btn btn--primary" id="step2Next">次へ進む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: お客様情報 + 利用規約 -->
+      <div class="apply__step" data-step="3">
+        <div class="apply__step-inner">
+          <div class="apply__step-header">
+            <div class="apply__vibe-bubble">
+              <div class="apply__vibe-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="var(--c-vibe)"/><path d="M4 10c0-3.3 2.7-6 6-6" stroke="var(--c-vibe)" stroke-width="1.2" stroke-linecap="round"/><path d="M16 10c0-3.3-2.7-6-6-6" stroke="var(--c-vibe)" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <span>あと少しで完了です！</span>
+            </div>
+            <h2 class="apply__step-title">お客様情報を入力</h2>
+          </div>
+
+          <form class="apply__form" id="applyForm">
+            <div class="apply__field">
+              <label for="applyName">お名前 <span class="apply__required">必須</span></label>
+              <input type="text" id="applyName" name="name" placeholder="山田 太郎" required>
+            </div>
+            <div class="apply__field">
+              <label for="applyCompany">会社名・店舗名</label>
+              <input type="text" id="applyCompany" name="company" placeholder="株式会社○○ / ○○サロン">
+            </div>
+            <div class="apply__field">
+              <label for="applyEmail">メールアドレス <span class="apply__required">必須</span></label>
+              <input type="email" id="applyEmail" name="email" placeholder="info@example.com" required>
+            </div>
+
+            <!-- 料金サマリー -->
+            <div class="apply__summary" id="priceSummary">
+              <h3 class="apply__summary-title">お申し込み内容</h3>
+              <div class="apply__summary-items" id="summaryItems"></div>
+              <div class="apply__summary-total">
+                <div class="apply__summary-row">
+                  <span>制作費（初回のみ）</span>
+                  <span id="summarySetup">&yen;0</span>
+                </div>
+                <div class="apply__summary-row apply__summary-row--highlight">
+                  <span>月額合計</span>
+                  <span id="summaryMonthly">&yen;0/月</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 利用規約 -->
+            <div class="apply__terms">
+              <label class="apply__terms-check">
+                <input type="checkbox" id="termsAgree" required>
+                <span class="apply__terms-checkbox"></span>
+                <span><a href="../terms.html" target="_blank">利用規約</a>に同意する</span>
+              </label>
+              <div class="apply__terms-summary">
+                <ul>
+                  <li>制作物の著作権は株式会社i-Styleに帰属します</li>
+                  <li>解約はいつでも可能です（月末締め）</li>
+                  <li>解約後90日でデータは削除されます</li>
+                  <li>ソースコード引き渡しは別途&yen;55,000</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="apply__nav-buttons">
+              <button type="button" class="btn btn--ghost" id="step3Back">戻る</button>
+              <button type="submit" class="btn btn--cta btn--lg" id="submitBtn" disabled>
+                <span>決済に進む</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- キャンセル通知 -->
+    <div class="apply__canceled-banner" id="canceledBanner" hidden>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>決済がキャンセルされました。もう一度お試しいただくか、内容を変更できます。</span>
+    </div>
+  </main>
+
+  <script src="../js/apply.js"></script>
+</body>
+</html>

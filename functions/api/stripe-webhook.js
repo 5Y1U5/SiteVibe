@@ -143,6 +143,65 @@ async function handleInvoicePaid(invoice, db) {
   console.log(`請求完了: customer=${customerId}, amount=${amount}`);
 }
 
+async function handleCheckoutCompleted(session, db) {
+  // Checkout Session 完了時にクライアント + ユーザーを D1 に作成
+  const customerId = session.customer;
+  const subscriptionId = session.subscription;
+  const email = session.customer_email || session.customer_details?.email;
+  const metadata = session.subscription
+    ? (session.metadata || {})
+    : {};
+
+  // subscription_data.metadata は subscription オブジェクトに付与される
+  // checkout.session.completed 時点では session.metadata にないことがあるため
+  // subscription から取得する場合もある
+  // ここでは customer_email をキーに D1 を確認
+
+  if (!email || !customerId) {
+    console.warn('Checkout completed だが email or customerId がありません');
+    return;
+  }
+
+  // 既存ユーザーチェック（重複申込防止）
+  const existingUser = await db.prepare(
+    'SELECT email FROM users WHERE email = ?'
+  ).bind(email).first();
+
+  if (existingUser) {
+    // 既に存在する場合は stripe_customer_id のみ更新
+    await db.prepare(
+      'UPDATE clients SET stripe_customer_id = ?, active = 1 WHERE id = (SELECT client_id FROM users WHERE email = ?)'
+    ).bind(customerId, email).run();
+    console.log(`既存ユーザーの Stripe 紐付け更新: ${email}`);
+    return;
+  }
+
+  // クライアント ID を生成（メールのローカルパートからスラッグ化）
+  const clientId = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').slice(0, 30);
+  const clientName = metadata.company || metadata.name || email.split('@')[0];
+  const plan = metadata.plan || 'light';
+
+  const PLAN_LIMITS_MAP = { light: 3, standard: 10, premium: 30 };
+  const monthlyLimit = PLAN_LIMITS_MAP[plan] || 3;
+
+  // クライアント作成
+  await db.prepare(
+    `INSERT OR IGNORE INTO clients (id, name, plan, monthly_limit, stripe_customer_id, stripe_subscription_id, active, blog_plan, chatta_plan)
+     VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)`
+  ).bind(
+    clientId, clientName, plan, monthlyLimit, customerId, subscriptionId || null,
+    metadata.blog_plan || null, metadata.chatta_plan || null
+  ).run();
+
+  // ユーザー作成
+  await db.prepare(
+    `INSERT OR IGNORE INTO users (email, client_id, role, display_name)
+     VALUES (?, ?, 'client', ?)`
+  ).bind(email, clientId, metadata.name || null).run();
+
+  console.log(`新規クライアント登録: ${clientId} (${email}), plan=${plan}`);
+}
+
 // ── メインハンドラー ──
 
 export async function onRequestPost(context) {
@@ -185,6 +244,10 @@ export async function onRequestPost(context) {
 
       case 'invoice.paid':
         await handleInvoicePaid(event.data.object, db);
+        break;
+
+      case 'checkout.session.completed':
+        await handleCheckoutCompleted(event.data.object, db);
         break;
 
       default:

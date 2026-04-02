@@ -207,6 +207,10 @@
           <div class="comparison-table__cell comparison-table__cell--before">PCが必須</div>
           <div class="comparison-table__cell comparison-table__cell--after">スマホから操作可能</div>
         </div>
+        <div class="comparison-table__row">
+          <div class="comparison-table__cell comparison-table__cell--before">ブログ更新は外注で1本数万円</div>
+          <div class="comparison-table__cell comparison-table__cell--after">AIがあなたのスタイルで自動生成</div>
+        </div>
       </div>
     </div>
   </section>
@@ -260,6 +264,13 @@
           </div>
           <h3>承認するまで反映されない</h3>
           <p>変更はプレビューで確認、承認するまでサイトに反映されません。ワンクリックで元に戻せます。</p>
+        </div>
+        <div class="feature-card" data-animate>
+          <div class="feature-card__icon feature-card__icon--blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>AIブログ生成</h3>
+          <p>話しかけるだけでSEO対策済みのブログ記事をAIが自動生成。あなたの文体で、集客につながる記事を。</p>
         </div>
       </div>
     </div>
@@ -347,7 +358,32 @@
           <a href="diagnosis/" class="btn btn--outline btn--block">このプランで始める</a>
         </div>
       </div>
-      <p class="plans__note" data-animate>※ 上限を超えた更新は1回&yen;1,100（税込）で追加可能。オプションでAI接客チャットボット（+&yen;3,300〜/月）やブログ生成（+&yen;3,300〜/月）も追加できます。</p>
+      <div class="plans__includes" data-animate>
+        <h3 class="plans__includes-title">全プラン共通</h3>
+        <div class="plans__includes-items">
+          <span>独自ドメイン</span>
+          <span>SSL証明書</span>
+          <span>レスポンシブ対応</span>
+          <span>メール転送1アドレス</span>
+          <span>SEO基本対策</span>
+        </div>
+      </div>
+      <div class="plans__addons" data-animate>
+        <h3 class="plans__addons-title">オプション</h3>
+        <div class="plans__addons-grid">
+          <div class="plans__addon">
+            <span class="plans__addon-name">AIブログ生成</span>
+            <span class="plans__addon-price">+&yen;3,300〜/月</span>
+            <span class="plans__addon-desc">月5〜15本のSEO記事をAIが自動生成</span>
+          </div>
+          <div class="plans__addon">
+            <span class="plans__addon-name">AIチャットボット</span>
+            <span class="plans__addon-price">+&yen;3,300〜/月</span>
+            <span class="plans__addon-desc">24時間自動接客で問い合わせ対応</span>
+          </div>
+        </div>
+      </div>
+      <p class="plans__note" data-animate>※ 上限を超えた更新は1回&yen;1,100（税込）で追加可能。オプションは後からいつでも追加・解除できます。</p>
     </div>
   </section>
 
@@ -382,6 +418,22 @@
         <div class="faq__item" data-animate>
           <button class="faq__question"><span>WordPressから移行できますか？</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <div class="faq__answer"><p>はい。既存サイトのデザインや内容を引き継いだ移行も対応しています。WordPress特有のセキュリティ更新やプラグイン管理から解放されます。</p></div>
+        </div>
+        <div class="faq__item" data-animate>
+          <button class="faq__question"><span>ブログ機能はどのように使えますか？</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="faq__answer"><p>オプションのAIブログ生成を追加すると、バイブに話しかけるだけでSEO対策済みの記事を自動生成できます。あなたの文体を学習し、ビジネスに合った記事を作成します。</p></div>
+        </div>
+        <div class="faq__item" data-animate>
+          <button class="faq__question"><span>独自ドメインは使えますか？</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="faq__answer"><p>はい。全プランで独自ドメインに対応しています。新規取得も、既存ドメインの設定代行も対応。SSL証明書は自動で発行されます。</p></div>
+        </div>
+        <div class="faq__item" data-animate>
+          <button class="faq__question"><span>解約したらサイトはどうなりますか？</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="faq__answer"><p>解約月末日にサイトの公開を停止します。90日間はデータを保持するので、再開も可能です。ソースコードの引き渡し（有償）にも対応しています。</p></div>
+        </div>
+        <div class="faq__item" data-animate>
+          <button class="faq__question"><span>メールアドレスも作れますか？</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="faq__answer"><p>全プランにメール転送1アドレスが標準で付いています（例: info@あなたのドメイン.com）。追加アドレスや本格的なメール環境（Google Workspace）の導入代行も可能です。</p></div>
         </div>
       </div>
     </div>
@@ -429,6 +481,7 @@
           <h4>サポート</h4>
           <a href="diagnosis/">無料診断</a>
           <a href="mailto:support@i-styleinc.com">お問い合わせ</a>
+          <a href="terms.html">利用規約</a>
         </div>
       </div>
     </div>

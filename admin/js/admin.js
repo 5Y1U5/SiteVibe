@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
   previewApprove.addEventListener('click', async () => {
     closePreview();
     Vibe.setState('done');
-    Vibe.say('承認されたっす！');
+    Vibe.say('承認されました！');
     const deployStatus = addMessage('status', 'デプロイ中...');
 
     try {
@@ -375,8 +375,8 @@ document.addEventListener('DOMContentLoaded', () => {
       deployStatus.querySelector('span:last-child').textContent = 'デプロイ完了！';
       deployStatus.classList.add('chat-msg__status--done');
       Vibe.setState('done');
-      addMessage('vibe', 'デプロイ完了っす！サイトを確認してみてください〜！');
-      if (ttsEnabled) Audio.speak('デプロイ完了っす！').catch(() => {});
+      addMessage('vibe', 'デプロイ完了です！サイトを確認してみてくださいね！');
+      if (ttsEnabled) Audio.speak('デプロイ完了です！').catch(() => {});
     } catch (err) {
       deployStatus.querySelector('span:last-child').textContent = 'デプロイ失敗';
       Vibe.setState('error');
@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
       Vibe.setState('idle');
-      addMessage('vibe', '了解っす！変更を取り消しました。別の依頼があればどうぞ〜');
+      addMessage('vibe', '了解です！変更を取り消しました。別の依頼があればどうぞ！');
     }, 500);
   });
 
@@ -532,14 +532,14 @@ document.addEventListener('DOMContentLoaded', () => {
       Vibe.setState('idle');
 
       if (result.error) {
-        addMessage('vibe', 'ちょっとうまくいかなかったっす...もう一度お願いします！');
+        addMessage('vibe', 'うまくいきませんでした...もう一度お願いします！');
       } else {
         addMessage('vibe', result.reply);
         if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
       }
     } catch {
       Vibe.setState('idle');
-      addMessage('vibe', 'ネットワークエラーっす...もう一度試してみてください！');
+      addMessage('vibe', 'ネットワークエラーです...もう一度試してみてください！');
     }
   }
 
@@ -590,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const vibeReply = jobResult.result || 'できましたよ〜！';
       addMessage('vibe', vibeReply, { diff });
 
-      if (ttsEnabled) Audio.speak('できましたよ〜！確認してくださいっす！').catch(() => {});
+      if (ttsEnabled) Audio.speak('できました！確認してくださいね！').catch(() => {});
 
     } catch (err) {
       console.error('処理エラー:', err);
@@ -673,7 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startWaveformAnimation();
       } catch (err) {
         console.error('マイク取得エラー:', err);
-        Vibe.say('マイクが使えないっす...テキストで入力してください！');
+        Vibe.say('マイクが使えません...テキストで入力してください！');
         addMessage('vibe', 'マイクの許可が必要です。ブラウザの設定を確認してください。');
       }
     } else {
@@ -683,7 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
       micHint.textContent = '文字起こし中...';
       stopWaveformAnimation();
       Vibe.setState('thinking');
-      Vibe.say('ふむふむ、聞き取り中っす...');
+      Vibe.say('聞き取り中です...');
 
       try {
         const audioBlob = await Audio.stopRecording();
@@ -691,7 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // 音声が短すぎる
           micHint.textContent = 'タップして話しかける';
           Vibe.setState('idle');
-          Vibe.say('あれ、聞こえなかったっす。もう一度どうぞ！');
+          Vibe.say('聞こえませんでした。もう一度どうぞ！');
           return;
         }
 
@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!text.trim()) {
           Vibe.setState('idle');
-          Vibe.say('うーん、聞き取れなかったっす。もう一度お願いします！');
+          Vibe.say('聞き取れませんでした。もう一度お願いします！');
           return;
         }
 
@@ -799,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (data.success) {
         Vibe.setState('done');
-        addMessage('vibe', `ロールバック完了っす！${hash} の変更を取り消しました。`);
+        addMessage('vibe', `ロールバック完了です！${hash} の変更を取り消しました。`);
         historyOverlay.classList.remove('active');
       } else {
         throw new Error(data.error || 'ロールバック失敗');
@@ -954,7 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
       slug: document.getElementById('blogEditSlug').value,
       content: document.getElementById('blogEditContent').value,
     });
-    Vibe.say('記事を保存しましたっす！');
+    Vibe.say('記事を保存しました！');
   });
 
   // 公開ボタン
@@ -968,7 +968,7 @@ document.addEventListener('DOMContentLoaded', () => {
       content: document.getElementById('blogEditContent').value,
       status: 'published',
     });
-    Vibe.say('記事を公開しましたっす！');
+    Vibe.say('記事を公開しました！');
     switchBlogTab('blog-list');
     blogCurrentStatus = 'published';
     document.querySelectorAll('.blog-panel__filter-btn').forEach(b => {
@@ -989,7 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ブログ生成リクエスト（Vibeチャット経由）
   async function processBlogRequest(text) {
     Vibe.setState('working');
-    Vibe.say('ブログ記事を生成中っす...');
+    Vibe.say('ブログ記事を生成中です...');
     addMessage('status', 'ブログ記事を生成しています...');
 
     try {
@@ -1008,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       Vibe.setState('done');
-      addMessage('vibe', `ブログ記事ができましたっす！「${data.title}」\n確認・編集はブログパネルからどうぞ！`);
+      addMessage('vibe', `ブログ記事ができました！「${data.title}」\n確認・編集はブログパネルからどうぞ！`);
 
       // ブログパネルを開いてエディタに表示
       blogOverlay.classList.add('active');
@@ -1034,6 +1034,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ─── 初期表示 ─── */
   setTimeout(() => {
-    addMessage('vibe', 'こんにちは！バイブっす。話しかけるか、テキストで入力してくださいっす！');
+    addMessage('vibe', 'こんにちは！バイブです。話しかけるか、テキストで入力してくださいね！');
   }, 800);
 });

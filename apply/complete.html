@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お申し込み完了 — SiteVibe</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/apply.css">
+  <style>
+    .complete { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-2xl); text-align: center; }
+    .complete__icon { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(14, 165, 233, 0.1)); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-xl); animation: scaleIn 0.5s ease; }
+    .complete__icon svg { color: #10B981; }
+    .complete__title { font-size: var(--font-size-3xl); font-weight: 800; color: var(--c-text); margin: 0 0 var(--space-md); }
+    .complete__desc { font-size: var(--font-size-base); color: var(--c-text-muted); margin: 0 0 var(--space-2xl); max-width: 480px; line-height: 1.7; }
+    .complete__next { background: #fff; border: 1px solid var(--c-border); border-radius: var(--radius-xl); padding: var(--space-xl); max-width: 480px; width: 100%; margin-bottom: var(--space-xl); }
+    .complete__next-title { font-size: var(--font-size-lg); font-weight: 700; color: var(--c-text); margin: 0 0 var(--space-md); }
+    .complete__next-desc { font-size: var(--font-size-sm); color: var(--c-text-muted); margin: 0 0 var(--space-lg); line-height: 1.6; }
+    .complete__next-steps { list-style: none; padding: 0; margin: 0 0 var(--space-lg); text-align: left; }
+    .complete__next-steps li { display: flex; align-items: flex-start; gap: var(--space-sm); padding: var(--space-sm) 0; font-size: var(--font-size-sm); color: var(--c-text); }
+    .complete__next-steps li span:first-child { width: 24px; height: 24px; border-radius: 50%; background: var(--c-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .complete__vibe { display: inline-flex; align-items: center; gap: var(--space-xs); background: linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(6, 182, 212, 0.08)); border: 1px solid rgba(14, 165, 233, 0.15); border-radius: 999px; padding: 8px 20px; font-size: var(--font-size-sm); color: var(--c-primary); font-weight: 500; margin-bottom: var(--space-xl); }
+    @keyframes scaleIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  </style>
+</head>
+<body>
+  <!-- ナビ -->
+  <nav class="apply-nav">
+    <div class="container apply-nav__inner">
+      <a href="../" class="nav__logo">
+        <span class="nav__logo-icon">S</span>
+        <span class="nav__logo-text">SiteVibe</span>
+      </a>
+      <span class="apply-nav__label">お申し込み完了</span>
+    </div>
+  </nav>
+
+  <main class="complete">
+    <div class="apply__bg">
+      <div class="hero__orb hero__orb--1"></div>
+      <div class="hero__orb hero__orb--2"></div>
+    </div>
+
+    <div class="complete__vibe">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="var(--c-vibe)"/><path d="M4 10c0-3.3 2.7-6 6-6" stroke="var(--c-vibe)" stroke-width="1.2" stroke-linecap="round"/><path d="M16 10c0-3.3-2.7-6-6-6" stroke="var(--c-vibe)" stroke-width="1.2" stroke-linecap="round"/></svg>
+      お申し込みありがとうございます！
+    </div>
+
+    <div class="complete__icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <h1 class="complete__title">決済が完了しました！</h1>
+    <p class="complete__desc">ご登録のメールアドレスに確認メールをお送りしました。<br>次のステップに進んで、制作に必要な情報をご入力ください。</p>
+
+    <div class="complete__next">
+      <h2 class="complete__next-title">次のステップ</h2>
+      <p class="complete__next-desc">ディレクションシートに必要な情報を入力してください。約10分で完了します。</p>
+      <ul class="complete__next-steps">
+        <li><span>1</span><span>ディレクションシートに記入（約10分）</span></li>
+        <li><span>2</span><span>バイブがサイトを制作開始（最短7日）</span></li>
+        <li><span>3</span><span>完成したサイトを確認・公開！</span></li>
+      </ul>
+      <a href="../direction/" class="btn btn--cta btn--lg btn--block">
+        <span>ディレクションシートを記入する</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <a href="../" class="btn btn--ghost">トップページに戻る</a>
+  </main>
+</body>
+</html>
