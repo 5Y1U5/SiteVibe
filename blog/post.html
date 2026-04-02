@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>記事 — SiteVibe ブログ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/blog.css">
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="../" class="nav__logo">
+        <span class="nav__logo-icon">S</span>
+        <span class="nav__logo-text">SiteVibe</span>
+      </a>
+      <div class="nav__links">
+        <a href="index.html" class="blog-back-link">ブログ一覧に戻る</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="blog-main">
+    <article class="container container--sm">
+      <div id="postContent" class="blog-post">
+        <div class="blog-loading">記事を読み込み中...</div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__bottom">
+      <div class="container">
+        <p>&copy; 2026 SiteVibe by i-Style Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const postId = params.get('id');
+
+    async function loadPost() {
+      const el = document.getElementById('postContent');
+      if (!postId) {
+        el.innerHTML = '<p class="blog-empty">記事IDが指定されていません。</p>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/blog-posts?id=${postId}`);
+        if (!res.ok) {
+          el.innerHTML = '<p class="blog-empty">記事が見つかりません。</p>';
+          return;
+        }
+
+        const post = await res.json();
+        document.title = `${post.title} — SiteVibe ブログ`;
+
+        const date = formatDate(post.published_at || post.created_at);
+        el.innerHTML = `
+          <time class="blog-post__date">${date}</time>
+          <h1 class="blog-post__title">${escapeHtml(post.title)}</h1>
+          <div class="blog-post__body">${renderMarkdown(post.content)}</div>
+        `;
+      } catch {
+        el.innerHTML = '<p class="blog-empty">記事の読み込みに失敗しました。</p>';
+      }
+    }
+
+    function formatDate(ts) {
+      const d = new Date(ts * 1000);
+      return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderMarkdown(md) {
+      // 簡易 Markdown → HTML 変換
+      return md
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(?!<[hul])/gm, function(match) { return match ? `<p>${match}` : match; })
+        .replace(/<p><\/p>/g, '');
+    }
+
+    loadPost();
+  </script>
+</body>
+</html>

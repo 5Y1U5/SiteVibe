@@ -6,6 +6,7 @@
 
 // Stripe Webhook は署名検証が別途行われるためスキップ
 const PUBLIC_PATHS = ['/api/stripe-webhook'];
+const PUBLIC_GET_PATHS = ['/api/blog-posts'];
 
 export async function onRequest(context) {
   const { request, env, next, data } = context;
@@ -13,6 +14,11 @@ export async function onRequest(context) {
 
   // 公開パスはスキップ
   if (PUBLIC_PATHS.some(p => url.pathname.startsWith(p))) {
+    return next();
+  }
+
+  // GET のみ公開のパス（ブログ公開記事等）
+  if (request.method === 'GET' && PUBLIC_GET_PATHS.some(p => url.pathname.startsWith(p))) {
     return next();
   }
 

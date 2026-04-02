@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ブログ — SiteVibe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/blog.css">
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="../" class="nav__logo">
+        <span class="nav__logo-icon">S</span>
+        <span class="nav__logo-text">SiteVibe</span>
+      </a>
+      <div class="nav__links">
+        <a href="../#how-it-works">仕組み</a>
+        <a href="../#plans">料金</a>
+        <a href="../diagnosis/" class="btn btn--sm btn--cta">無料診断する</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="blog-main">
+    <div class="container">
+      <div class="blog-header">
+        <h1>ブログ</h1>
+        <p>Web制作・サイト運営に役立つ情報をお届けします</p>
+      </div>
+      <div class="blog-grid" id="blogGrid">
+        <div class="blog-loading">記事を読み込み中...</div>
+      </div>
+      <div class="blog-pagination" id="blogPagination"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__bottom">
+      <div class="container">
+        <p>&copy; 2026 SiteVibe by i-Style Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const clientId = params.get('client_id') || 'default';
+    const page = parseInt(params.get('page') || '1');
+    const limit = 12;
+    const offset = (page - 1) * limit;
+
+    async function loadPosts() {
+      const grid = document.getElementById('blogGrid');
+      try {
+        const res = await fetch(`/api/blog-posts?client_id=${clientId}&status=published&limit=${limit}&offset=${offset}`);
+        const data = await res.json();
+
+        if (!data.posts || data.posts.length === 0) {
+          grid.innerHTML = '<p class="blog-empty">まだ記事がありません。</p>';
+          return;
+        }
+
+        grid.innerHTML = data.posts.map(post => `
+          <a href="post.html?id=${post.id}" class="blog-card">
+            <time class="blog-card__date">${formatDate(post.published_at || post.created_at)}</time>
+            <h2 class="blog-card__title">${escapeHtml(post.title)}</h2>
+          </a>
+        `).join('');
+
+        // ページネーション
+        const totalPages = Math.ceil(data.total / limit);
+        if (totalPages > 1) {
+          const pagination = document.getElementById('blogPagination');
+          let html = '';
+          for (let i = 1; i <= totalPages; i++) {
+            const active = i === page ? ' blog-pagination__link--active' : '';
+            html += `<a href="?client_id=${clientId}&page=${i}" class="blog-pagination__link${active}">${i}</a>`;
+          }
+          pagination.innerHTML = html;
+        }
+      } catch {
+        grid.innerHTML = '<p class="blog-empty">記事の読み込みに失敗しました。</p>';
+      }
+    }
+
+    function formatDate(ts) {
+      const d = new Date(ts * 1000);
+      return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
