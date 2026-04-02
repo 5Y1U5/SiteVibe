@@ -74,7 +74,7 @@
                 <th>名前</th>
                 <th>プラン</th>
                 <th>月間上限</th>
-                <th>Stripe ID</th>
+                <th>オプション</th>
                 <th>ステータス</th>
                 <th>操作</th>
               </tr>
@@ -156,6 +156,24 @@
         <div class="setup-form__group">
           <label class="setup-form__label" for="clientRepo">リポジトリパス</label>
           <input class="setup-form__input" type="text" id="clientRepo" placeholder="例: /path/to/repo">
+        </div>
+        <div class="setup-form__row">
+          <div class="setup-form__group">
+            <label class="setup-form__label" for="clientBlogPlan">ブログオプション</label>
+            <select class="setup-form__input" id="clientBlogPlan">
+              <option value="">なし</option>
+              <option value="blog_light">Blog Light（月5本 +¥3,300）</option>
+              <option value="blog_pro">Blog Pro（月15本 +¥5,500）</option>
+            </select>
+          </div>
+          <div class="setup-form__group">
+            <label class="setup-form__label" for="clientChattaPlan">Chattaオプション</label>
+            <select class="setup-form__input" id="clientChattaPlan">
+              <option value="">なし</option>
+              <option value="chatta_light">Chatta Light（月300対話 +¥3,300）</option>
+              <option value="chatta_pro">Chatta Pro（月2,000対話 +¥8,800）</option>
+            </select>
+          </div>
         </div>
         <div class="setup-form__group">
           <label class="setup-form__label" for="clientStripe">Stripe Customer ID</label>
