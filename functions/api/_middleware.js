@@ -25,8 +25,14 @@ export async function onRequest(context) {
     return next();
   }
 
-  // CF Access JWT を取得
-  const jwt = request.headers.get('Cf-Access-Jwt-Assertion');
+  // CF Access JWT を取得（ヘッダー or Cookie）
+  let jwt = request.headers.get('Cf-Access-Jwt-Assertion');
+  if (!jwt) {
+    // ブラウザからのリクエストは Cookie で送られる
+    const cookies = request.headers.get('Cookie') || '';
+    const match = cookies.match(/CF_Authorization=([^;]+)/);
+    if (match) jwt = match[1];
+  }
   if (!jwt) {
     return jsonResponse({ error: '認証が必要です' }, 401);
   }
