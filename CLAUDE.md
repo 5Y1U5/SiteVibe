@@ -105,11 +105,21 @@ npx serve .
 - ジョブランナー（server/）が Mac mini で稼働、Tailscale Funnel で外部公開
 - 変更はプレビューパネルで確認 → 承認/却下フロー
 
+## 課金基盤（Phase B）
+- Stripe Webhook: `/api/stripe-webhook` — 署名検証 + サブスクリプション/請求イベント処理
+- 利用制限: `/api/agent` で月次 AI更新回数チェック（投入時429） + 承認時 usage INSERT
+- 利用状況API: `/api/usage` — 当月の使用回数/上限を返す
+- 管理画面: ヘッダーに利用状況バッジ表示（warning/exceeded 対応）
+- Stripe 商品: 3ベースプラン + 4オプション + 1超過更新（テストモードで作成済み）
+- セットアップ手順: docs/STRIPE-SETUP-GUIDE.md
+- 注意: `wrangler secret put` ではなく `wrangler pages secret put --project-name sitevibe` を使う
+
 ## 環境変数
 - `OPENAI_API_KEY` — Cloudflare Pages シークレット（Whisper + TTS 用）
 - `JOB_RUNNER_URL` — ジョブランナーの公開URL（Tailscale Funnel）
 - `JOB_RUNNER_TOKEN` — ジョブランナー認証トークン
 - `RESEND_API_KEY` — メール送信用（ディレクションシート）
+- `STRIPE_WEBHOOK_SECRET` — Stripe Webhook 署名検証用
 
 ## 禁止事項
 - main ブランチへの直接コミット（feature ブランチで PR 経由）
