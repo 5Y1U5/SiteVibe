@@ -2222,7 +2222,7 @@ img { max-width: 100%; display: block; }
   .hero__cta { justify-content: center; }
   .hero__cta-note { width: 100%; text-align: center; }
   .hero__phone-frame { width: 240px; }
-  .hero__visual { order: -1; }
+  .hero__subtitle { font-size: var(--font-size-base); }
 }
 
 /* ─── インサイトカード ─── */
