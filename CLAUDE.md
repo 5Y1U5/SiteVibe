@@ -35,10 +35,15 @@ SiteVibe/
 │   ├── main.js         # LP用スクリプト（ナビ・FAQ・スクロールアニメーション）
 │   ├── diagnosis.js    # 診断フォームスクリプト
 │   └── direction.js    # ディレクションシートスクリプト
+├── blog/               # 公開ブログページ
+│   ├── index.html      # 記事一覧
+│   └── post.html       # 記事詳細
 ├── functions/api/      # Cloudflare Pages Functions
+│   ├── blog-generate.js # AI記事生成（GPT-4o-mini、利用制限付き）
+│   ├── blog-posts.js   # ブログCRUD API
 │   ├── transcribe.js   # OpenAI Whisper API プロキシ（STT）
 │   ├── speech.js       # OpenAI TTS API プロキシ
-│   ├── agent.js        # ジョブランナー転送プロキシ
+│   ├── agent.js        # ジョブランナー転送プロキシ + 利用制限
 │   └── direction.js    # ディレクションシート送信
 ├── server/             # ジョブランナー（Mac mini で稼働）
 │   ├── index.ts        # Hono + Bun API サーバー
