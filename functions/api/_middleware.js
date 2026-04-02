@@ -88,7 +88,7 @@ async function verifyAccessJWT(token, env) {
   if (header.alg !== 'RS256') return null;
 
   // JWKS から公開鍵を取得
-  const teamDomain = env.CF_ACCESS_TEAM_DOMAIN || 'i-style-vc';
+  const teamDomain = env.CF_ACCESS_TEAM_DOMAIN || 'istyle';
   const publicKey = await getAccessPublicKey(teamDomain, header.kid);
   if (!publicKey) return null;
 
