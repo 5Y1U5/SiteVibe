@@ -73,4 +73,4 @@ INSERT OR IGNORE INTO clients (id, name, plan, monthly_limit, repo_path)
 VALUES ('default', 'SiteVibe (デフォルト)', 'premium', 999, NULL);
 
 INSERT OR IGNORE INTO users (email, client_id, role, display_name)
-VALUES ('t@i-style.vc', 'default', 'admin', 'i-Style 管理者');
+VALUES ('takahashi.istyle@gmail.com', 'default', 'admin', 'i-Style 管理者');
