@@ -642,6 +642,70 @@ function generateIndexHtml(posts: Array<{ title: string; slug: string; meta_desc
 }
 
 
+// ─── サイト停止（メンテナンスページ差し替え） ───
+app.use("/site-suspend", async (c, next) => {
+  const auth = c.req.header("Authorization");
+  if (auth !== `Bearer ${API_TOKEN}`) {
+    return c.json({ error: "認証が必要です" }, 401);
+  }
+  await next();
+});
+
+app.post("/site-suspend", async (c) => {
+  const body = await c.req.json<{ repoPath: string; clientName?: string }>();
+  const { repoPath, clientName } = body;
+
+  if (!repoPath) {
+    return c.json({ error: "repoPath は必須です" }, 400);
+  }
+
+  try {
+    const { writeFileSync, existsSync } = await import("fs");
+    const name = clientName || "サイト";
+
+    const maintenanceHtml = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escHtml(name)} — メンテナンス中</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #F8FAFC; color: #0F172A; }
+    .maintenance { text-align: center; padding: 2rem; max-width: 480px; }
+    .maintenance h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+    .maintenance p { color: #64748B; line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div class="maintenance">
+    <h1>メンテナンス中です</h1>
+    <p>現在サイトは一時的に非公開となっております。<br>ご不便をおかけして申し訳ございません。</p>
+  </div>
+</body>
+</html>`;
+
+    writeFileSync(`${repoPath}/index.html`, maintenanceHtml, "utf-8");
+
+    const proc = Bun.spawn(["bash", "-c", `cd "${repoPath}" && git add index.html && git commit -m "サイト停止: メンテナンスページに差し替え" && git push`], {
+      stdout: "pipe", stderr: "pipe",
+    });
+    const exitCode = await proc.exited;
+    const stderr = await new Response(proc.stderr).text();
+
+    if (exitCode !== 0) {
+      console.error("site-suspend git push 失敗:", stderr);
+      return c.json({ error: "git push に失敗しました", detail: stderr }, 500);
+    }
+
+    console.log(`サイト停止完了: ${repoPath}`);
+    return c.json({ success: true });
+  } catch (err: any) {
+    console.error("サイト停止エラー:", err.message);
+    return c.json({ error: err.message }, 500);
+  }
+});
+
 // ─── サーバー起動 ───
 const PORT = parseInt(process.env.PORT || "3100");
 
