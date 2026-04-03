@@ -510,11 +510,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (result.action === 'code') {
         Vibe.setState('idle');
         await processCodeRequest(text);
-      } else if (result.action === 'blog_generate' && result.topic) {
-        Vibe.setState('idle');
+      } else if (result.action === 'blog_generate') {
+        const topic = result.topic || text;
         addMessage('vibe', result.reply);
-        if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
-        await processBlogGenerate(result.topic);
+        await processBlogGenerate(topic);
       } else {
         // chat, blog_prompt, その他すべて
         Vibe.setState('idle');
