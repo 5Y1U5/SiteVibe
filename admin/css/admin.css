@@ -121,13 +121,15 @@ html, .admin-body {
   max-width: 120px;
 }
 
+.admin-header__status {
+  order: 10;
+  width: 100%;
+  justify-content: center;
+  padding-top: 2px;
+  font-size: var(--font-size-xs);
+}
+
 @media (max-width: 600px) {
-  .admin-header__status {
-    order: 10;
-    width: 100%;
-    justify-content: center;
-    padding-top: 2px;
-  }
   .admin-header__mini-vibe-speech {
     max-width: 80px;
     font-size: 10px;
@@ -1677,6 +1679,23 @@ html, .admin-body {
 .blog-gen-inline__status {
   font-size: 0.85rem;
   min-height: 20px;
+}
+
+.blog-gen-inline__status.loading::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--c-primary);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: blogGenSpin 0.8s linear infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@keyframes blogGenSpin {
+  to { transform: rotate(360deg); }
 }
 
 /* フッター */

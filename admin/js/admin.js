@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* TTS トグル */
   const ttsToggle = document.getElementById('ttsToggle');
-  let ttsEnabled = true;
+  let ttsEnabled = false;
 
   ttsToggle.addEventListener('click', () => {
     ttsEnabled = !ttsEnabled;
@@ -512,25 +512,13 @@ document.addEventListener('DOMContentLoaded', () => {
         await processCodeRequest(text);
       } else if (result.action === 'blog_generate') {
         const topic = result.topic || text;
-        Vibe.setState('idle');
         addMessage('vibe', result.reply);
-        // ブログパネルを開いてインラインフォームにトピックセット+自動生成
-        blogOverlay.classList.add('active');
-        switchBlogTab('blog-list');
-        if (blogGenForm) blogGenForm.style.display = 'flex';
-        if (blogGenToggle) blogGenToggle.textContent = '- 閉じる';
-        const topicInput = document.getElementById('blogGenTopic');
-        if (topicInput) topicInput.value = topic;
-        blogGenSubmit?.click();
+        // 直接ブログ生成を実行
+        await processBlogGenerate(topic);
       } else if (result.action === 'blog_prompt') {
         Vibe.setState('idle');
         addMessage('vibe', result.reply);
         if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
-        // ブログパネルを開いてインラインフォームを展開
-        blogOverlay.classList.add('active');
-        switchBlogTab('blog-list');
-        if (blogGenForm) blogGenForm.style.display = 'flex';
-        if (blogGenToggle) blogGenToggle.textContent = '- 閉じる';
       } else {
         // chat, その他すべて
         Vibe.setState('idle');
@@ -889,7 +877,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 記事一覧取得
   async function loadBlogPosts() {
-    if (!currentUser) return;
+    const clientId = currentUser?.clientId;
+    if (!clientId) {
+      // currentUser未取得なら/api/meから再取得
+      try {
+        const meRes = await fetch('/api/me');
+        if (meRes.ok) {
+          currentUser = await meRes.json();
+        }
+      } catch { /* ignore */ }
+      if (!currentUser?.clientId) return;
+    }
     try {
       const res = await fetch(`/api/blog-posts?client_id=${currentUser.clientId}&status=${blogCurrentStatus}`);
       const data = await res.json();
@@ -1278,6 +1276,7 @@ document.addEventListener('DOMContentLoaded', () => {
       blogGenSubmit.textContent = '生成中...';
       blogGenStatus.textContent = 'AIが記事を生成しています（20〜30秒ほどお待ちください）...';
       blogGenStatus.style.color = 'var(--c-primary)';
+      blogGenStatus.classList.add('loading');
 
       try {
         const res = await fetch('/api/blog-generate', {
@@ -1314,6 +1313,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } finally {
         blogGenSubmit.disabled = false;
         blogGenSubmit.textContent = 'AIで記事を生成する';
+        blogGenStatus.classList.remove('loading');
       }
     });
   }
