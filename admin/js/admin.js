@@ -1197,6 +1197,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ブログ生成リクエスト（Vibeチャット経由）
   async function processBlogRequest(text) {
+    // トピックを抽出（「ブログ書いて」等の定型句を除去して実質的な内容があるか判定）
+    const topic = text
+      .replace(/ブログ|記事|書いて|書きたい|かきたい|作って|作りたい|生成|して|を|の|に|で|も|が|は|お願い|ください/g, '')
+      .trim();
+
+    // トピックがなければブログパネルを開くだけ
+    if (topic.length < 3) {
+      Vibe.say('ブログパネルを開きました！記事の作成・編集ができます。AIに書いてほしい場合は、テーマを教えてくださいね！');
+      blogOverlay.classList.add('active');
+      switchBlogTab('blog-list');
+      loadBlogPosts();
+      loadBlogSeries();
+      return;
+    }
+
+    // トピックありの場合はAI生成
     Vibe.setState('working');
     Vibe.say('ブログ記事を生成中です...');
     addMessage('status', 'ブログ記事を生成しています...');
@@ -1205,18 +1221,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/blog-generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript: text, topic: text }),
+        body: JSON.stringify({ topic }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        Vibe.setState('error');
+        Vibe.setState('idle');
         addMessage('vibe', `すみません...${data.error || 'ブログ生成でエラーが出ちゃいました'}`);
         return;
       }
 
-      Vibe.setState('done');
+      Vibe.setState('idle');
       addMessage('vibe', `ブログ記事ができました！「${data.title}」\n確認・編集はブログパネルからどうぞ！`);
 
       // ブログパネルを開いてエディタに表示
@@ -1224,7 +1240,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await openBlogEditor(data.id);
 
     } catch (err) {
-      Vibe.setState('error');
+      Vibe.setState('idle');
       addMessage('vibe', 'ブログ生成中にエラーが出ちゃいました...');
     }
   }
