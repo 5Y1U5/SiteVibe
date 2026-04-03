@@ -514,20 +514,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const topic = result.topic || text;
         Vibe.setState('idle');
         addMessage('vibe', result.reply);
-        // ブログパネルのAI生成タブを開いてトピックをセット
+        // ブログパネルを開いてインラインフォームにトピックセット+自動生成
         blogOverlay.classList.add('active');
-        switchBlogTab('blog-generate');
+        switchBlogTab('blog-list');
+        if (blogGenForm) blogGenForm.style.display = 'flex';
+        if (blogGenToggle) blogGenToggle.textContent = '- 閉じる';
         const topicInput = document.getElementById('blogGenTopic');
         if (topicInput) topicInput.value = topic;
-        // 自動で生成開始
         blogGenSubmit?.click();
       } else if (result.action === 'blog_prompt') {
         Vibe.setState('idle');
         addMessage('vibe', result.reply);
         if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
-        // ブログパネルのAI生成タブを開く
+        // ブログパネルを開いてインラインフォームを展開
         blogOverlay.classList.add('active');
-        switchBlogTab('blog-generate');
+        switchBlogTab('blog-list');
+        if (blogGenForm) blogGenForm.style.display = 'flex';
+        if (blogGenToggle) blogGenToggle.textContent = '- 閉じる';
       } else {
         // chat, その他すべて
         Vibe.setState('idle');
