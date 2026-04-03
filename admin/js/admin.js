@@ -510,12 +510,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addMessage('user', text, { isVoice });
 
+    // ブログトピック待ちステートの場合、Intent判定をスキップして直接生成
+    if (awaitingBlogTopic) {
+      awaitingBlogTopic = false;
+      await processBlogGenerate(text);
+      isProcessing = false;
+      return;
+    }
+
     // AI判定でルーティング
     const intent = await classifyIntent(text);
     if (intent === 'code') {
       await processCodeRequest(text);
     } else if (intent === 'blog_open') {
-      await openBlogPanel();
+      awaitingBlogTopic = true;
+      addMessage('vibe', 'ブログのテーマは決まっていますか？アイデアやトピックを教えてくださいね！バイブがサポートしますよ！');
     } else if (intent === 'blog_generate') {
       await processBlogGenerate(text);
     } else {
@@ -832,6 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let blogCurrentStatus = 'draft';
   let blogCurrentId = null;
   let blogSeriesCache = [];
+  let awaitingBlogTopic = false;
 
   // シリーズ読み込み
   async function loadBlogSeries() {
@@ -1198,15 +1208,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ブログ生成リクエスト（Vibeチャット経由）
-  // ブログパネルを開く（トピックなし）
-  async function openBlogPanel() {
-    Vibe.say('ブログパネルを開きました！記事の作成・編集ができます。AIに書いてほしい場合は、テーマを教えてくださいね！');
-    blogOverlay.classList.add('active');
-    switchBlogTab('blog-list');
-    loadBlogPosts();
-    loadBlogSeries();
-  }
-
   // AI記事生成（トピックあり）
   async function processBlogGenerate(text) {
     Vibe.setState('working');
