@@ -30,13 +30,15 @@ export async function onRequestPost(context) {
         messages: [
           {
             role: 'system',
-            content: `あなたはWebサイト管理AIです。ユーザーのメッセージを以下の3つのどれかに判定してください。
+            content: `あなたはWebサイト管理AIです。ユーザーのメッセージを以下の4つのどれかに判定してください。
 
-「code」— サイトのHTML/CSS/JSの変更・追加・修正・削除を依頼している（テキスト変更、デザイン変更、セクション追加、画像差し替え、レイアウト調整なども含む）
-「blog」— ブログ記事の作成・生成・執筆を依頼している（「ブログ書いて」「記事作りたい」「今日の気づきを記事にして」「ブログを書きたい」など）
+「code」— サイトのHTML/CSS/JSの変更・追加・修正・削除を依頼している
+「blog_generate」— 具体的なトピックを指定してブログ記事をAIに書いてほしい（例:「SEOについてブログ書いて」「今日の気づきを記事にして」「美容院の集客について記事作って」）
+「blog_open」— ブログの管理画面を開きたい、記事一覧を見たい、自分で記事を書きたい（例:「ブログかきたい」「ブログ書きたい」「ブログ管理」「記事を確認したい」「ブログ開いて」）
 「chat」— 雑談、質問、感想、挨拶など、上記に該当しないメッセージ
 
-「code」「blog」「chat」のどれか1単語だけを返してください。`
+判定基準: 具体的なテーマ・話題が含まれていれば「blog_generate」、含まれていなければ「blog_open」。
+上記4つのどれか1つだけを返してください。`
           },
           { role: 'user', content: message }
         ],
@@ -49,7 +51,10 @@ export async function onRequestPost(context) {
 
     const data = await res.json();
     const raw = (data.choices?.[0]?.message?.content || 'chat').trim().toLowerCase();
-    const intent = raw.includes('code') ? 'code' : raw.includes('blog') ? 'blog' : 'chat';
+    const intent = raw.includes('code') ? 'code'
+      : raw.includes('blog_generate') ? 'blog_generate'
+      : raw.includes('blog_open') || raw.includes('blog') ? 'blog_open'
+      : 'chat';
 
     return jsonResponse({ intent });
 

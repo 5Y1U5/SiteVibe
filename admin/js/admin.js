@@ -443,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ message: text }),
       });
       const data = await res.json();
-      return data.intent === 'code' ? 'code' : data.intent === 'blog' ? 'blog' : 'chat';
+      return ['code', 'blog_generate', 'blog_open'].includes(data.intent) ? data.intent : 'chat';
     } catch {
       // API失敗時はchatにフォールバック
       return 'chat';
@@ -514,8 +514,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const intent = await classifyIntent(text);
     if (intent === 'code') {
       await processCodeRequest(text);
-    } else if (intent === 'blog') {
-      await processBlogRequest(text);
+    } else if (intent === 'blog_open') {
+      await openBlogPanel();
+    } else if (intent === 'blog_generate') {
+      await processBlogGenerate(text);
     } else {
       await processChatRequest(text);
     }
@@ -1196,23 +1198,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ブログ生成リクエスト（Vibeチャット経由）
-  async function processBlogRequest(text) {
-    // トピックを抽出（「ブログ書いて」等の定型句を除去して実質的な内容があるか判定）
-    const topic = text
-      .replace(/ブログ|記事|書いて|書きたい|かきたい|かいて|作って|作りたい|つくって|生成|投稿|して|したい|を|の|に|で|も|が|は|お願い|ください|よろしく|頼む/g, '')
-      .trim();
+  // ブログパネルを開く（トピックなし）
+  async function openBlogPanel() {
+    Vibe.say('ブログパネルを開きました！記事の作成・編集ができます。AIに書いてほしい場合は、テーマを教えてくださいね！');
+    blogOverlay.classList.add('active');
+    switchBlogTab('blog-list');
+    loadBlogPosts();
+    loadBlogSeries();
+  }
 
-    // トピックがなければブログパネルを開くだけ
-    if (topic.length < 3) {
-      Vibe.say('ブログパネルを開きました！記事の作成・編集ができます。AIに書いてほしい場合は、テーマを教えてくださいね！');
-      blogOverlay.classList.add('active');
-      switchBlogTab('blog-list');
-      loadBlogPosts();
-      loadBlogSeries();
-      return;
-    }
-
-    // トピックありの場合はAI生成
+  // AI記事生成（トピックあり）
+  async function processBlogGenerate(text) {
     Vibe.setState('working');
     Vibe.say('ブログ記事を生成中です...');
     addMessage('status', 'ブログ記事を生成しています...');
@@ -1221,7 +1217,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/blog-generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic }),
+        body: JSON.stringify({ topic: text }),
       });
 
       const data = await res.json();
@@ -1235,7 +1231,6 @@ document.addEventListener('DOMContentLoaded', () => {
       Vibe.setState('idle');
       addMessage('vibe', `ブログ記事ができました！「${data.title}」\n確認・編集はブログパネルからどうぞ！`);
 
-      // ブログパネルを開いてエディタに表示
       blogOverlay.classList.add('active');
       await openBlogEditor(data.id);
 
