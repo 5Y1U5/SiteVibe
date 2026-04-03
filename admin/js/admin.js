@@ -1300,12 +1300,12 @@ document.addEventListener('DOMContentLoaded', () => {
         topicInput.value = '';
         keywordsInput.value = '';
 
-        // 下書き一覧に切り替え
-        setTimeout(() => {
-          switchBlogTab('blog-list');
-          blogCurrentStatus = 'draft';
-          loadBlogPosts();
-        }, 1500);
+        // 下書き一覧を即座に更新
+        blogCurrentStatus = 'draft';
+        document.querySelectorAll('.blog-panel__filter-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.status === 'draft');
+        });
+        loadBlogPosts();
 
       } catch (err) {
         console.error('blog-generate 例外:', err);
