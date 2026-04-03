@@ -1,6 +1,6 @@
 // ============================================
-// SiteVibe — バイブ チャット API（高速応答）
-// コード変更不要の会話用。OpenAI GPT で即座に返答。
+// SiteVibe — バイブ 統合チャット API
+// 会話・ブログ・コード変更の判定をAIが一元的に行う
 // ============================================
 
 export async function onRequestPost(context) {
@@ -12,10 +12,17 @@ export async function onRequestPost(context) {
   }
 
   try {
-    const { message } = await request.json();
+    const body = await request.json();
+    const { message, history } = body;
     if (!message?.trim()) {
       return jsonResponse({ error: 'message は必須です' }, 400);
     }
+
+    // 会話履歴を構築（直近5往復まで）
+    const chatHistory = (history || []).slice(-10).map(h => ({
+      role: h.role,
+      content: h.content,
+    }));
 
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -25,7 +32,9 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        max_tokens: 300,
+        max_tokens: 400,
+        temperature: 0.7,
+        response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
@@ -33,12 +42,29 @@ export async function onRequestPost(context) {
 性格: 明るくて頼れるパートナー。親しみやすいけど、仕事はしっかり。
 一人称: バイブ
 口調: です/ます ベースの親しみやすい丁寧語。「！」でエネルギー感、「〜ね」「〜よ」で親しみを出す。
-例: 「了解です！変更しますね！」「お任せください！」「確認してみてくださいね！」
-ルール:
-- サイトの変更依頼には「了解です！変更しますね！」と返す（実際の変更はしない）
-- 雑談には明るく短く返す
-- 返答は2-3文以内で簡潔に`
+
+あなたは以下の3つの役割を持っています:
+1. 雑談・質問への対応（通常の会話）
+2. ブログ記事の生成依頼への対応
+3. サイトのコード変更依頼への対応
+
+必ず以下のJSON形式で返してください:
+{"reply": "ユーザーへの返答テキスト", "action": "アクション名", "topic": "ブログトピック（該当時のみ）"}
+
+actionの判定基準:
+- "chat" — 雑談、質問、感想、挨拶、お礼など
+- "blog_generate" — ユーザーが具体的なテーマを指定してブログ記事を書いてほしい場合。topicにテーマを入れる
+- "blog_prompt" — ユーザーがブログを書きたいと言っているが、まだ具体的なテーマが決まっていない場合。テーマを聞く返答をする
+- "code" — サイトのHTML/CSS/JSの変更・追加・修正を依頼している場合
+
+重要:
+- 会話の流れを読んで判定する。前のメッセージで「ブログ書きたい」→今回「ChatGPTの基礎で」なら blog_generate
+- 「おまかせで」「お任せ」「何でもいい」は、前にテーマが出ていればそのテーマで blog_generate
+- blog_generate の場合、replyは「了解です！記事を生成しますね！」程度で短く
+- blog_prompt の場合、replyでテーマを聞く
+- replyは2-3文以内で簡潔に`
           },
+          ...chatHistory,
           { role: 'user', content: message }
         ],
       }),
@@ -47,13 +73,22 @@ export async function onRequestPost(context) {
     if (!res.ok) {
       const err = await res.text();
       console.error('Chat API エラー:', err);
-      return jsonResponse({ error: 'チャットエラー' }, 502);
+      return jsonResponse({ reply: 'すみません、うまく返せませんでした...', action: 'chat' });
     }
 
     const data = await res.json();
-    const reply = data.choices?.[0]?.message?.content || 'すみません、うまく返せませんでした...';
+    const raw = data.choices?.[0]?.message?.content || '{}';
 
-    return jsonResponse({ reply });
+    try {
+      const parsed = JSON.parse(raw);
+      return jsonResponse({
+        reply: parsed.reply || 'すみません、うまく返せませんでした...',
+        action: parsed.action || 'chat',
+        topic: parsed.topic || null,
+      });
+    } catch {
+      return jsonResponse({ reply: raw, action: 'chat' });
+    }
 
   } catch (err) {
     console.error('chat エラー:', err);
