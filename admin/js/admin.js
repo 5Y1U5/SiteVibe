@@ -511,10 +511,10 @@ document.addEventListener('DOMContentLoaded', () => {
         Vibe.setState('idle');
         await processCodeRequest(text);
       } else if (result.action === 'blog_generate') {
-        const topic = result.topic || text;
         addMessage('vibe', result.reply);
-        // 直接ブログ生成を実行
-        await processBlogGenerate(topic);
+        // 音声入力はtranscriptとして渡す（AIが解釈して記事を生成）
+        // テキスト入力はtopicとして渡す（そのままテーマになる）
+        await processBlogGenerate(result.topic || text, isVoice ? text : null);
       } else if (result.action === 'blog_prompt') {
         Vibe.setState('idle');
         addMessage('vibe', result.reply);
@@ -836,20 +836,30 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // パネル開閉
+  function openBlogPanel() {
+    blogOverlay.classList.add('active');
+    switchBlogTab('blog-list');
+    loadBlogPosts();
+    loadBlogSeries();
+    location.hash = 'blog';
+  }
+  function closeBlogPanel() {
+    blogOverlay.classList.remove('active');
+    if (location.hash === '#blog') history.replaceState(null, '', location.pathname);
+  }
   if (blogBtn) {
-    blogBtn.addEventListener('click', () => {
-      blogOverlay.classList.add('active');
-      switchBlogTab('blog-list');
-      loadBlogPosts();
-      loadBlogSeries();
-    });
+    blogBtn.addEventListener('click', openBlogPanel);
   }
   if (blogClose) {
-    blogClose.addEventListener('click', () => blogOverlay.classList.remove('active'));
+    blogClose.addEventListener('click', closeBlogPanel);
   }
   blogOverlay.addEventListener('click', (e) => {
-    if (e.target === blogOverlay) blogOverlay.classList.remove('active');
+    if (e.target === blogOverlay) closeBlogPanel();
   });
+  // リロード時にhashがあればブログパネルを開く
+  if (location.hash === '#blog') {
+    openBlogPanel();
+  }
 
   // タブ切り替え
   document.querySelectorAll('.blog-panel__tab').forEach(tab => {
@@ -1197,15 +1207,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ブログ生成リクエスト（Vibeチャット経由）
   // AI記事生成（トピックあり）
-  async function processBlogGenerate(text) {
+  async function processBlogGenerate(topic, transcript) {
     Vibe.setState('working');
     addMessage('status', 'ブログ記事を生成しています...（20〜30秒ほどお待ちください）');
+
+    // transcript（音声メモ）がある場合はAIが内容を解釈して記事を生成
+    // topicのみの場合はそのままテーマとして使用
+    const body = transcript
+      ? { transcript, topic: topic || undefined }
+      : { topic };
 
     try {
       const res = await fetch('/api/blog-generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: text }),
+        body: JSON.stringify(body),
       });
 
       let data;

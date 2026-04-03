@@ -18,7 +18,36 @@ export async function onRequest(context) {
   }
 
   // GET のみ公開のパス（ブログ公開記事等）
+  // 認証があれば注入するが、なくても通す（公開記事はOK、下書きはハンドラ側で判定）
   if (request.method === 'GET' && PUBLIC_GET_PATHS.some(p => url.pathname.startsWith(p))) {
+    try {
+      let pubJwt = request.headers.get('Cf-Access-Jwt-Assertion');
+      if (!pubJwt) {
+        const cookies = request.headers.get('Cookie') || '';
+        const match = cookies.match(/CF_Authorization=([^;]+)/);
+        if (match) pubJwt = match[1];
+      }
+      if (pubJwt) {
+        const payloadB64 = pubJwt.split('.')[1];
+        const padded = payloadB64.replace(/-/g, '+').replace(/_/g, '/');
+        const padding = '='.repeat((4 - padded.length % 4) % 4);
+        const payload = JSON.parse(atob(padded + padding));
+        if (payload.email && env.DB) {
+          const u = await env.DB.prepare(
+            `SELECT u.email, u.client_id, u.role, u.display_name,
+                    c.name as client_name, c.plan, c.monthly_limit, c.repo_path, c.active
+             FROM users u JOIN clients c ON u.client_id = c.id WHERE u.email = ?`
+          ).bind(payload.email).first();
+          if (u && u.active) {
+            data.user = {
+              email: u.email, clientId: u.client_id, role: u.role,
+              displayName: u.display_name, clientName: u.client_name,
+              plan: u.plan, monthlyLimit: u.monthly_limit, repoPath: u.repo_path,
+            };
+          }
+        }
+      }
+    } catch { /* 認証失敗でも公開パスなので通す */ }
     return next();
   }
 
