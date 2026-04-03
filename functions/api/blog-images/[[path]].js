@@ -7,7 +7,7 @@ export async function onRequestGet(context) {
   const { params, env } = context;
   const key = params.path.join('/');
 
-  if (!key) {
+  if (!key || !key.startsWith('blog/') || key.includes('..')) {
     return new Response('Not Found', { status: 404 });
   }
 

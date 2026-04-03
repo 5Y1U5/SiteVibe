@@ -1073,7 +1073,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const after = textarea.value.substring(pos);
           textarea.value = `${before}\n![画像](${data.url})\n${after}`;
           textarea.focus();
-          textarea.selectionStart = textarea.selectionEnd = pos + data.url.length + 12;
+          textarea.selectionStart = textarea.selectionEnd = pos + data.url.length + 10;
           Vibe.say('画像をアップロードしました！');
         } else {
           Vibe.say(data.error || '画像のアップロードに失敗しました');
@@ -1093,6 +1093,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
+        URL.revokeObjectURL(img.src);
         let w = img.width;
         let h = img.height;
         if (w > maxWidth) {
