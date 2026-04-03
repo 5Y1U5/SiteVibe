@@ -128,7 +128,7 @@ async function handleSubscriptionChange(subscription, db) {
   await db.prepare(
     `UPDATE clients
      SET plan = ?, monthly_limit = ?, stripe_subscription_id = ?,
-         chatta_plan = ?, blog_plan = ?, active = 1
+         chatta_plan = ?, blog_plan = ?, active = 1, suspended_at = NULL
      WHERE stripe_customer_id = ?`
   ).bind(plan, monthlyLimit, subscriptionId, chattaPlan, blogPlan, customerId).run();
 
@@ -141,6 +141,18 @@ async function handleInvoicePaid(invoice, db) {
   const customerId = invoice.customer;
   const amount = invoice.amount_paid;
   console.log(`請求完了: customer=${customerId}, amount=${amount}`);
+}
+
+async function handlePaymentFailed(invoice, db) {
+  const customerId = invoice.customer;
+  const now = Math.floor(Date.now() / 1000);
+
+  // suspended_at が未設定の場合のみ猶予期間開始
+  await db.prepare(
+    `UPDATE clients SET suspended_at = ? WHERE stripe_customer_id = ? AND suspended_at IS NULL AND active = 1`
+  ).bind(now, customerId).run();
+
+  console.log(`支払い失敗 → 猶予期間開始: customer=${customerId}`);
 }
 
 async function handleCheckoutCompleted(session, db) {
@@ -244,6 +256,10 @@ export async function onRequestPost(context) {
 
       case 'invoice.paid':
         await handleInvoicePaid(event.data.object, db);
+        break;
+
+      case 'invoice.payment_failed':
+        await handlePaymentFailed(event.data.object, db);
         break;
 
       case 'checkout.session.completed':
