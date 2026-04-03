@@ -1628,35 +1628,38 @@ html, .admin-body {
   box-shadow: 0 0 0 2px var(--admin-glow);
 }
 
-.blog-generate {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.blog-gen-inline {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--admin-border);
 }
 
-.blog-generate__field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.blog-generate__btn {
+.blog-gen-inline__toggle {
   width: 100%;
-  padding: 12px;
-  font-size: 1rem;
+  padding: 10px;
+  background: rgba(7, 123, 220, 0.1);
+  border: 1px dashed var(--c-primary);
+  border-radius: 8px;
+  color: var(--c-primary);
+  font-size: 0.9rem;
   font-weight: 700;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease);
 }
 
-.blog-generate__btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.blog-gen-inline__toggle:hover {
+  background: rgba(7, 123, 220, 0.2);
 }
 
-.blog-generate__status {
+.blog-gen-inline__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.blog-gen-inline__status {
   font-size: 0.85rem;
-  color: var(--admin-text-muted);
-  min-height: 24px;
+  min-height: 20px;
 }
 
 /* フッター */
