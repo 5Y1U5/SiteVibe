@@ -1628,6 +1628,37 @@ html, .admin-body {
   box-shadow: 0 0 0 2px var(--admin-glow);
 }
 
+.blog-generate {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blog-generate__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.blog-generate__btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.blog-generate__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.blog-generate__status {
+  font-size: 0.85rem;
+  color: var(--admin-text-muted);
+  min-height: 24px;
+}
+
 /* フッター */
 .blog-panel__footer {
   display: flex;

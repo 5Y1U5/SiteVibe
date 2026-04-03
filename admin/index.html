@@ -184,6 +184,7 @@
       <div class="blog-panel__header">
         <div class="blog-panel__tabs">
           <button class="blog-panel__tab active" data-tab="blog-list">記事一覧</button>
+          <button class="blog-panel__tab" data-tab="blog-generate">AI生成</button>
           <button class="blog-panel__tab" data-tab="blog-editor">エディタ</button>
         </div>
         <button class="blog-panel__close" id="blogClose" aria-label="閉じる">
@@ -199,6 +200,21 @@
           </div>
           <div class="blog-panel__list" id="blogList">
             <p class="blog-panel__empty">記事がありません</p>
+          </div>
+        </div>
+        <!-- AI生成 -->
+        <div class="blog-panel__content" data-content="blog-generate">
+          <div class="blog-generate">
+            <div class="blog-generate__field">
+              <label class="blog-editor__label">テーマ・トピック</label>
+              <input type="text" class="blog-editor__input" id="blogGenTopic" placeholder="例: ChatGPTの基本、美容院の集客方法...">
+            </div>
+            <div class="blog-generate__field">
+              <label class="blog-editor__label">キーワード（任意、カンマ区切り）</label>
+              <input type="text" class="blog-editor__input blog-editor__input--sm" id="blogGenKeywords" placeholder="例: AI, チャットボット, 業務効率化">
+            </div>
+            <button class="blog-panel__btn blog-panel__btn--primary blog-generate__btn" id="blogGenSubmit">AIで記事を生成する</button>
+            <div class="blog-generate__status" id="blogGenStatus"></div>
           </div>
         </div>
         <!-- エディタ -->
