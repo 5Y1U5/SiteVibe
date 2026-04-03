@@ -1184,8 +1184,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // AI記事生成（トピックあり）
   async function processBlogGenerate(text) {
     Vibe.setState('working');
-    Vibe.say('ブログ記事を生成中です...');
-    addMessage('status', 'ブログ記事を生成しています...');
+    addMessage('status', 'ブログ記事を生成しています...（20〜30秒ほどお待ちください）');
 
     try {
       const res = await fetch('/api/blog-generate', {
@@ -1194,23 +1193,36 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ topic: text }),
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        Vibe.setState('idle');
+        addMessage('vibe', 'サーバーからの応答が不正でした。もう一度お試しください。');
+        console.error('blog-generate: JSONパース失敗', res.status);
+        return;
+      }
 
       if (!res.ok) {
         Vibe.setState('idle');
-        addMessage('vibe', `すみません...${data.error || 'ブログ生成でエラーが出ちゃいました'}`);
+        addMessage('vibe', `すみません...${data.error || 'ブログ生成でエラーが出ちゃいました'}（コード: ${res.status}）`);
+        console.error('blog-generate エラー:', res.status, data);
         return;
       }
 
       Vibe.setState('idle');
-      addMessage('vibe', `ブログ記事ができました！「${data.title}」\n確認・編集はブログパネルからどうぞ！`);
+      addMessage('vibe', `ブログ記事ができました！「${data.title}」\n下書きに保存しました。ブログパネルで確認・編集できます！`);
 
       blogOverlay.classList.add('active');
-      await openBlogEditor(data.id);
+      switchBlogTab('blog-list');
+      blogCurrentStatus = 'draft';
+      loadBlogPosts();
+      loadBlogSeries();
 
     } catch (err) {
       Vibe.setState('idle');
-      addMessage('vibe', 'ブログ生成中にエラーが出ちゃいました...');
+      addMessage('vibe', 'ブログ生成中にネットワークエラーが発生しました。通信状況を確認してもう一度お試しください。');
+      console.error('blog-generate 例外:', err);
     }
   }
 
