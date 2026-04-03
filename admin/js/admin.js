@@ -434,36 +434,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (container) container.style.transform = '';
   }
 
-  /* ─── インテント判定（キーワード優先 + AI判定フォールバック） ─── */
-  async function classifyIntent(text) {
-    // ブログ関連キーワードの高速プリスクリーニング（API不要）
-    if (/ブログ|記事/.test(text)) {
-      // 具体的トピックが含まれていそうなら blog_generate
-      const stripped = text.replace(/ブログ|記事|書いて|書きたい|かきたい|かいて|作って|作りたい|つくって|生成|投稿|して|したい|を|の|に|で|も|が|は|お願い|ください|よろしく|頼む/g, '').trim();
-      return stripped.length >= 4 ? 'blog_generate' : 'blog_open';
-    }
+  /* ─── 会話履歴（Chat APIに渡す） ─── */
+  const chatHistory = [];
 
-    try {
-      const res = await fetch('/api/intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
-      });
-      const data = await res.json();
-      return ['code', 'blog_generate', 'blog_open'].includes(data.intent) ? data.intent : 'chat';
-    } catch {
-      return 'chat';
-    }
-  }
-
-  /* ─── チャットAPI（高速、会話用） ─── */
+  /* ─── 統合チャットAPI（会話 + ルーティング判定を一元化） ─── */
   async function callChat(message) {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, history: chatHistory }),
     });
-    return res.json();
+    const data = await res.json();
+    // 履歴に追加（直近10件まで保持）
+    chatHistory.push({ role: 'user', content: message });
+    chatHistory.push({ role: 'assistant', content: data.reply || '' });
+    if (chatHistory.length > 10) chatHistory.splice(0, 2);
+    return data;
   }
 
   /* ─── エージェントAPI（コード変更用） ─── */
@@ -509,48 +495,29 @@ document.addEventListener('DOMContentLoaded', () => {
     return res.json();
   }
 
-  /* ─── 処理フロー（ルーティング） ─── */
+  /* ─── 処理フロー（統合チャットルーティング） ─── */
   async function processRequest(text, isVoice = false) {
     if (isProcessing) return;
     isProcessing = true;
 
     addMessage('user', text, { isVoice });
-
-    // ブログトピック待ちステートの場合、Intent判定をスキップして直接生成
-    if (awaitingBlogTopic) {
-      awaitingBlogTopic = false;
-      await processBlogGenerate(text);
-      isProcessing = false;
-      return;
-    }
-
-    // AI判定でルーティング
-    const intent = await classifyIntent(text);
-    if (intent === 'code') {
-      await processCodeRequest(text);
-    } else if (intent === 'blog_open') {
-      awaitingBlogTopic = true;
-      addMessage('vibe', 'ブログのテーマは決まっていますか？アイデアやトピックを教えてくださいね！バイブがサポートしますよ！');
-    } else if (intent === 'blog_generate') {
-      await processBlogGenerate(text);
-    } else {
-      await processChatRequest(text);
-    }
-
-    isProcessing = false;
-  }
-
-  /* チャット応答（高速、1-3秒） */
-  async function processChatRequest(text) {
     Vibe.setState('thinking');
 
     try {
+      // 統合Chat APIで会話 + action判定を一括実行
       const result = await callChat(text);
-      Vibe.setState('idle');
 
-      if (result.error) {
-        addMessage('vibe', 'うまくいきませんでした...もう一度お願いします！');
+      if (result.action === 'code') {
+        Vibe.setState('idle');
+        await processCodeRequest(text);
+      } else if (result.action === 'blog_generate' && result.topic) {
+        Vibe.setState('idle');
+        addMessage('vibe', result.reply);
+        if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
+        await processBlogGenerate(result.topic);
       } else {
+        // chat, blog_prompt, その他すべて
+        Vibe.setState('idle');
         addMessage('vibe', result.reply);
         if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
       }
@@ -558,6 +525,8 @@ document.addEventListener('DOMContentLoaded', () => {
       Vibe.setState('idle');
       addMessage('vibe', 'ネットワークエラーです...もう一度試してみてください！');
     }
+
+    isProcessing = false;
   }
 
   /* コード変更（Claude Code経由、時間がかかる） */
@@ -847,7 +816,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let blogCurrentStatus = 'draft';
   let blogCurrentId = null;
   let blogSeriesCache = [];
-  let awaitingBlogTopic = false;
 
   // シリーズ読み込み
   async function loadBlogSeries() {
