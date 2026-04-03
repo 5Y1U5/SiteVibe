@@ -829,6 +829,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const blogFooter = document.getElementById('blogFooter');
   let blogCurrentStatus = 'draft';
   let blogCurrentId = null;
+  let blogSeriesCache = [];
+
+  // シリーズ読み込み
+  async function loadBlogSeries() {
+    try {
+      const res = await fetch('/api/blog-series');
+      const data = await res.json();
+      blogSeriesCache = data.series || [];
+      const select = document.getElementById('blogEditSeries');
+      if (select) {
+        select.innerHTML = '<option value="">なし</option>' +
+          blogSeriesCache.map(s => `<option value="${escHtml(s.id)}">${escHtml(s.name)} (${s.post_count || 0})</option>`).join('');
+      }
+    } catch { /* 無視 */ }
+  }
 
   // パネル開閉
   if (blogBtn) {
@@ -836,6 +851,7 @@ document.addEventListener('DOMContentLoaded', () => {
       blogOverlay.classList.add('active');
       switchBlogTab('blog-list');
       loadBlogPosts();
+      loadBlogSeries();
     });
   }
   if (blogClose) {
@@ -889,13 +905,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     blogList.innerHTML = posts.map(p => {
       const date = p.published_at ? formatTime(p.published_at * 1000) : formatTime(p.created_at * 1000);
-      const publishBtn = p.status === 'draft'
+      const series = p.series_id ? blogSeriesCache.find(s => s.id === p.series_id) : null;
+      const seriesBadge = series ? `<span class="blog-item__badge blog-item__badge--series">${escHtml(series.name)}</span>` : '';
+      const scheduledBadge = p.status === 'scheduled' && p.scheduled_at
+        ? `<span class="blog-item__badge blog-item__badge--scheduled">予約 ${formatTime(p.scheduled_at * 1000)}</span>`
+        : '';
+      const publishBtn = (p.status === 'draft' || p.status === 'scheduled')
         ? `<button class="blog-item__btn blog-item__btn--publish" data-action="publish" data-id="${p.id}">公開</button>`
         : '';
       return `
         <div class="blog-item" data-id="${p.id}">
           <div class="blog-item__info">
-            <div class="blog-item__title">${escHtml(p.title)}</div>
+            <div class="blog-item__title">${escHtml(p.title)} ${seriesBadge}${scheduledBadge}</div>
             <div class="blog-item__meta">${date} · ${p.slug}</div>
           </div>
           <div class="blog-item__actions">
@@ -942,20 +963,57 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('blogEditTitle').value = post.title;
       document.getElementById('blogEditSlug').value = post.slug;
       document.getElementById('blogEditContent').value = post.content;
+      document.getElementById('blogEditSeries').value = post.series_id || '';
+      // 予約日時をdatetime-localフォーマットに変換
+      const scheduleInput = document.getElementById('blogEditSchedule');
+      if (post.scheduled_at) {
+        const d = new Date(post.scheduled_at * 1000);
+        scheduleInput.value = d.toISOString().slice(0, 16);
+      } else {
+        scheduleInput.value = '';
+      }
       switchBlogTab('blog-editor');
     } catch { /* 無視 */ }
+  }
+
+  // エディタ共通データ取得
+  function getEditorData() {
+    return {
+      title: document.getElementById('blogEditTitle').value,
+      slug: document.getElementById('blogEditSlug').value,
+      content: document.getElementById('blogEditContent').value,
+      series_id: document.getElementById('blogEditSeries').value || null,
+    };
   }
 
   // 保存ボタン
   document.getElementById('blogSave').addEventListener('click', async () => {
     const id = document.getElementById('blogEditId').value;
     if (!id) return;
-    await saveBlogPost(id, {
-      title: document.getElementById('blogEditTitle').value,
-      slug: document.getElementById('blogEditSlug').value,
-      content: document.getElementById('blogEditContent').value,
-    });
+    await saveBlogPost(id, getEditorData());
     Vibe.say('記事を保存しました！');
+  });
+
+  // 予約公開ボタン
+  document.getElementById('blogSchedule').addEventListener('click', async () => {
+    const id = document.getElementById('blogEditId').value;
+    if (!id) return;
+    const scheduleVal = document.getElementById('blogEditSchedule').value;
+    if (!scheduleVal) {
+      Vibe.say('予約日時を指定してください！');
+      document.getElementById('blogEditSchedule').focus();
+      return;
+    }
+    const scheduledAt = Math.floor(new Date(scheduleVal).getTime() / 1000);
+    if (scheduledAt <= Math.floor(Date.now() / 1000)) {
+      Vibe.say('未来の日時を指定してください！');
+      return;
+    }
+    await saveBlogPost(id, { ...getEditorData(), status: 'scheduled', scheduled_at: scheduledAt });
+    Vibe.say(`記事を予約しました！${scheduleVal.replace('T', ' ')} に公開されます。`);
+    switchBlogTab('blog-list');
+    blogCurrentStatus = 'draft';
+    loadBlogPosts();
   });
 
   // 公開ボタン
@@ -963,14 +1021,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = document.getElementById('blogEditId').value;
     if (!id) return;
     if (!confirm('この記事を公開しますか？')) return;
-    await saveBlogPost(id, {
-      title: document.getElementById('blogEditTitle').value,
-      slug: document.getElementById('blogEditSlug').value,
-      content: document.getElementById('blogEditContent').value,
-      status: 'published',
-    });
+    await saveBlogPost(id, { ...getEditorData(), status: 'published' });
     Vibe.say('記事を公開中です...');
     await triggerBlogPublish(id);
+    // スタイル学習をバックグラウンドでトリガー
+    triggerStyleLearning();
     Vibe.say('記事を公開しました！サイトに反映されます。');
     switchBlogTab('blog-list');
     blogCurrentStatus = 'published';
@@ -1007,6 +1062,19 @@ document.addEventListener('DOMContentLoaded', () => {
         published_at: p.published_at,
       }));
 
+      // シリーズ情報を取得
+      let seriesPosts = [];
+      let seriesName = '';
+      if (post.series_id) {
+        const series = blogSeriesCache.find(s => s.id === post.series_id);
+        seriesName = series?.name || '';
+        const spRes = await fetch(`/api/blog-posts?client_id=${currentUser.clientId}&status=published&limit=50`);
+        const spData = await spRes.json();
+        seriesPosts = (spData.posts || [])
+          .filter(p => p.series_id === post.series_id)
+          .map(p => ({ title: p.title, slug: p.slug, series_order: p.series_order }));
+      }
+
       // ジョブランナーに送信
       const res = await fetch('/api/agent', {
         method: 'POST',
@@ -1022,6 +1090,8 @@ document.addEventListener('DOMContentLoaded', () => {
             published_at: post.published_at,
           },
           allPosts,
+          seriesPosts,
+          seriesName,
         }),
       });
 
@@ -1032,6 +1102,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.error('ブログ公開エラー:', err);
     }
+  }
+
+  // スタイル自動学習（バックグラウンド、エラーは無視）
+  async function triggerStyleLearning() {
+    try {
+      const res = await fetch('/api/blog-learn-style', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        console.log('スタイル学習完了:', data.analyzed, '本分析');
+      }
+    } catch { /* バックグラウンド処理なのでエラーは無視 */ }
   }
 
   // ブログ生成リクエスト（Vibeチャット経由）
