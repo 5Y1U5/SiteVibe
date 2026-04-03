@@ -5,7 +5,7 @@
 // ============================================
 
 // Stripe Webhook は署名検証が別途行われるためスキップ
-const PUBLIC_PATHS = ['/api/stripe-webhook', '/api/apply'];
+const PUBLIC_PATHS = ['/api/stripe-webhook', '/api/apply', '/api/blog-cron'];
 const PUBLIC_GET_PATHS = ['/api/blog-posts'];
 
 export async function onRequest(context) {

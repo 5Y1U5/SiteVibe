@@ -213,6 +213,18 @@
               <label class="blog-editor__label">Slug</label>
               <input type="text" class="blog-editor__input blog-editor__input--sm" id="blogEditSlug" placeholder="url-slug">
             </div>
+            <div class="blog-editor__row">
+              <div class="blog-editor__field">
+                <label class="blog-editor__label">シリーズ</label>
+                <select class="blog-editor__input blog-editor__input--sm" id="blogEditSeries">
+                  <option value="">なし</option>
+                </select>
+              </div>
+              <div class="blog-editor__field">
+                <label class="blog-editor__label">予約公開</label>
+                <input type="datetime-local" class="blog-editor__input blog-editor__input--sm" id="blogEditSchedule">
+              </div>
+            </div>
             <div class="blog-editor__field blog-editor__field--grow">
               <label class="blog-editor__label">本文（Markdown）</label>
               <textarea class="blog-editor__textarea" id="blogEditContent" placeholder="Markdown で記事を書く..."></textarea>
@@ -222,6 +234,7 @@
       </div>
       <div class="blog-panel__footer" id="blogFooter">
         <button class="blog-panel__btn blog-panel__btn--secondary" id="blogSave">保存</button>
+        <button class="blog-panel__btn blog-panel__btn--schedule" id="blogSchedule">予約公開</button>
         <button class="blog-panel__btn blog-panel__btn--primary" id="blogPublish">公開する</button>
       </div>
     </div>

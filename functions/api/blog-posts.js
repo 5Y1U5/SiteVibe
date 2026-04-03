@@ -18,7 +18,7 @@ export async function onRequestGet(context) {
   // 記事詳細
   if (id) {
     const post = await env.DB.prepare(
-      `SELECT id, client_id, title, content, slug, status, meta_description, published_at, created_at, updated_at
+      `SELECT id, client_id, title, content, slug, status, meta_description, scheduled_at, series_id, series_order, published_at, created_at, updated_at
        FROM blog_posts WHERE id = ?`
     ).bind(id).first();
 
@@ -51,7 +51,7 @@ export async function onRequestGet(context) {
   }
 
   const posts = await env.DB.prepare(
-    `SELECT id, title, slug, status, meta_description, published_at, created_at, updated_at
+    `SELECT id, title, slug, status, meta_description, scheduled_at, series_id, series_order, published_at, created_at, updated_at
      FROM blog_posts
      WHERE client_id = ? AND status = ?
      ORDER BY created_at DESC
@@ -80,7 +80,7 @@ export async function onRequestPut(context) {
   }
 
   const body = await request.json();
-  const { id, title, content, slug, status } = body;
+  const { id, title, content, slug, status, scheduled_at, series_id, series_order } = body;
 
   if (!id) {
     return jsonResponse({ error: 'id は必須です' }, 400);
@@ -111,8 +111,19 @@ export async function onRequestPut(context) {
     values.push(status);
     if (status === 'published') {
       updates.push('published_at = unixepoch()');
+      updates.push('scheduled_at = NULL');
     }
   }
+  if (scheduled_at !== undefined) {
+    updates.push('scheduled_at = ?');
+    values.push(scheduled_at);
+    if (scheduled_at && status === undefined) {
+      updates.push('status = ?');
+      values.push('scheduled');
+    }
+  }
+  if (series_id !== undefined) { updates.push('series_id = ?'); values.push(series_id || null); }
+  if (series_order !== undefined) { updates.push('series_order = ?'); values.push(series_order); }
 
   if (updates.length === 0) {
     return jsonResponse({ error: '更新するフィールドがありません' }, 400);

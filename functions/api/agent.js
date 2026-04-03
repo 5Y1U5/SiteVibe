@@ -80,6 +80,8 @@ export async function onRequestPost(context) {
           repoPath: body.repoPath || user?.repoPath,
           post: body.post,
           allPosts: body.allPosts,
+          seriesPosts: body.seriesPosts,
+          seriesName: body.seriesName,
         }),
       });
       const data = await res.json();

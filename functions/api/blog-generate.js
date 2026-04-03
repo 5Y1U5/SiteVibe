@@ -47,7 +47,7 @@ export async function onRequestPost(context) {
 
   // リクエストボディ
   const body = await request.json();
-  const { topic, keywords, transcript } = body;
+  const { topic, keywords, transcript, seriesId } = body;
 
   if (!topic?.trim() && !transcript?.trim()) {
     return jsonResponse({ error: 'topic または transcript は必須です' }, 400);
@@ -71,6 +71,30 @@ export async function onRequestPost(context) {
 
   const keywordStr = keywords?.length ? `キーワード: ${keywords.join(', ')}\n` : '';
 
+  // シリーズ指定時に既存記事のコンテキストを収集
+  let seriesContext = '';
+  if (seriesId) {
+    const seriesInfo = await env.DB.prepare(
+      'SELECT name, description FROM blog_series WHERE id = ? AND client_id = ?'
+    ).bind(seriesId, user.clientId).first();
+
+    if (seriesInfo) {
+      const seriesPosts = await env.DB.prepare(
+        `SELECT title, content FROM blog_posts
+         WHERE series_id = ? AND client_id = ? AND status IN ('published', 'draft')
+         ORDER BY series_order ASC, created_at ASC LIMIT 5`
+      ).bind(seriesId, user.clientId).all();
+
+      const existing = (seriesPosts.results || [])
+        .map((p, i) => `${i + 1}. ${p.title}\n${p.content.substring(0, 300)}`)
+        .join('\n\n');
+
+      seriesContext = `\n\n## シリーズ「${seriesInfo.name}」の続きとして書いてください
+${seriesInfo.description ? `シリーズ概要: ${seriesInfo.description}\n` : ''}
+${existing ? `既に公開済みの記事:\n${existing}\n\n重複しない新しい切り口で書いてください。` : ''}`;
+    }
+  }
+
   // transcript がある場合は音声メモベースの記事生成
   let contentInstruction;
   if (transcript?.trim()) {
@@ -88,7 +112,7 @@ ${topic ? `テーマ: ${topic}\n` : ''}${keywordStr}`;
 ${keywordStr}`;
   }
 
-  const systemPrompt = `あなたはプロのブログライターです。${writingDna}
+  const systemPrompt = `あなたはプロのブログライターです。${writingDna}${seriesContext}
 
 要件:
 - タイトル（魅力的で読みたくなるもの、40文字以内）
@@ -132,9 +156,9 @@ ${keywordStr}`;
     const postId = crypto.randomUUID();
     const metaDesc = generated.meta_description || generated.content.replace(/[#*\-\n]/g, ' ').trim().substring(0, 160);
     await env.DB.prepare(
-      `INSERT INTO blog_posts (id, client_id, title, content, slug, meta_description, status, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, 'draft', unixepoch(), unixepoch())`
-    ).bind(postId, user.clientId, generated.title, generated.content, slug, metaDesc).run();
+      `INSERT INTO blog_posts (id, client_id, title, content, slug, meta_description, series_id, status, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'draft', unixepoch(), unixepoch())`
+    ).bind(postId, user.clientId, generated.title, generated.content, slug, metaDesc, seriesId || null).run();
 
     // usage 記録
     await env.DB.prepare(

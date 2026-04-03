@@ -420,11 +420,13 @@ app.post("/blog-publish", async (c) => {
     repoPath: string;
     post: { title: string; content: string; slug: string; meta_description?: string; published_at?: number };
     allPosts: Array<{ title: string; slug: string; meta_description?: string; published_at?: number }>;
+    seriesPosts?: Array<{ title: string; slug: string; series_order?: number }>;
+    seriesName?: string;
     siteUrl?: string;
     siteName?: string;
   }>();
 
-  const { repoPath, post, allPosts, siteUrl, siteName } = body;
+  const { repoPath, post, allPosts, seriesPosts, seriesName, siteUrl, siteName } = body;
 
   if (!repoPath || !post?.slug || !post?.title || !post?.content) {
     return c.json({ error: "repoPath, post.slug, post.title, post.content は必須です" }, 400);
@@ -456,6 +458,8 @@ app.post("/blog-publish", async (c) => {
       url,
       siteName: name,
       slug: post.slug,
+      seriesPosts: seriesPosts || [],
+      seriesName: seriesName || "",
     });
     writeFileSync(`${postDir}/index.html`, postHtml, "utf-8");
 
@@ -522,7 +526,7 @@ function formatDate(ts: number): string {
 }
 
 // ─── 記事ページ HTML ───
-function generatePostHtml(p: { title: string; content: string; metaDesc: string; pubDate: string; pubDateDisplay: string; url: string; siteName: string; slug: string }): string {
+function generatePostHtml(p: { title: string; content: string; metaDesc: string; pubDate: string; pubDateDisplay: string; url: string; siteName: string; slug: string; seriesPosts: Array<{ title: string; slug: string; series_order?: number }>; seriesName: string }): string {
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -572,6 +576,16 @@ function generatePostHtml(p: { title: string; content: string; metaDesc: string;
     <div class="blog-article__body">
       ${p.content}
     </div>
+    ${p.seriesPosts.length > 0 ? `
+    <div class="blog-article__series">
+      <h3 class="blog-article__series-title">シリーズ「${escHtml(p.seriesName)}」の記事</h3>
+      <ul class="blog-article__series-list">
+        ${p.seriesPosts.map(sp => sp.slug === p.slug
+          ? `<li class="blog-article__series-current">${escHtml(sp.title)}</li>`
+          : `<li><a href="../${sp.slug}/">${escHtml(sp.title)}</a></li>`
+        ).join("")}
+      </ul>
+    </div>` : ""}
     <a href="../" class="blog-article__back">&larr; 記事一覧に戻る</a>
   </main>
 </body>
