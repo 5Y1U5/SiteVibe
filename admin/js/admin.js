@@ -1035,6 +1035,86 @@ document.addEventListener('DOMContentLoaded', () => {
     loadBlogPosts();
   });
 
+  // ─── ブログ画像アップロード ───
+  const blogImageBtn = document.getElementById('blogImageBtn');
+  const blogImageInput = document.getElementById('blogImageInput');
+
+  if (blogImageBtn && blogImageInput) {
+    blogImageBtn.addEventListener('click', () => {
+      if (blogImageBtn.disabled) return;
+      blogImageInput.click();
+    });
+
+    blogImageInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      blogImageInput.value = '';
+
+      blogImageBtn.disabled = true;
+      blogImageBtn.classList.add('uploading');
+      const origText = blogImageBtn.querySelector('span').textContent;
+      blogImageBtn.querySelector('span').textContent = 'アップロード中...';
+
+      try {
+        const resized = await resizeImage(file, 1200, 0.85);
+        const formData = new FormData();
+        formData.append('image', resized, 'image.webp');
+
+        const res = await fetch('/api/blog-images', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+
+        if (data.url) {
+          const textarea = document.getElementById('blogEditContent');
+          const pos = textarea.selectionStart;
+          const before = textarea.value.substring(0, pos);
+          const after = textarea.value.substring(pos);
+          textarea.value = `${before}\n![画像](${data.url})\n${after}`;
+          textarea.focus();
+          textarea.selectionStart = textarea.selectionEnd = pos + data.url.length + 10;
+          Vibe.say('画像をアップロードしました！');
+        } else {
+          Vibe.say(data.error || '画像のアップロードに失敗しました');
+        }
+      } catch (err) {
+        Vibe.say('画像のアップロードに失敗しました');
+      } finally {
+        blogImageBtn.disabled = false;
+        blogImageBtn.classList.remove('uploading');
+        blogImageBtn.querySelector('span').textContent = origText;
+      }
+    });
+  }
+
+  // 画像リサイズ（最大幅制限 + WebP変換）
+  function resizeImage(file, maxWidth, quality) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(img.src);
+        let w = img.width;
+        let h = img.height;
+        if (w > maxWidth) {
+          h = Math.round(h * (maxWidth / w));
+          w = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(
+          (blob) => blob ? resolve(blob) : reject(new Error('変換失敗')),
+          'image/webp',
+          quality,
+        );
+      };
+      img.onerror = () => reject(new Error('画像読み込み失敗'));
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
   // 記事保存 API
   async function saveBlogPost(id, data) {
     await fetch('/api/blog-posts', {
