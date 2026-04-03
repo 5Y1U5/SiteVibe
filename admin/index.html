@@ -194,6 +194,16 @@
       <div class="blog-panel__body">
         <!-- 記事一覧 -->
         <div class="blog-panel__content active" data-content="blog-list">
+          <!-- AI記事生成（インライン） -->
+          <div class="blog-gen-inline" id="blogGenInline">
+            <button class="blog-gen-inline__toggle" id="blogGenToggle">+ AIで記事を生成</button>
+            <div class="blog-gen-inline__form" id="blogGenForm" style="display:none">
+              <input type="text" class="blog-editor__input" id="blogGenTopic" placeholder="テーマを入力（例: ChatGPTの基本）">
+              <input type="text" class="blog-editor__input blog-editor__input--sm" id="blogGenKeywords" placeholder="キーワード（任意、カンマ区切り）">
+              <button class="blog-panel__btn blog-panel__btn--primary" id="blogGenSubmit" style="width:100%;padding:10px">AIで記事を生成する</button>
+              <div class="blog-gen-inline__status" id="blogGenStatus"></div>
+            </div>
+          </div>
           <div class="blog-panel__filter">
             <button class="blog-panel__filter-btn active" data-status="draft">下書き</button>
             <button class="blog-panel__filter-btn" data-status="published">公開済み</button>

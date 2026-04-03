@@ -1240,9 +1240,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ─── ブログパネル内 AI生成ボタン ───
+  // ─── ブログ AI生成（インライン） ───
+  const blogGenToggle = document.getElementById('blogGenToggle');
+  const blogGenForm = document.getElementById('blogGenForm');
   const blogGenSubmit = document.getElementById('blogGenSubmit');
   const blogGenStatus = document.getElementById('blogGenStatus');
+
+  if (blogGenToggle && blogGenForm) {
+    blogGenToggle.addEventListener('click', () => {
+      const visible = blogGenForm.style.display !== 'none';
+      blogGenForm.style.display = visible ? 'none' : 'flex';
+      blogGenToggle.textContent = visible ? '+ AIで記事を生成' : '- 閉じる';
+    });
+  }
 
   if (blogGenSubmit) {
     blogGenSubmit.addEventListener('click', async () => {
