@@ -5,3 +5,7 @@ compatibility_date = "2024-12-01"
 binding = "DB"
 database_name = "sitevibe-db"
 database_id = "0b3355cd-1eb6-46c2-9fea-203a21271346"
+
+[[r2_buckets]]
+binding = "BLOG_IMAGES"
+bucket_name = "sitevibe-blog-images"

@@ -1569,12 +1569,51 @@ html, .admin-body {
   color: var(--admin-text-muted);
 }
 
+.blog-editor__toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+
+.blog-editor__toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: none;
+  border: 1px solid var(--admin-border);
+  border-radius: 4px;
+  color: var(--admin-text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease);
+}
+
+.blog-editor__toolbar-btn:hover {
+  background: var(--admin-surface-hover);
+  color: var(--admin-text);
+}
+
+.blog-editor__toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.blog-editor__toolbar-btn.uploading {
+  color: var(--c-primary);
+  border-color: var(--c-primary);
+}
+
 .blog-editor__textarea {
   flex: 1;
   padding: 12px;
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
-  border-radius: 6px;
+  border-radius: 0 0 6px 6px;
   color: var(--admin-text);
   font-size: 0.85rem;
   font-family: 'SF Mono', 'Fira Code', monospace;
