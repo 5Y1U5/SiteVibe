@@ -512,10 +512,24 @@ document.addEventListener('DOMContentLoaded', () => {
         await processCodeRequest(text);
       } else if (result.action === 'blog_generate') {
         const topic = result.topic || text;
+        Vibe.setState('idle');
         addMessage('vibe', result.reply);
-        await processBlogGenerate(topic);
+        // ブログパネルのAI生成タブを開いてトピックをセット
+        blogOverlay.classList.add('active');
+        switchBlogTab('blog-generate');
+        const topicInput = document.getElementById('blogGenTopic');
+        if (topicInput) topicInput.value = topic;
+        // 自動で生成開始
+        blogGenSubmit?.click();
+      } else if (result.action === 'blog_prompt') {
+        Vibe.setState('idle');
+        addMessage('vibe', result.reply);
+        if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
+        // ブログパネルのAI生成タブを開く
+        blogOverlay.classList.add('active');
+        switchBlogTab('blog-generate');
       } else {
-        // chat, blog_prompt, その他すべて
+        // chat, その他すべて
         Vibe.setState('idle');
         addMessage('vibe', result.reply);
         if (ttsEnabled) Audio.speak(result.reply).catch(() => {});
@@ -1224,6 +1238,71 @@ document.addEventListener('DOMContentLoaded', () => {
       addMessage('vibe', 'ブログ生成中にネットワークエラーが発生しました。通信状況を確認してもう一度お試しください。');
       console.error('blog-generate 例外:', err);
     }
+  }
+
+  // ─── ブログパネル内 AI生成ボタン ───
+  const blogGenSubmit = document.getElementById('blogGenSubmit');
+  const blogGenStatus = document.getElementById('blogGenStatus');
+
+  if (blogGenSubmit) {
+    blogGenSubmit.addEventListener('click', async () => {
+      const topicInput = document.getElementById('blogGenTopic');
+      const keywordsInput = document.getElementById('blogGenKeywords');
+      const topic = topicInput?.value?.trim();
+
+      if (!topic) {
+        blogGenStatus.textContent = 'テーマを入力してください';
+        blogGenStatus.style.color = '#F59E0B';
+        topicInput.focus();
+        return;
+      }
+
+      const keywords = keywordsInput?.value?.trim()
+        ? keywordsInput.value.split(/[,、]/).map(k => k.trim()).filter(Boolean)
+        : [];
+
+      blogGenSubmit.disabled = true;
+      blogGenSubmit.textContent = '生成中...';
+      blogGenStatus.textContent = 'AIが記事を生成しています（20〜30秒ほどお待ちください）...';
+      blogGenStatus.style.color = 'var(--c-primary)';
+
+      try {
+        const res = await fetch('/api/blog-generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic, keywords }),
+        });
+
+        const data = await res.json();
+        console.log('blog-generate response:', res.status, data);
+
+        if (!res.ok) {
+          blogGenStatus.textContent = `エラー: ${data.error || '不明なエラー'}（${res.status}）`;
+          blogGenStatus.style.color = '#EF4444';
+          return;
+        }
+
+        blogGenStatus.textContent = `「${data.title}」を下書きに保存しました！`;
+        blogGenStatus.style.color = '#10B981';
+        topicInput.value = '';
+        keywordsInput.value = '';
+
+        // 下書き一覧に切り替え
+        setTimeout(() => {
+          switchBlogTab('blog-list');
+          blogCurrentStatus = 'draft';
+          loadBlogPosts();
+        }, 1500);
+
+      } catch (err) {
+        console.error('blog-generate 例外:', err);
+        blogGenStatus.textContent = `ネットワークエラー: ${err.message}`;
+        blogGenStatus.style.color = '#EF4444';
+      } finally {
+        blogGenSubmit.disabled = false;
+        blogGenSubmit.textContent = 'AIで記事を生成する';
+      }
+    });
   }
 
   function escHtml(str) {
