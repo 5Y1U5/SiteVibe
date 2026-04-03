@@ -177,8 +177,8 @@ ${keywordStr}`;
     }, 201);
 
   } catch (err) {
-    console.error('ブログ生成エラー:', err.message);
-    return jsonResponse({ error: 'ブログ生成中にエラーが発生しました' }, 500);
+    console.error('ブログ生成エラー:', err.message, err.stack);
+    return jsonResponse({ error: `ブログ生成中にエラーが発生しました: ${err.message}` }, 500);
   }
 }
 
@@ -192,8 +192,8 @@ async function generateWithAnthropic(apiKey, systemPrompt, userMessage) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'claude-opus-4-6',
-      max_tokens: 4000,
+      model: 'claude-sonnet-4-6',
+      max_tokens: 3000,
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
     }),
