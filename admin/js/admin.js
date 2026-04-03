@@ -434,8 +434,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (container) container.style.transform = '';
   }
 
-  /* ─── インテント判定（AI判定: チャット vs コード変更） ─── */
+  /* ─── インテント判定（キーワード優先 + AI判定フォールバック） ─── */
   async function classifyIntent(text) {
+    // ブログ関連キーワードの高速プリスクリーニング（API不要）
+    if (/ブログ|記事/.test(text)) {
+      // 具体的トピックが含まれていそうなら blog_generate
+      const stripped = text.replace(/ブログ|記事|書いて|書きたい|かきたい|かいて|作って|作りたい|つくって|生成|投稿|して|したい|を|の|に|で|も|が|は|お願い|ください|よろしく|頼む/g, '').trim();
+      return stripped.length >= 4 ? 'blog_generate' : 'blog_open';
+    }
+
     try {
       const res = await fetch('/api/intent', {
         method: 'POST',
@@ -445,7 +452,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       return ['code', 'blog_generate', 'blog_open'].includes(data.intent) ? data.intent : 'chat';
     } catch {
-      // API失敗時はchatにフォールバック
       return 'chat';
     }
   }
