@@ -2026,9 +2026,9 @@ img { max-width: 100%; display: block; }
   background: var(--c-bg-alt);
 }
 
-/* ─── ヒーロー v2（ライト） ─── */
+/* ─── ヒーロー v2（ダーク） ─── */
 .hero--light {
-  background: var(--c-bg);
+  background: #080F1E;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -2040,7 +2040,7 @@ img { max-width: 100%; display: block; }
 .hero__bg-gradient {
   position: absolute;
   inset: 0;
-  background: var(--g-hero);
+  background: linear-gradient(160deg, #0D1F3C 0%, #080F1E 50%, #050C18 100%);
   pointer-events: none;
 }
 
@@ -2068,8 +2068,8 @@ img { max-width: 100%; display: block; }
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--c-vibe);
-  background: var(--c-vibe-glow);
-  border: 1px solid rgba(6, 182, 212, 0.15);
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.3);
   padding: 6px 16px;
   border-radius: var(--radius-full);
   width: fit-content;
@@ -2080,7 +2080,7 @@ img { max-width: 100%; display: block; }
   font-weight: 900;
   line-height: 1.15;
   letter-spacing: -0.03em;
-  color: var(--c-text);
+  color: #ffffff;
 }
 
 .hero__title-accent {
@@ -2092,7 +2092,7 @@ img { max-width: 100%; display: block; }
 
 .hero__subtitle {
   font-size: var(--font-size-lg);
-  color: var(--c-text-muted);
+  color: rgba(255, 255, 255, 0.65);
   line-height: 1.8;
 }
 
@@ -2105,7 +2105,7 @@ img { max-width: 100%; display: block; }
 
 .hero__cta-note {
   font-size: var(--font-size-xs);
-  color: var(--c-text-dim);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* ─── ヒーロー：スマホビジュアル ─── */
