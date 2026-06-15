@@ -11,3 +11,22 @@ server/data/
 scripts/stripe-prices.json
 .omc/
 .wrangler/
+
+# === claude-auto-ignore ===
+node_modules/
+.DS_Store
+.next/
+dist/
+build/
+out/
+.venv/
+__pycache__/
+.cache/
+.playwright-mcp/
+.omc/
+*.bak
+.env
+.env.*
+!.env.example
+.codex-review/
+.claude/settings.local.json

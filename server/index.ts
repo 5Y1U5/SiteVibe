@@ -634,7 +634,7 @@ function generateIndexHtml(posts: Array<{ title: string; slug: string; meta_desc
 <body>
   <main class="blog-list">
     <h1 class="blog-list__title-page">ブログ</h1>
-    ${items if items.strip() else '<p class="blog-list__empty">まだ記事がありません</p>'}
+    ${items.trim() ? items : '<p class="blog-list__empty">まだ記事がありません</p>'}
     <a href="../" class="blog-list__back">&larr; トップに戻る</a>
   </main>
 </body>
