@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テンプレート管理 — SiteVibe</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/template-admin.css">
+</head>
+<body>
+  <header class="template-header">
+    <a href="../">SiteVibe</a>
+    <a href="setup.html">クライアント管理へ</a>
+  </header>
+
+  <main class="template-admin">
+    <section class="template-admin__hero">
+      <div>
+        <span>Template Settings</span>
+        <h1>店舗ごとの提案テンプレートを選択</h1>
+        <p>営業デモや初期制作で使う美容室テンプレートを指定できます。</p>
+      </div>
+      <div class="template-admin__select-card">
+        <label for="clientId">クライアント</label>
+        <input id="clientId" type="text" value="sample-client">
+        <p id="clientStatus">テンプレートを選んで保存できます。</p>
+      </div>
+    </section>
+
+    <section class="template-admin__grid" id="adminTemplateGrid" aria-label="テンプレート一覧"></section>
+  </main>
+
+  <script type="module" src="js/templates-admin.js"></script>
+</body>
+</html>
