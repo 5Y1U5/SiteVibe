@@ -6,7 +6,9 @@
 
 // Stripe Webhook は署名検証が別途行われるためスキップ
 const PUBLIC_PATHS = ['/api/stripe-webhook', '/api/apply', '/api/blog-cron', '/api/cancel-cron'];
-const PUBLIC_GET_PATHS = ['/api/blog-posts'];
+// ブログ画像は公開記事に埋め込まれるので、閲覧者（未ログイン）が読めないと表示できない。
+// GET だけを公開にする。アップロード（POST /api/blog-images）は従来どおり認証の内側。
+const PUBLIC_GET_PATHS = ['/api/blog-posts', '/api/blog-images'];
 
 export async function onRequest(context) {
   const { request, env, next, data } = context;
