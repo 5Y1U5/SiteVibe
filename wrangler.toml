@@ -1,3 +1,29 @@
+# 【注意】このファイルは Cloudflare Pages には読まれていない（2026-08-22 確認）。
+#
+# Pages の設定として認識されるには pages_build_output_dir が要る。それが無いため、
+# 下の compatibility_date・D1・R2 はどれも本番に反映されていない。
+# CI は `wrangler pages deploy . --project-name=sitevibe --branch=main` で
+# リポジトリ直下をそのまま配信しており、バインディングは
+# Cloudflare のダッシュボード側の設定が使われている。
+#
+# 本番（Pages プロジェクト sitevibe）の実際の設定:
+#   compatibility_date : 2026-03-08（このファイルの 2024-12-01 ではない）
+#   D1  DB             : sitevibe-db（0b3355cd-...）※このファイルと同じもの
+#   R2                 : **バインディングなし**
+#   環境変数           : ANTHROPIC_API_KEY / OPENAI_API_KEY / RESEND_API_KEY /
+#                        STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET /
+#                        JOB_RUNNER_TOKEN / JOB_RUNNER_URL
+#
+# 【未解決】functions/api/blog-images.js と functions/api/blog-images/[[path]].js は
+# env.BLOG_IMAGES（R2）を使うが、本番にバインディングが無く、
+# バケット sitevibe-blog-images 自体も存在しない。
+# 2026-04-03 の「ブログ本文への画像アップロード機能追加」(#30) 以降、
+# この機能は本番で動いていないと考えられる。
+# 直すならバケット作成 → Pages にバインディング追加が要る。
+#
+# このファイルは手元で `wrangler pages dev` を使うときの覚書として残している。
+# 本番の設定を変えたいときは、ここではなくダッシュボード側を直すこと。
+
 name = "sitevibe"
 compatibility_date = "2024-12-01"
 
