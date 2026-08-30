@@ -18,13 +18,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 公開してよいファイルだけを _site に集める。
+      - name: Collect publishable files
+        run: bash scripts/pages-build.sh
+
       - name: Deploy to Cloudflare Pages (Production)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy . --project-name=sitevibe --branch=main
+          command: pages deploy _site --project-name=sitevibe --branch=main
 
       - name: Deploy to Cloudflare Pages (Preview)
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
@@ -33,7 +37,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy . --project-name=sitevibe --branch=pr-${{ github.event.pull_request.number }}
+          command: pages deploy _site --project-name=sitevibe --branch=pr-${{ github.event.pull_request.number }}
 
       - name: Comment Preview URL on PR
         if: github.event_name == 'pull_request' && steps.deploy-preview.outcome == 'success'

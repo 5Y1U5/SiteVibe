@@ -30,3 +30,6 @@ __pycache__/
 !.env.example
 .codex-review/
 .claude/settings.local.json
+
+# 配信用に集めた公開ファイル（scripts/pages-build.sh が生成）
+_site/
